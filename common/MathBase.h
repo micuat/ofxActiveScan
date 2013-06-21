@@ -530,30 +530,30 @@ class CVector : public CMatrix<nDimension,1,T>
 public:
 
 	//---------- initializers
-	CVector(void) : CMatrix() {}
+	CVector(void) : CMatrix<nDimension,1,T>() {}
 
 	explicit CVector(T const * const element) 
-		: CMatrix(element) {}
+		: CMatrix<nDimension,1,T>(element) {}
 
 	// copy
 	CVector(const CVector& vec) 
-		: CMatrix(vec) {}
+		: CMatrix<nDimension,1,T>(vec) {}
 
 	const CVector& operator =(const CVector& vec)
 	{
-		CMatrix::operator=(vec);
+		CMatrix<nDimension,1,T>::operator=(vec);
 		return *this;
 	}
 
 	// coersion
 	template <typename T2>
 	CVector(const CMatrix<nDimension,1,T2>& vec)
-		: CMatrix(vec) {}
+		: CMatrix<nDimension,1,T>(vec) {}
 
 	template <typename T2>
 	const CVector& operator =(const CMatrix<nDimension,1,T2>& vec)
 	{
-		CMatrix::operator=(vec);
+		CMatrix<nDimension,1,T>::operator=(vec);
 		return *this;
 	}
 
@@ -561,13 +561,13 @@ public:
 	T& operator [](const int n)
 	{
 		_ASSERTE(n<nDimension);
-		return m[n];
+		return CMatrix<nDimension,1,T>::m[n];
 	}
 
 	T const& operator [](const int n) const
 	{
 		_ASSERTE(n<nDimension);
-		return m[n];
+		return CMatrix<nDimension,1,T>::m[n];
 	}
 };
 
@@ -1276,45 +1276,45 @@ public:
 
 	// copy
 	CDynamicVector(const CDynamicVector& vec)
-		: CDynamicMatrix(vec)
+		: CDynamicMatrix<T>(vec)
 	{
 	}
 
 	const CDynamicVector& operator =(const CDynamicVector& vec)
 	{
-		return CDynamicMatrix::operator =(vec);
+		return CDynamicMatrix<T>::operator =(vec);
 	}
 
 	// coercion
 	template <typename T2>
 	CDynamicVector(const CDynamicMatrix<T2>& vec)
-		: CDynamicMatrix(vec)
+		: CDynamicMatrix<T>(vec)
 	{
 	}
 
 	template <typename T2>
 	const CDynamicVector& operator =(const CDynamicMatrix<T2>& vec)
 	{
-		return CDynamicMatrix::operator =(vec);
+		return CDynamicMatrix<T>::operator =(vec);
 	}
 
 	// helpers
 	void Resize(int nRows)
 	{
-		CDynamicMatrix::Resize(nRows, 1);
+		CDynamicMatrix<T>::Resize(nRows, 1);
 	}
 
 	//---------- operators
 	T& operator [](const int n)
 	{
-		_ASSERTE(0<=n && n<m_nNumRows);
-		return m[n];
+		_ASSERTE(0<=n && n<CDynamicMatrix<T>::m_nNumRows);
+		return CDynamicMatrix<T>::m[n];
 	}
 
 	T const& operator [](const int n) const
 	{
-		_ASSERTE(0<=n && n<m_nNumRows);
-		return m[n];
+		_ASSERTE(0<=n && n<CDynamicMatrix<T>::m_nNumRows);
+		return CDynamicMatrix<T>::m[n];
 	}
 };
 
