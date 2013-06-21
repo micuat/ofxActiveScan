@@ -5,6 +5,8 @@
 // $Id: decode.cpp 4546 2011-05-24 12:20:43Z shun $
 //
 
+#include <stdlib.h>
+
 #include "stdafx.h"
 
 #include "decode.h"

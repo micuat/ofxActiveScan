@@ -129,7 +129,9 @@ void NormalizeImage(const Field<2,float>& src, Field<2,float>& dst)
 		dst = src / maxval;
 	else
 	{
-		TRACE("[" __FUNCTION__ "] warning: attempting to normalize a non-positive image.\n");
+		char s[256];
+		sprintf(s, "[%s] warning: attempting to normalize a non-positive image.\n", __FUNCTION__);
+		TRACE(s);
 		dst = src;
 	}
 }
@@ -142,10 +144,13 @@ void NormalizeImage(const Field<2,CVector<3,float> >& src, Field<2,CVector<3,flo
 	for (int y=0; y<src.size(1); y++)
 		for (int x=0; x<src.size(0); x++)
 			for (int c=0; c<3; c++)
-				maxpixel = std::max(maxpixel, abs(src.cell(x,y)[c]));
+				maxpixel = std::max(maxpixel, std::abs(src.cell(x,y)[c]));
 
-	if (maxpixel==0)
-		TRACE("[" __FUNCTION__ "] warning: black image.\n");
+	if (maxpixel==0) {
+		char s[256];
+		sprintf(s, "[%s] warning: black image.\n", __FUNCTION__);
+		TRACE(s);
+	}
 
 	dst = src / maxpixel;
 }

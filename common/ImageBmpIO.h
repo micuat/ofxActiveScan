@@ -11,6 +11,7 @@
 #pragma once
 
 #include "BmpUtil.h"
+#include "MiscUtil.h"
 #include "Field.h"
 
 namespace slib

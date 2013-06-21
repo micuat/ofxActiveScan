@@ -162,7 +162,7 @@ private:
 
 	void dump_images(int direction) const
 	{
-		char *suffix = direction ? "v" : "h";
+		char *suffix = (char *)(direction ? "v" : "h");
 		float s = 1.0/m_gray_map[direction].size(0);
 		WriteCorrespondenceMap(m_gray_map[direction], m_mask[direction], slib::format("gray-%s.bmp", suffix), s);
 		WriteCorrespondenceMap(m_phase_map[direction], m_mask[direction], slib::format("phase-%s.bmp", suffix), s);

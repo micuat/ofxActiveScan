@@ -21,6 +21,26 @@ namespace slib
 template <int nDimension, typename T>
 class Field
 {
+	char* format(const char *fmt, ...) const
+	{
+		va_list param;
+		va_start(param, fmt);
+		char message[1024];
+		vsnprintf(message, 1023, fmt, param);
+		message[1023] = 0;
+		return message;
+	}
+
+	std::string format_str(const char *fmt, ...) const
+	{
+		va_list param;
+		va_start(param, fmt);
+		char message[1024];
+		vsnprintf(message, 1023, fmt, param);
+		message[1023] = 0;
+		return std::string(message);
+	}
+
 public:
 	// constructor
 	Field(void)
@@ -134,7 +154,7 @@ public:
 	const Field& operator +=(const Field<nDimension,T2>& fld)
 	{
 		if (m_size!=fld.m_size)
-			throw std::runtime_error("[" __FUNCTION__ "] operation not allowed");
+			throw std::runtime_error(format_str("[%s] operation not allowed", __FUNCTION__));
 
 		int nSizeArray = GetSizeOfArray();
 		for (int i = 0; i < nSizeArray; i++)
@@ -147,7 +167,7 @@ public:
 	const Field& operator -=(const Field<nDimension,T2>& fld)
 	{
 		if (m_size!=fld.size())
-			throw std::runtime_error("size mismatched in " __FUNCTION__);
+			throw std::runtime_error(format_str("size mismatched in %s", __FUNCTION__));
 
 		int nSizeArray = GetSizeOfArray();
 		for (int i = 0; i < nSizeArray; i++)
@@ -167,7 +187,7 @@ public:
 	const Field& operator *=(const Field& fld)
 	{
 		if (m_size!=fld.size())
-			throw std::runtime_error("size mismatched in " __FUNCTION__);
+			throw std::runtime_error(format_str("size mismatched in %s", __FUNCTION__));
 		int nSizeArray = GetSizeOfArray();
 		for (int i = 0; i < nSizeArray; i++)
 			m_cell[i] *= fld.ptr(i);
@@ -422,7 +442,7 @@ inline
 T GetInterpolatedCell(const Field<nDimension,T>& fld, const CVector<nDimension,float_t>& pos) 
 {
 	if (!fld.IsInside(pos))
-		throw std::runtime_error("[" __FUNCTION__ "] out of bound");
+		throw std::runtime_error("[" + __FUNCTION__ + "] out of bound");
 
 	T val = T();
 	CVector<nDimension,int> gridpos;

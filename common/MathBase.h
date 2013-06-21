@@ -232,8 +232,8 @@ public:
 	template <int nSubRows,int nSubCols>
 	CMatrix<nSubRows,nSubCols,T> GetSubMatrix(int sr, int sc) const
 	{
-		STATIC_ASSERT(nSubRows<=nNumRows);
-		STATIC_ASSERT(nSubCols<=nNumCols);
+//		STATIC_ASSERT(nSubRows<=nNumRows);
+//		STATIC_ASSERT(nSubCols<=nNumCols);
 		CMatrix<nSubRows,nSubCols,T> iret;
 		for (int c=0; c<nSubCols; c++)
 			for (int r=0; r<nSubRows; r++)
