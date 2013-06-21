@@ -11,6 +11,7 @@
 
 #include "Field.h" // for GetPseudoInverse()
 #include "MathBaseLapack.h" // for GetPseudoInverse()
+#include "ColorConv.h"
 
 namespace slib
 {
@@ -155,7 +156,7 @@ void UnwrapPhase(const Field<2,float> &phase, const int period, const Field<2,fl
 			float moire_phase = phase.cell(x, y);	// in [0,1)
 			float gray_phase = (float)(graycode % period) / period;	// in [0,1)
 
-			if (_isnan(moire_phase)) {
+			if (moire_phase != moire_phase) { // isnan(moire_phase)
 				result.cell(x, y) = graycode;
 				unwrap_error.cell(x,y) = 0.5;
 				continue;
