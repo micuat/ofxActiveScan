@@ -15,6 +15,7 @@
 #undef max
 
 #include <stdexcept>
+#include <stdarg.h>
 
 namespace slib
 {
@@ -25,7 +26,7 @@ void ThrowRuntimeError(const char *fmt, ...)
 	va_list param;
 	va_start(param, fmt);
 	char message[1024];
-	_vsnprintf(message, 1023, fmt, param);
+	vsnprintf(message, 1023, fmt, param);
 	message[1023] = 0;
 	TRACE(message);
 	TRACE("\n");
@@ -38,7 +39,7 @@ void ThrowLogicError(const char *fmt, ...)
 	va_list param;
 	va_start(param, fmt);
 	char message[1024];
-	_vsnprintf(message, 1023, fmt, param);
+	vsnprintf(message, 1023, fmt, param);
 	message[1023] = 0;
 	TRACE(message);
 	throw std::logic_error(message);
@@ -54,7 +55,7 @@ std::string format(const char *fmt, ...)
 	va_start(arguments, fmt);
 	try
 	{
-		int length = _vscprintf(fmt, arguments);
+		int length = vsnprintf(NULL, 0, fmt, arguments);
 		if (length < 0)
 			throw std::runtime_error("_vscprintf() failed.");
 		buffer.assign(length, 0);
