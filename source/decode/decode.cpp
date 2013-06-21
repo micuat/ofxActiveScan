@@ -24,7 +24,7 @@ using namespace slib;
 
 void decode_gray(const options_t& options, const char * const *filenames, int nbits, Field<2,float>& gray, Field<2,int>& error)
 {
-	std::vector<Field<2,float>> diff(nbits);
+	std::vector<Field<2,float> > diff(nbits);
 	for (int bit = nbits - 1; bit >= 0; bit--)
 	{
 		Field<2,float> complementary;
@@ -50,7 +50,7 @@ void decode_gray(const options_t& options, const char * const *filenames, int nb
 
 void decode_phase(const options_t& options, const char *const *filenames,const Field<2,float>& gray,Field<2,float>& phase, Field<2,float>&error)
 {
-	std::vector<Field<2,float>> phaseimages(options.num_fringes);
+	std::vector<Field<2,float> > phaseimages(options.num_fringes);
 	for (int i = 0; i < options.num_fringes; i++) 
 		image::Read(phaseimages[i], *filenames++);
 
@@ -77,7 +77,7 @@ void write_images(const char *suffix, const Field<2,float>& gray, const Field<2,
 	DumpCode(phase, mask, format("phase-%s.bmp", suffix), s);
 }
 
-void decode(const options_t& options, const std::vector<Field<2,float>>&gray, const std::vector<Field<2,float>>& phase, Field<2,float>&mask)
+void decode(const options_t& options, const std::vector<Field<2,float> >&gray, const std::vector<Field<2,float> >& phase, Field<2,float>&mask)
 {
 		Field<2,float>gray_code;
 		Field<2,int> gray_error;

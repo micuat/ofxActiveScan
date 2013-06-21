@@ -40,8 +40,8 @@ namespace {
 
 // generate the coefficient matrix for linear solution 
 void generate_kronecker_matrix(
-	const std::vector<CVector<2,double>>& tp1, // normalized
-	const std::vector<CVector<2,double>>& tp2, // normalized
+	const std::vector<CVector<2,double> >& tp1, // normalized
+	const std::vector<CVector<2,double> >& tp2, // normalized
 	CDynamicMatrix<double>& matA // coefficient matrix for further nonlinear optimization
 	) 
 {
@@ -85,8 +85,8 @@ void solve_algebraic_closed_form(
 
 // estimate the fundamental matrix F such that argmin|p1.F.p2| 
 void EstimateFundamentalMatrixAlgebraic(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CMatrix<3,3,double>& fundamental)
 {
 	int npoints = p1.size();
@@ -94,7 +94,7 @@ void EstimateFundamentalMatrixAlgebraic(
 		throw std::runtime_error("input errror in " __FUNCTION__);
 
 	// normalize
-	std::vector<CVector<2,double>> tp1, tp2;
+	std::vector<CVector<2,double> > tp1, tp2;
 	double scale1, scale2;
 	CVector<2,double> center1, center2;
 	dlt::normalize(p1, tp1, scale1, center1);
@@ -127,7 +127,7 @@ namespace {
 
 struct fundamental_geometric_data_t
 {
-	const std::vector<CVector<2,double>>& p1, &p2;
+	const std::vector<CVector<2,double> >& p1, &p2;
 };
 
 // sampson approximation
@@ -157,11 +157,11 @@ void pairwise_stereo(
 	const CMatrix<3,4,double>& matP2, 
 	CVector<3,double>& X)
 {
-	std::vector<CVector<2,double>> p2d(2);
+	std::vector<CVector<2,double> > p2d(2);
 	p2d[0] = x1;
 	p2d[1] = x2;
 
-	std::vector<CMatrix<3,4,double>> proj(2);
+	std::vector<CMatrix<3,4,double> > proj(2);
 	proj[0] = matP1;
 	proj[1] = matP2;
 
@@ -237,8 +237,8 @@ void fundamental_ba_jacobian(int j, int i, double *aj, double *bi, double *Aij, 
 } // nameless namespace
 
 // minimize the geometric error 
-void EstimateFundamentalMatrixGeometric(const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+void EstimateFundamentalMatrixGeometric(const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CMatrix<3,3,double>& fundamental // in & out
 	)
 {
@@ -373,8 +373,8 @@ void EstimateFundamentalMatrixGeometric(const std::vector<CVector<2,double>>& p1
 namespace {
 
 void generate_kronecker_matrix_lift(
-	const std::vector<CVector<3,double>>& lifted1,
-	const std::vector<CVector<3,double>>& lifted2,
+	const std::vector<CVector<3,double> >& lifted1,
+	const std::vector<CVector<3,double> >& lifted2,
 	CDynamicMatrix<double>& matA)
 {
 	int npoints = lifted1.size();
@@ -392,9 +392,9 @@ void generate_kronecker_matrix_lift(
 }
 
 void lift_coorinates(
-	const std::vector<CVector<2,double>>& pos, 
+	const std::vector<CVector<2,double> >& pos, 
 	const CVector<2,double>& cod,
-	std::vector<CVector<3,double>>& lifted)
+	std::vector<CVector<3,double> >& lifted)
 {
 	const int npoints = pos.size();
 	lifted.resize(npoints);
@@ -408,8 +408,8 @@ void lift_coorinates(
 } // nameless namespace
 
 void EstimateRadialFundamentalMatrixAlgebraic(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	const CVector<2,double>& cod1,
 	const CVector<2,double>& cod2,
 	double& xi1,
@@ -421,12 +421,12 @@ void EstimateRadialFundamentalMatrixAlgebraic(
 		throw std::runtime_error("input errror in " __FUNCTION__);
 
 	// lifted coordinates
-	std::vector<CVector<3,double>> lifted1, lifted2;
+	std::vector<CVector<3,double> > lifted1, lifted2;
 	lift_coorinates(p1, cod1, lifted1);
 	lift_coorinates(p2, cod2, lifted2);
 
 	// normalize for DLT
-	std::vector<CVector<3,double>> normalized_lifted1, normalized_lifted2;
+	std::vector<CVector<3,double> > normalized_lifted1, normalized_lifted2;
 	CMatrix<4,4,double> denormalize_trans1,denormalize_trans2;
 	dlt::normalize_anisotropic(lifted1, normalized_lifted1, denormalize_trans1);
 	dlt::normalize_anisotropic(lifted2, normalized_lifted2, denormalize_trans2);
@@ -461,7 +461,7 @@ void EstimateRadialFundamentalMatrixAlgebraic(
 	xi2 = v1[3] / ((dir2[0]*dir2[1]*v1[1]+dir2[0]*dir2[2]*v1[2])/(dir2[1]*dir2[1]+dir2[2]*dir2[2])-v1[0]);
 
 	// undistortion
-	std::vector<CVector<2,double>> undist1(npoints), undist2(npoints);
+	std::vector<CVector<2,double> > undist1(npoints), undist2(npoints);
 	for (int i=0; i<npoints; i++) 
 	{
 		CancelRadialDistortion(xi1,cod1,p1[i],undist1[i]);
@@ -481,7 +481,7 @@ namespace {
 #ifdef ENABLE_SAMPSON_APPROXIMATION
 struct radial_geometric_data_t
 {
-	const std::vector<CVector<2,double>> &p1,&p2;
+	const std::vector<CVector<2,double> > &p1,&p2;
 	const CVector<2,double> &cod1, &cod2;
 };
 
@@ -572,8 +572,8 @@ void radial_ba_jacobian(int j, int i, double *aj, double *bi, double *Aij, doubl
 } // nameless namespace
 
 void EstimateRadialFundamentalMatrixGeometric(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	const CVector<2,double>& cod1,
 	const CVector<2,double>& cod2,
 	double& xi1, // [in/out] 
@@ -812,8 +812,8 @@ void apriori_sampson_error(double *parameter, double *hx, int m, int n, void *ad
 } // nameless namespace 
 
 void EstimateRadialFundamentalMatrixApriori(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	 CVector<2,double>& cod1,// [in/out] 
 	 CVector<2,double>& cod2,// [in/out] 
 	double& xi1, // [in/out] 
@@ -872,10 +872,10 @@ namespace ransac {
 
 // estimator_t: paramtype (*)(const std::vector<datatype>&, const odatatype&);
 // evaluator_t: double (*)(const datatype&, const odatatype&, const paramtype&);
-CMatrix<3,3,double> fundamental_estimator(const std::vector<std::pair<CVector<2,double>,CVector<2,double>>>& data)
+CMatrix<3,3,double> fundamental_estimator(const std::vector<std::pair<CVector<2,double>,CVector<2,double> > >& data)
 {
 	int ndata = data.size();
-	std::vector<CVector<2,double>> p1(ndata),p2(ndata);
+	std::vector<CVector<2,double> > p1(ndata),p2(ndata);
 	for (int i=0; i<ndata; i++)
 	{
 		p1[i]=data[i].first;
@@ -886,7 +886,7 @@ CMatrix<3,3,double> fundamental_estimator(const std::vector<std::pair<CVector<2,
 	return fundamental;
 }
 
-double fundamental_evaluator(const std::pair<CVector<2,double>,CVector<2,double>>& data, const CMatrix<3,3,double>& fundamental)
+double fundamental_evaluator(const std::pair<CVector<2,double>,CVector<2,double> >& data, const CMatrix<3,3,double>& fundamental)
 {
 	CMatrix<3,3,double> D3 = make_diagonal_matrix(1,1,0);
 	CVector<3,double> p1 = GetHomogeneousVector(data.first);
@@ -909,10 +909,10 @@ struct radial_estimator
 	{
 	}
 	
-	radial_param_t operator()(const std::vector<std::pair<CVector<2,double>,CVector<2,double>>>& data) const
+	radial_param_t operator()(const std::vector<std::pair<CVector<2,double>,CVector<2,double> > >& data) const
 	{
 		int ndata = data.size();
-		std::vector<CVector<2,double>> p1(ndata),p2(ndata);
+		std::vector<CVector<2,double> > p1(ndata),p2(ndata);
 		for (int i=0; i<ndata; i++)
 		{
 			p1[i]=data[i].first;
@@ -935,7 +935,7 @@ struct radial_estimator
 
 struct radial_evaluator
 {
-	double operator ()(const std::pair<CVector<2,double>,CVector<2,double>>& data, const radial_param_t& param) const
+	double operator ()(const std::pair<CVector<2,double>,CVector<2,double> >& data, const radial_param_t& param) const
 	{
 		CVector<2,double> u1,u2;
 		CancelRadialDistortion(param.xi1,param.cod1,data.first, u1);
@@ -955,14 +955,14 @@ struct radial_evaluator
 
 // using EstimateFundamentalMatrixAlgebraic()
 void EstimateFundamentalMatrixRansac(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CMatrix<3,3,double>& fundamental)
 {
 	int npoints = p1.size();
 
 	// ransac
-	std::vector<std::pair<CVector<2,double>,CVector<2,double>>> data(npoints);
+	std::vector<std::pair<CVector<2,double>,CVector<2,double> > > data(npoints);
 	for (int i=0; i<npoints; i++)
 		data[i] = std::make_pair(p1[i],p2[i]);
 	double maxerror = 1;
@@ -970,10 +970,10 @@ void EstimateFundamentalMatrixRansac(
 		8, maxerror, 0.95, fundamental);
 
 	// refine using only inliers
-	std::vector<std::pair<CVector<2,double>,CVector<2,double>>> inliers;
+	std::vector<std::pair<CVector<2,double>,CVector<2,double> > > inliers;
 	FindInliers(data, ransac::fundamental_evaluator, maxerror, fundamental, inliers);
 	int nin = inliers.size();
-	std::vector<CVector<2,double>> in1(nin), in2(nin);
+	std::vector<CVector<2,double> > in1(nin), in2(nin);
 	for (int i=0; i<nin; i++)
 	{
 		in1[i]=inliers[i].first;
@@ -984,8 +984,8 @@ void EstimateFundamentalMatrixRansac(
 
 // using EstimateRadialFundamentalMatrixApriori()
 void EstimateRadialFundamentalMatrixRansac(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CVector<2,double>& cod1,
 	CVector<2,double>& cod2,
 	double& xi1, 
@@ -994,7 +994,7 @@ void EstimateRadialFundamentalMatrixRansac(
 {
 	int npoints = p1.size();
 
-	std::vector<std::pair<CVector<2,double>,CVector<2,double>>> data(npoints);
+	std::vector<std::pair<CVector<2,double>,CVector<2,double> > > data(npoints);
 	for (int i=0; i<npoints; i++)
 		data[i] = std::make_pair(p1[i],p2[i]);
 	ransac::radial_param_t param;
@@ -1011,8 +1011,8 @@ void EstimateRadialFundamentalMatrixRansac(
 
 // using EstimateRadialFundamentalMatrixApriori()
 void RefineRadialFundamentalMatrix(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CVector<2,double>& cod1,
 	CVector<2,double>& cod2,
 	double& xi1, 
@@ -1021,19 +1021,19 @@ void RefineRadialFundamentalMatrix(
 {
 	int npoints = p1.size();
 
-	std::vector<std::pair<CVector<2,double>,CVector<2,double>>> data(npoints);
+	std::vector<std::pair<CVector<2,double>,CVector<2,double> > > data(npoints);
 	for (int i=0; i<npoints; i++)
 		data[i] = std::make_pair(p1[i],p2[i]);
 
 	// refine using only inliers
 	double maxerror = 1;
 	const ransac::radial_param_t param = { fundamental, xi1, xi2, cod1, cod2 };
-	std::vector<std::pair<CVector<2,double>,CVector<2,double>>> inliers;
+	std::vector<std::pair<CVector<2,double>,CVector<2,double> > > inliers;
 	FindInliers(data, ransac::radial_evaluator(), maxerror, param, inliers);
 	int nin = inliers.size();
 	TRACE("refining with %d inliers.\n", nin);
 
-	std::vector<CVector<2,double>> in1(nin), in2(nin);
+	std::vector<CVector<2,double> > in1(nin), in2(nin);
 	for (int i=0; i<nin; i++)
 	{
 		in1[i]=inliers[i].first;

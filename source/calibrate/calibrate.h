@@ -140,8 +140,8 @@ private:
 	void reconstruct_epipolar_geometry(slib::CMatrix<3,3,double>& fundamental)
 	{
 		// correspondences
-		std::vector<slib::CVector<2,double>> p1; // projector coordinate
-		std::vector<slib::CVector<2,double>> p2; // camera coordinates
+		std::vector<slib::CVector<2,double> > p1; // projector coordinate
+		std::vector<slib::CVector<2,double> > p2; // camera coordinates
 		sample_points(p1, p2);
 
 		if (m_options.debug)
@@ -220,7 +220,7 @@ private:
 	void dump_distortion_correction(void) const
 	{
 		int linewidth = 2;
-		slib::Field<2,slib::CVector<3,float>> src,dst;
+		slib::Field<2,slib::CVector<3,float> > src,dst;
 
 		int pgrid = (m_options.projector_width - linewidth) / 40;
 		src.Initialize(m_options.projector_width,m_options.projector_height);
@@ -246,8 +246,8 @@ private:
 	}
 
 	void sample_points( 
-		std::vector<slib::CVector<2,double>>& p1, // projector coordinate
-		std::vector<slib::CVector<2,double>>& p2) const // camera coordinates
+		std::vector<slib::CVector<2,double> >& p1, // projector coordinate
+		std::vector<slib::CVector<2,double> >& p2) const // camera coordinates
 	{
 		if (m_options.nsamples) {
 			// subsample correspondences for efficient computation
@@ -323,7 +323,7 @@ private:
 		}
 		TRACE("sum_error = %e\n", sum_error);
 
-		slib::Field<2,slib::CVector<3,float>> img(m_match.size());
+		slib::Field<2,slib::CVector<3,float> > img(m_match.size());
 		slib::image::ConvertToJetMap(error, img);
 		for (int y=0; y<m_match.size(1); y++)
 		{
@@ -339,7 +339,7 @@ private:
 	}
 
 	void undistort_camera_image(
-		const slib::Field<2,slib::CVector<3,float>>& src, slib::Field<2,slib::CVector<3,float>>& dst) const
+		const slib::Field<2,slib::CVector<3,float> >& src, slib::Field<2,slib::CVector<3,float> >& dst) const
 	{
 		dst.Initialize(src.size());
 		for (int y=0; y<src.size(1); y++) 
@@ -355,7 +355,7 @@ private:
 	}
 
 	void distort_projector_image(
-		const slib::Field<2,slib::CVector<3,float>>& src, slib::Field<2,slib::CVector<3,float>>& dst) const
+		const slib::Field<2,slib::CVector<3,float> >& src, slib::Field<2,slib::CVector<3,float> >& dst) const
 	{
 		dst.Initialize(src.size());
 		for (int y=0; y<src.size(1); y++) 
@@ -373,7 +373,7 @@ private:
 private:
 	// input
 	options_t m_options;
-	slib::Field<2,slib::CVector<2,double>> m_match;
+	slib::Field<2,slib::CVector<2,double> > m_match;
 	slib::Field<2,float> m_mask;
 	
 	// output

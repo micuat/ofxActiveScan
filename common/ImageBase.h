@@ -31,7 +31,7 @@ float GetIntensity(const CVector<3,float>& p)
 }
 
 inline
-void ConvertToRGB(const Field<2,float>& gray, Field<2,CVector<3,float>>& rgb)
+void ConvertToRGB(const Field<2,float>& gray, Field<2,CVector<3,float> >& rgb)
 {
 	rgb.Initialize(gray.size());
 	for (int y=0; y<rgb.size(1); y++)
@@ -40,7 +40,7 @@ void ConvertToRGB(const Field<2,float>& gray, Field<2,CVector<3,float>>& rgb)
 }
 
 inline
-void ConvertToHueMap(const Field<2,float>& gray, Field<2,CVector<3,float>>& hue)
+void ConvertToHueMap(const Field<2,float>& gray, Field<2,CVector<3,float> >& hue)
 {
 	hue.Initialize(gray.size());
 	for (int y=0; y<hue.size(1); y++)
@@ -53,7 +53,7 @@ void ConvertToHueMap(const Field<2,float>& gray, Field<2,CVector<3,float>>& hue)
 }
 
 inline
-void ConvertToJetMap(const Field<2,float>& gray, Field<2,CVector<3,float>>& hue)
+void ConvertToJetMap(const Field<2,float>& gray, Field<2,CVector<3,float> >& hue)
 {
 	hue.Initialize(gray.size());
 	for (int y=0; y<hue.size(1); y++)
@@ -67,7 +67,7 @@ void ConvertToJetMap(const Field<2,float>& gray, Field<2,CVector<3,float>>& hue)
 }
 
 inline
-void ConvertToRGBMap(const Field<2,float>& gray, Field<2,CVector<3,float>>& rgb)
+void ConvertToRGBMap(const Field<2,float>& gray, Field<2,CVector<3,float> >& rgb)
 {
 	rgb.Initialize(gray.size());
 	for (int y=0; y<rgb.size(1); y++)
@@ -82,7 +82,7 @@ void ConvertToRGBMap(const Field<2,float>& gray, Field<2,CVector<3,float>>& rgb)
 }
 
 inline
-void ConvertToSignedColor(const Field<2,float>& src, Field<2,CVector<3,float>>& rgb)
+void ConvertToSignedColor(const Field<2,float>& src, Field<2,CVector<3,float> >& rgb)
 {
 	rgb.Initialize(src.size());
 	rgb.Clear(make_vector(0,0,0));
@@ -95,7 +95,7 @@ void ConvertToSignedColor(const Field<2,float>& src, Field<2,CVector<3,float>>& 
 }
 
 inline
-void ConvertToGray(const Field<2,CVector<3,float>>& rgb, Field<2,float>& gray)
+void ConvertToGray(const Field<2,CVector<3,float> >& rgb, Field<2,float>& gray)
 {
 	gray.Initialize(rgb.size());
 	for (int y=0; y<gray.size(1); y++)
@@ -104,7 +104,7 @@ void ConvertToGray(const Field<2,CVector<3,float>>& rgb, Field<2,float>& gray)
 }
 
 inline
-void ConvertToChannel(const Field<2,CVector<3,float>>& rgb, int ch, Field<2,float>& gray)
+void ConvertToChannel(const Field<2,CVector<3,float> >& rgb, int ch, Field<2,float>& gray)
 {
 	gray.Initialize(rgb.size());
 	for (int y=0; y<gray.size(1); y++)
@@ -113,7 +113,7 @@ void ConvertToChannel(const Field<2,CVector<3,float>>& rgb, int ch, Field<2,floa
 }
 
 inline
-void ConvertToMaxChannel(const Field<2,CVector<3,float>>& rgb, Field<2,float>& gray)
+void ConvertToMaxChannel(const Field<2,CVector<3,float> >& rgb, Field<2,float>& gray)
 {
 	gray.Initialize(rgb.size());
 	for (int y=0; y<gray.size(1); y++)
@@ -136,7 +136,7 @@ void NormalizeImage(const Field<2,float>& src, Field<2,float>& dst)
 
 // 'dst' may be alias to 'src'
 inline
-void NormalizeImage(const Field<2,CVector<3,float>>& src, Field<2,CVector<3,float>>& dst)
+void NormalizeImage(const Field<2,CVector<3,float> >& src, Field<2,CVector<3,float> >& dst)
 {
 	float maxpixel = 0;
 	for (int y=0; y<src.size(1); y++)
@@ -152,7 +152,7 @@ void NormalizeImage(const Field<2,CVector<3,float>>& src, Field<2,CVector<3,floa
 
 // legend
 
-inline void AddJetMapLegend(Field<2,CVector<3,float>>& img, float height=0.2, float width=0.02) {
+inline void AddJetMapLegend(Field<2,CVector<3,float> >& img, float height=0.2, float width=0.02) {
 	int size = img.size(1);
 	int barwidth  = size*width;
 	int barheight = size*height;

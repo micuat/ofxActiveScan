@@ -401,10 +401,10 @@ void EstimateRelativePoseByEssentialMatrix(const CMatrix<3,3,T>& matE, CMatrix<3
 	// initialize stereo pair
 	CVector<3,T> ref = make_vector(0,0,1); // a 3D point in front of camera
 	CVector<3,T> epi = matE * ref; // corresponding epipolar line in projector view
-	std::vector<CVector<2,T>> pos2d(2);
+	std::vector<CVector<2,T> > pos2d(2);
 	pos2d[0]=make_vector<T>(0,-epi[2]/epi[1]); // the point on the line and at image center
 	pos2d[1]=make_vector<T>(0,0);
-	std::vector<CMatrix<3,4,T>> proj(2);
+	std::vector<CMatrix<3,4,T> > proj(2);
 	proj[1].Fill(0);// = CMatrix<3,4,T>::GetZero();
 	proj[1](0,0)=proj[1](1,1)=proj[1](2,2)=1;//
 

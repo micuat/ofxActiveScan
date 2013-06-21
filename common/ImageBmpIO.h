@@ -52,7 +52,7 @@ void Read(Field<2,T>& fld, const std::string& filename, float scale)
 // read an RGB image 
 template <typename T>
 inline
-void Read(Field<2,CVector<3,T>>& fld, const std::string& filename, float scale)
+void Read(Field<2,CVector<3,T> >& fld, const std::string& filename, float scale)
 {
 	CBmpImage img;
 	if (!img.LoadBmp(filename))
@@ -102,7 +102,7 @@ void Write(const Field<2,T>& fld, const std::string& filename, float maxval)
 // write an RGB image 
 template <typename T>
 inline
-void Write(const Field<2,CVector<3,T>>& fld, const std::string& filename, float scale)
+void Write(const Field<2,CVector<3,T> >& fld, const std::string& filename, float scale)
 {
 	CBmpImage img;
 	img.Initialize(fld.size(0), fld.size(1), 3);

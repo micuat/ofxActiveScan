@@ -31,7 +31,7 @@ static float m_max_edge_length = 0.1;
 static float m_distortion_angle = 1;
 static bool m_debug = false;
 
-bool distorted(const int v1,const int v2,const int v3,const std::vector<CVector<3,double>>& result) 
+bool distorted(const int v1,const int v2,const int v3,const std::vector<CVector<3,double> >& result) 
 {
 	if (result[v1][2]<0 || result[v2][2]<0 || result[v3][2]<0)
 		return true;
@@ -55,7 +55,7 @@ bool distorted(const int v1,const int v2,const int v3,const std::vector<CVector<
 	return maxcos > t;
 }
 
-void WritePly(const std::vector<CVector<3,double>>& result, const Field<2,float>& mask, std::string filename)
+void WritePly(const std::vector<CVector<3,double> >& result, const Field<2,float>& mask, std::string filename)
 {
 	// generate face indices
 	Field<2,int> index(mask.size());
@@ -66,7 +66,7 @@ void WritePly(const std::vector<CVector<3,double>>& result, const Field<2,float>
 			else
 				index.cell(x,y)=-1;
 
-	std::vector<CVector<3,int>> face;
+	std::vector<CVector<3,int> > face;
 	for (int y=0; y<mask.size(1)-1; y++)
 	{
 		for (int x=0; x<mask.size(0)-1; x++)
@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
 		camRt = make_diagonal_matrix(1,1,1).AppendCols(make_vector(0,0,0));//CMatrix<3,4,double>::GetIdentity(); // reconstruction is in camera coordinate frame
 
 		// compute projection matrices of projector and camera
-		std::vector<CMatrix<3,4,double>> matrices(2);
+		std::vector<CMatrix<3,4,double> > matrices(2);
 		matrices[0] = matKcam * camRt; // camera
 		matrices[1] = matKpro * proRt; // projector
 
@@ -217,7 +217,7 @@ int main(int argc, char* argv[])
 		CMatrix<3,3,double> matF = transpose_of(inverse_of(matKpro)) * GetSkewSymmetric(vecT) * matR * inverse_of(matKcam);
 
 		// triangulate 3d points
-		std::vector<CVector<3,double>> result;
+		std::vector<CVector<3,double> > result;
 		for (int y=0; y<horizontal.size(1); y++)
 		{
 			if (y % (horizontal.size(1)/100) == 0)
@@ -229,7 +229,7 @@ int main(int argc, char* argv[])
 				if (mask.cell(x,y))
 				{
 					// 2D correspondence
-					std::vector<CVector<2,double>> p2d(2);
+					std::vector<CVector<2,double> > p2d(2);
 
 					// camra coordinate
 					slib::fmatrix::CancelRadialDistortion(xi2,cod2,make_vector<double>(x,y),p2d[0]);

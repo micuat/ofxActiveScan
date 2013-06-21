@@ -17,20 +17,20 @@ namespace fmatrix {
 //////////////////////////////////////////////////////////////////////
 
 void EstimateFundamentalMatrixAlgebraic(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CMatrix<3,3,double>& fundamental);
 
 void EstimateFundamentalMatrixGeometric(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CMatrix<3,3,double>& fundamental // [in/out] 
 	);
 
 // using EstimateFundamentalMatrixAlgebraic()
 void EstimateFundamentalMatrixRansac(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CMatrix<3,3,double>& fundamental);
 
 //////////////////////////////////////////////////////////////////////
@@ -38,8 +38,8 @@ void EstimateFundamentalMatrixRansac(
 //////////////////////////////////////////////////////////////////////
 
 void EstimateRadialFundamentalMatrixAlgebraic(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	const CVector<2,double>& cod1,
 	const CVector<2,double>& cod2,
 	double& xi1, // [in/out]
@@ -48,8 +48,8 @@ void EstimateRadialFundamentalMatrixAlgebraic(
 	);
 
 void EstimateRadialFundamentalMatrixGeometric(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	const CVector<2,double>& cod1,
 	const CVector<2,double>& cod2,
 	double& xi1, // [in/out] 
@@ -58,8 +58,8 @@ void EstimateRadialFundamentalMatrixGeometric(
 	);
 
 void EstimateRadialFundamentalMatrixApriori(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CVector<2,double>& cod1,// [in/out] 
 	CVector<2,double>& cod2,// [in/out] 
 	double& xi1, // [in/out] 
@@ -69,8 +69,8 @@ void EstimateRadialFundamentalMatrixApriori(
 
 // using EstimateRadialFundamentalMatrixApriori()
 void EstimateRadialFundamentalMatrixRansac(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CVector<2,double>& cod1, // [in/out]
 	CVector<2,double>& cod2, // [in/out]
 	double& xi1,  // [in/out]
@@ -80,8 +80,8 @@ void EstimateRadialFundamentalMatrixRansac(
 
 // using EstimateRadialFundamentalMatrixApriori()
 void RefineRadialFundamentalMatrix(
-	const std::vector<CVector<2,double>>& p1,
-	const std::vector<CVector<2,double>>& p2,
+	const std::vector<CVector<2,double> >& p1,
+	const std::vector<CVector<2,double> >& p2,
 	CVector<2,double>& cod1,
 	CVector<2,double>& cod2,
 	double& xi1, 

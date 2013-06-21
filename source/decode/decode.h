@@ -23,7 +23,7 @@ public:
 	void Decode(const std::vector<std::string>& files) 
 	{
 		std::vector<std::string>::const_iterator it = files.begin();
-		std::vector<slib::Field<2,float>> images;
+		std::vector<slib::Field<2,float> > images;
 		if (m_options.horizontal) 
 		{
 			int nbits = m_options.get_num_bits(0);
@@ -130,10 +130,10 @@ private:
 		}
 	}
 
-	void decode_gray(const std::vector<slib::Field<2,float>>& images, int direction)
+	void decode_gray(const std::vector<slib::Field<2,float> >& images, int direction)
 	{
 		int nbits = m_options.get_num_bits(direction);
-		std::vector<slib::Field<2,float>> diff(nbits);
+		std::vector<slib::Field<2,float> > diff(nbits);
 		for (int bit = 0; bit<nbits; bit++)
 		{
 			float maxval = std::max(images[2*bit].max(), images[2*bit+1].max());
@@ -153,7 +153,7 @@ private:
 		DecodeGrayCodeImages(diff, m_gray_map[direction]);
 	}
 
-	void decode_phase(const std::vector<slib::Field<2,float>>& images, int direction)
+	void decode_phase(const std::vector<slib::Field<2,float> >& images, int direction)
 	{
 		DecodePhaseCodeImages(images, m_phase_map[direction]);
 
@@ -170,7 +170,7 @@ private:
 		ExportCorrespondencePlot(m_phase_map[direction], m_mask[direction], slib::format("phase-%s.dat", suffix));
 
 		slib::Field<2,float> err;
-		slib::Field<2,slib::CVector<3,float>> rgb;
+		slib::Field<2,slib::CVector<3,float> > rgb;
 
 		err=m_gray_error[direction];
 		err /= m_options.get_num_bits(direction);
@@ -185,7 +185,7 @@ private:
 		slib::image::Write(rgb,slib::format("phase-error-%s.bmp", suffix));
 	}
 
-	void apply_mask(const slib::Field<2,float>& mask, slib::Field<2,slib::CVector<3,float>>& img) const 
+	void apply_mask(const slib::Field<2,float>& mask, slib::Field<2,slib::CVector<3,float> >& img) const 
 	{
 		for (int y=0; y<mask.size(1); y++) 
 			for (int x=0; x<mask.size(0); x++) 

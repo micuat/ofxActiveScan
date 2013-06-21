@@ -47,7 +47,7 @@ void GenerateGrayCodeImage(const int direction, const int level, Field<2,float> 
 }
 
 inline 
-void DecodeGrayCodeImages(const std::vector<Field<2,float>>& bmps, Field<2,float>& result)
+void DecodeGrayCodeImages(const std::vector<Field<2,float> >& bmps, Field<2,float>& result)
 {
 	int nlevels = bmps.size();
 	const CVector<2,int>& size = bmps[0].size();
@@ -97,7 +97,7 @@ void GeneratePhaseCodeImage(const int direction, const int period, const int pha
 
 // generate phase image from moire pattern images.
 inline 
-void DecodePhaseCodeImages(const std::vector<Field<2,float>> &images, Field<2,float>& result)
+void DecodePhaseCodeImages(const std::vector<Field<2,float> > &images, Field<2,float>& result)
 {
 	const CVector<2,int>& size = images[0].size();
 	const int nphases = images.size();
@@ -199,7 +199,7 @@ void WriteCorrespondenceMap(const Field<2, T>&code, const Field<2,float> &mask, 
 		}
 	}
 #else
-	Field<2,CVector<3,float>> img(code.size());
+	Field<2,CVector<3,float> > img(code.size());
 	img.Clear(make_vector(0, 0, 0));
 	for (int y = 0; y < code.size(1); y++) {
 		for (int x = 0; x < code.size(0); x++) {
