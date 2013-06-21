@@ -18,6 +18,8 @@
 #undef min
 #undef max
 
+#include <string.h>
+
 namespace slib
 {
 

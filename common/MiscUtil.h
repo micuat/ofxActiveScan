@@ -14,6 +14,8 @@
 #undef min
 #undef max
 
+#include <stdexcept>
+
 namespace slib
 {
 

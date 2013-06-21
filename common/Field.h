@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <stdexcept>
+
 #include "MathBase.h"
 
 #undef min

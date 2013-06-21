@@ -18,6 +18,9 @@
 #undef min
 #undef max
 
+#include <stdexcept>
+#include <string.h>
+
 namespace slib
 {
 namespace image

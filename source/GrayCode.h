@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include "Field.h" // for GetPseudoInverse()
 #include "MathBaseLapack.h" // for GetPseudoInverse()
 
@@ -73,7 +75,7 @@ void CountGraycodeUncertainty(const Field<2,float> &diff, const float threshold,
 {
 	for (int y = 0; y < diff.size(1); y++)
 		for (int x = 0; x < diff.size(0); x++)
-			if (abs(diff.cell(x, y)) < threshold)
+			if (std::abs(diff.cell(x, y)) < threshold)
 				uncertainty.cell(x, y)++;
 }
 
@@ -168,7 +170,7 @@ void UnwrapPhase(const Field<2,float> &phase, const int period, const Field<2,fl
 			else if (moire_phase < gray_phase - 0.5)
 				moire_phase += 1;
 
-			float diff = abs(gray_phase - moire_phase);
+			float diff = std::abs(gray_phase - moire_phase);
 			if (diff < window) {
 				result.cell(x, y) = graycode - (graycode % period) + period * moire_phase;
 			} else {

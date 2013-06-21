@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <stdexcept>
+
 namespace slib {
 
 class CIniFile

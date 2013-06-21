@@ -5,6 +5,8 @@
 // $Id: encode.cpp 4547 2011-05-24 14:04:52Z shun $
 //
 
+#include <stdlib.h>
+
 #include "stdafx.h"
 
 #include "MiscUtil.h"
