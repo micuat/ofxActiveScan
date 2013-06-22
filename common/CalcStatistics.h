@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdlib.h>
+
 namespace slib
 {
 
@@ -44,7 +46,7 @@ template <int nDimension, typename T>
 inline
 T Gaussian(const CVector<nDimension,T> &x, const CVector<nDimension,T> &mean, const CMatrix<nDimension,nDimension,T> &covar)
 {
-	return GaussianExt(x, mean, CalcDeterminant(invCovar), GetInverse(covar));
+	return GaussianExt(x, mean, CalcDeterminant(covar), GetInverse(covar));
 }
 
 template <int nDimension, typename T> 

@@ -510,7 +510,7 @@ CMatrix<4,4,T> inverse_of(const CMatrix<4,4,T>& a)
 
 #define DUMP_VECMAT(mat) \
 {\
-	TRACE("["__FUNCTION__"] " #mat " =:\n"); \
+	TRACE("[%s] " #mat " =:\n", __FUNCTION__); \
 	for (int i__=0; i__<(mat).GetNumRows(); i__++) \
 	{ \
 		TRACE("\t["); \

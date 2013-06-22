@@ -441,8 +441,11 @@ template <int nDimension,typename T,typename float_t>
 inline
 T GetInterpolatedCell(const Field<nDimension,T>& fld, const CVector<nDimension,float_t>& pos) 
 {
-	if (!fld.IsInside(pos))
-		throw std::runtime_error("[" + __FUNCTION__ + "] out of bound");
+	if (!fld.IsInside(pos)) {
+		char s[256];
+		sprintf(s, "[%s] out of bound", __FUNCTION__);
+		throw std::runtime_error(std::string(s));
+	}
 
 	T val = T();
 	CVector<nDimension,int> gridpos;

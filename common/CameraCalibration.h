@@ -93,6 +93,7 @@ CVector<4,T> GetProjectionCenter(const CMatrix<3,4,T>& projection)
 //
 //----------------------------------------------------------------------
 
+/*
 template <typename T>
 inline
 bool EstimateProjectionMatrix(
@@ -188,6 +189,7 @@ bool EstimateProjectionMatrix(
 	DUMP_VECMAT(matP);
 	return true;
 }
+*/
 
 template <typename T> inline
 bool AlmostEqual(const T& v1, const T& v2)
