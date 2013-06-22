@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <cmath>
+
 namespace slib
 {
 namespace dlt
@@ -82,7 +84,7 @@ inline void normalize_anisotropic(
 	{
 		dst[i] = src[i] - center;
 		for (int d=0; d<nDimension; d++)
-			sum[d] += abs(dst[i][d]);
+			sum[d] += std::abs(dst[i][d]);
 	}
 	for (int d=0; d<nDimension; d++)
 		scale[d] = (float)num_data / sum[d];

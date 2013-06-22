@@ -649,7 +649,7 @@ T crossZ(const CMatrix<2,1,T>& vec0, const CMatrix<2,1,T>& vec1)
 
 template <typename T>
 inline
-CMatrix<3,3,T> GetSkewSymmetric(CMatrix<3,1,T>& vec)
+CMatrix<3,3,T> GetSkewSymmetric(CMatrix<3,1,T> vec)
 {
 	return make_matrix<T>(
 		0, -vec(2,0), vec(1,0),

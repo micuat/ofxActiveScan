@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include <cmath>
+#include <stdexcept>
+
 #include "stdafx.h"
 
 #define ENABLE_SAMPSON_APPROXIMATION
@@ -27,6 +30,17 @@
 
 namespace slib {
 namespace fmatrix {
+
+	std::string format_str(const char *fmt, ...)
+	{
+		va_list param;
+		va_start(param, fmt);
+		char message[1024];
+		vsnprintf(message, 1023, fmt, param);
+		message[1023] = 0;
+		return std::string(message);
+	}
+
 
 //////////////////////////////////////////////////////////////////////
 // fundamental matrix 
@@ -91,7 +105,7 @@ void EstimateFundamentalMatrixAlgebraic(
 {
 	int npoints = p1.size();
 	if (p1.size() != p2.size() || npoints < 8)
-		throw std::runtime_error("input errror in " __FUNCTION__);
+		throw std::runtime_error(format_str("input errror in %s", __FUNCTION__));
 
 	// normalize
 	std::vector<CVector<2,double> > tp1, tp2;
@@ -133,7 +147,7 @@ struct fundamental_geometric_data_t
 // sampson approximation
 void fundamental_sampson_error(double *p, double *hx, int m, int n, void *adata)
 {
-	CMatrix<3,3,double> fundamental = GetSkewSymmetric(CVector<3,double>(p)) * CMatrix<3,3,double>(p+3);
+	CMatrix<3,3,double> fundamental = GetSkewSymmetric(CMatrix<3,1,double>(p)) * CMatrix<3,3,double>(p+3);
 
 	fundamental_geometric_data_t *data = (fundamental_geometric_data_t *)adata;
 	for (int i=0; i<n; i++)
@@ -247,7 +261,7 @@ void EstimateFundamentalMatrixGeometric(const std::vector<CVector<2,double> >& p
 #ifdef ENABLE_SAMPSON_APPROXIMATION
 	// minimize the sampson error 
 	if (p1.size() != p2.size() || npoints < 12)
-		throw std::runtime_error("input errror in [" __FUNCTION__ "]");
+		throw std::runtime_error(format_str("input errror in [%s]", __FUNCTION__));
 
 	int m = 12; 
 	int n = npoints; 
@@ -274,13 +288,13 @@ void EstimateFundamentalMatrixGeometric(const std::vector<CVector<2,double> >& p
 		0, 0, (void *)&adata);
 	print_levmar_info(info);
 
-	fundamental = GetSkewSymmetric(CVector<3,double>(p)) * CMatrix<3,3,double>(p+3);
+	fundamental = GetSkewSymmetric(CMatrix<3,1,double>(p)) * CMatrix<3,3,double>(p+3);
 	delete [] p;
 #else
 	// minimize the geometric error |x-PX|+|x'-P'X| by bundle adjustment
 	// See: Multiple View Geometry 2nd Edition p.285
 	if (p1.size() != p2.size() || npoints < 24) // TODO: should be 12
-		throw std::runtime_error("input errror in " __FUNCTION__);
+		throw std::runtime_error(format_str("input errror in %s", __FUNCTION__));
 
 	// P1 = [ I | 0 ]
 	CMatrix<3,4,double> matP1 = CMatrix<3,4,double>::GetIdentity();
@@ -418,7 +432,7 @@ void EstimateRadialFundamentalMatrixAlgebraic(
 {
 	int npoints = p1.size();
 	if (p1.size() != p2.size() || npoints < 15)
-		throw std::runtime_error("input errror in " __FUNCTION__);
+		throw std::runtime_error(format_str("input errror in %s", __FUNCTION__));
 
 	// lifted coordinates
 	std::vector<CVector<3,double> > lifted1, lifted2;
@@ -586,7 +600,7 @@ void EstimateRadialFundamentalMatrixGeometric(
 #ifdef ENABLE_SAMPSON_APPROXIMATION
 	// sampson
 	if (p1.size() != p2.size() || npoints < 11) // TODO: correct?
-		throw std::runtime_error("input errror in " __FUNCTION__);
+		throw std::runtime_error(format_str("input errror in %s", __FUNCTION__));
 
 	int m = 9+2; // fmatrix(9), xi(2)
 
@@ -617,7 +631,7 @@ void EstimateRadialFundamentalMatrixGeometric(
 #else
 	// reprojection
 	if (p1.size() != p2.size() || npoints < 26) // TODO: should be 13?
-		throw std::runtime_error("input errror in " __FUNCTION__);
+		throw std::runtime_error(format_str("input errror in %s", __FUNCTION__));
 
 	// P1 = [ I | 0 ]
 	CMatrix<3,4,double> matP1 = CMatrix<3,4,double>::GetIdentity();
@@ -823,7 +837,7 @@ void EstimateRadialFundamentalMatrixApriori(
 {
 	int npoints = p1.size();
 	if (p1.size() != p2.size() || npoints < 15) // TODO: correct?
-		throw std::runtime_error("input errror in " __FUNCTION__);
+		throw std::runtime_error(format_str("input errror in %s", __FUNCTION__));
 
 	// parameters
 	int m = 9 + 6;// fmatrix, cod(4), xi(2)
@@ -891,8 +905,8 @@ double fundamental_evaluator(const std::pair<CVector<2,double>,CVector<2,double>
 	CMatrix<3,3,double> D3 = make_diagonal_matrix(1,1,0);
 	CVector<3,double> p1 = GetHomogeneousVector(data.first);
 	CVector<3,double> p2 = GetHomogeneousVector(data.second);
-	double d1 = abs(dot(p2, transpose_of(fundamental) * p1)) / GetNorm2(D3 * transpose_of(fundamental) * p1);
-	double d2 = abs(dot(p1, fundamental * p2)) / GetNorm2(D3 * fundamental * p2);
+	double d1 = std::abs(dot(p2, transpose_of(fundamental) * p1)) / GetNorm2(D3 * transpose_of(fundamental) * p1);
+	double d2 = std::abs(dot(p1, fundamental * p2)) / GetNorm2(D3 * fundamental * p2);
 	return (d1 + d2) / 2;
 }
 
@@ -944,8 +958,8 @@ struct radial_evaluator
 		CMatrix<3,3,double> D3 = make_diagonal_matrix(1,1,0);
 		CVector<3,double> p1 = GetHomogeneousVector(u1);
 		CVector<3,double> p2 = GetHomogeneousVector(u2);
-		double d1 = abs(dot(p2, transpose_of(param.fundamental) * p1)) / GetNorm2(D3 * transpose_of(param.fundamental) * p1);
-		double d2 = abs(dot(p1, param.fundamental * p2)) / GetNorm2(D3 * param.fundamental * p2);
+		double d1 = std::abs(dot(p2, transpose_of(param.fundamental) * p1)) / GetNorm2(D3 * transpose_of(param.fundamental) * p1);
+		double d2 = std::abs(dot(p1, param.fundamental * p2)) / GetNorm2(D3 * param.fundamental * p2);
 		return (d1 + d2) / 2;
 	}
 
