@@ -19,6 +19,9 @@
 #include "../Options.h"
 #include "../FundamentalMatrix.h"
 
+#include <stdlib.h>
+#include <time.h>
+
 class CProCamCalibrate
 {
 public:
@@ -33,6 +36,7 @@ public:
 		const slib::Field<2,float>& vertical, 
 		const slib::Field<2,float>& mask)
 	{
+		srand(time(NULL));
 		m_mask = mask;
 		build_correspondence(horizontal,vertical);
 		slib::CMatrix<3,3,double> fundamental;
@@ -255,8 +259,8 @@ private:
 			while (p1.size() < m_options.nsamples) 
 			{
 	#if 1
-				int x = (float)rand()/(RAND_MAX+1)*m_match.size(0); 
-				int y = (float)rand()/(RAND_MAX+1)*m_match.size(1);
+				int x = ((float)rand())/((float)RAND_MAX+1.0)*(float)m_match.size(0); 
+				int y = ((float)rand())/((float)RAND_MAX+1.0)*(float)m_match.size(1);
 	#else
 				int x = slib::GaussianRandom(m_match.size(0)/2.0, m_match.size(0)/4.0);
 				int y = slib::GaussianRandom(m_match.size(1)/2.0, m_match.size(1)/4.0);
