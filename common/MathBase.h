@@ -19,6 +19,7 @@
 #undef max
 
 #include <string.h>
+#include <stdexcept>
 
 namespace slib
 {

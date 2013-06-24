@@ -13,6 +13,8 @@
 #undef small // conflict with "rpcndr.h" used in MFC
 #include <mkl_lapack.h>
 
+#include <stdexcept>
+
 #include "MathBaseUtil.h"
 
 #undef min
