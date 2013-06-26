@@ -9,16 +9,16 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <levmar.h>
 
 #include "stdafx.h"
+#include "levmar_util.h"
 
 #define ENABLE_SAMPSON_APPROXIMATION
 
 #include "MathBaseUtil.h"
 #include "DLT.h"
 #include "LeastSquare.h"
-#include "levmar.h"
-#include "levmar_util.h"
 #include "ransac.h"
 #ifndef ENABLE_SAMPSON_APPROXIMATION
 #include "sba.h"

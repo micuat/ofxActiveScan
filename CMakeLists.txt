@@ -30,10 +30,10 @@ cmake_minimum_required(VERSION 2.8)
 # set include directories
 set (OF_INCLUDES
     ${OF_INCLUDES}
-    /home/sre/nhieda/intel/mkl/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ProCamTools
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ProCamTools/common
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/levmar/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/lapack/include
     PARENT_SCOPE
 )
 
@@ -46,32 +46,25 @@ set (OF_INCLUDES
 # add link search directories
 set (OF_LIBRARY_DIRS
     ${OF_LIBRARY_DIRS}
-    /home/sre/nhieda/intel/mkl/lib/ia32
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/lapack/lib/linux
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/levmar/lib/linux
     PARENT_SCOPE
 )
 
 # define sources
 set (OFX_PROCAMTOOLS_SOURCE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ProCamTools/FundamentalMatrix.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar/Axb.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar/lmbc.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar/lmblec.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar/lmbleic.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar/lmlec.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar/lm.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/levmar/misc.c
     PARENT_SCOPE
 )
 
 # if applicable, set LDFLAGS
 set (OF_LIBRARIES
-#set (OF_LDFLAGS
     ${OF_LIBRARIES}
-#    ${OF_LDFLAGS}
-    -lmkl_core
-    -lmkl_pgi_thread
-    -lmkl_rt
-    -lmkl_scalapack_core
-    -lmkl_sequential
+    -llevmar
+    -llapack
+    -lblas
+    -lgfortran
+    -lf2c
+    -lm
     PARENT_SCOPE
 )

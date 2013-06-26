@@ -7,13 +7,10 @@
 
 #pragma once
 
-// http://software.intel.com/en-us/articles/intel-mkl-link-line-advisor/
-#pragma comment(lib,"mkl_c_dll.lib")
-
 #undef small // conflict with "rpcndr.h" used in MFC
-#include <mkl_lapack.h>
 
 #include <stdexcept>
+#include <lapacke.h>
 
 #include "MathBaseUtil.h"
 
@@ -59,7 +56,7 @@ void SingularValueDecomposition(const CMatrixType& mat, // in
 	int lwork = std::max(3*std::min(m, n)+std::max(m, n), 5*std::min(m,n)); 
 	double *work = new double [lwork];
 	int info;
-	DGESVD(&jobu,&jobvt,&m,&n,a,&lda,s,u,&ldu,vt,&ldvt,work,&lwork,&info);
+	LAPACK_dgesvd(&jobu,&jobvt,&m,&n,a,&lda,s,u,&ldu,vt,&ldvt,work,&lwork,&info);
 
 	if (info < 0)
 		TRACE("Error: %d-th parameter of DGESVD had an illegal value.\n", -info);
@@ -176,7 +173,7 @@ const CDynamicMatrix<T> inverse_of(const CDynamicMatrix<T>& mat)
 	int lda = m;
 	int *ipiv = new int [std::min(m,n)];
 	int info;
-	DGETRF(&m, &n, a, &lda, ipiv, &info); 
+	LAPACK_dgetrf(&m, &n, a, &lda, ipiv, &info); 
 
 	if (info>0)
 	{
@@ -186,7 +183,7 @@ const CDynamicMatrix<T> inverse_of(const CDynamicMatrix<T>& mat)
 
 	int lwork = m;
 	double *work = new double [lwork];
-	DGETRI(&n, a, &lda, ipiv, work, &lwork, &info);
+	LAPACK_dgetri(&n, a, &lda, ipiv, work, &lwork, &info);
 
 	delete [] ipiv;
 	delete [] work;
@@ -213,7 +210,7 @@ T determinant_of(const CDynamicMatrix<T>& mat)
 	int lda = m;
 	int *ipiv = new int [minmn];
 	int info;
-	DGETRF(&m, &n, a, &lda, ipiv, &info);
+	LAPACK_dgetrf(&m, &n, a, &lda, ipiv, &info);
 
 	if (info > 0) {
 		delete [] ipiv;
