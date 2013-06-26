@@ -5,8 +5,6 @@
 // $Id: FundamentalMatrix.h 4414 2011-03-10 15:06:35Z shun $
 //
 
-#pragma once
-
 #include <cmath>
 #include <stdexcept>
 #include <levmar.h>
