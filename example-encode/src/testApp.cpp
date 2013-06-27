@@ -22,27 +22,65 @@ void testApp::setup() {
 	if (argc != 2)
 		print_usage(argv[0]);
 	
-	ofSetLogLevel(OF_LOG_NOTICE);
+	ofSetLogLevel(OF_LOG_VERBOSE);
+	
+	cv::FileStorage fs(ofToDataPath("config.yml"), cv::FileStorage::READ);
+	int devID, pw, ph, grayLow, grayHigh;
+	fs["proWidth"] >> pw;
+	fs["proHeight"] >> ph;
+	fs["camWidth"] >> cw;
+	fs["camHeight"] >> ch;
+	fs["grayLow"] >> grayLow;
+	fs["grayHigh"] >> grayHigh;
+	fs["devID"] >> devID;
+	fs["bufferTime"] >> bufferTime;
 	
 	encode.init(argv[1]);
 	
-	curIndex = 0;
+	camera.listDevices();
+	camera.setDeviceID(devID);
+	camera.initGrabber(cw, ch);
+	
+	curIndex = -1;
+	captureTime = 0;
 }
 
 void testApp::update() {
+	unsigned long curTime = ofGetSystemTime();
+	bool needToCapture = (0 <= curIndex) && (curIndex < encode.getSize())
+		&& ((curTime - captureTime) > bufferTime);
+	
+	camera.update();
+	if(camera.isFrameNew() && needToCapture) {
+		curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
+		curFrame.saveImage(ofToString(curIndex) + ".bmp");
+		captureTime = curTime;
+		curIndex++;
+		if( curIndex < encode.getSize() ) {
+			curPattern = encode.getPatternAt(curIndex);
+		} else {
+			curIndex = -1;
+		}
+	}
 }
 
 void testApp::draw() {
 	ofBackground(0);
 	
-//	if( curPattern.bAllocated() ) {
+	if( curIndex >= 0 ) {
 		curPattern.draw(0, 0);
-//	}
+	} else {
+		camera.draw(0, 0);
+	}
 }
 
 void testApp::keyPressed(int key) {
 	if(key == ' ') {
+		curIndex = 0;
 		curPattern = encode.getPatternAt(curIndex);
-		curIndex++;
+		captureTime = ofGetSystemTime();
+	}
+	if( key == 'f' ) {
+		ofToggleFullscreen();
 	}
 }

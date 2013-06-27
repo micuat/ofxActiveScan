@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxCv.h"
 
 #include "ofxActiveScan.h"
 
@@ -22,5 +23,11 @@ private:
 	
 	ofxActiveScan::Encode encode;
 	ofImage curPattern;
+	ofImage curFrame;
+	ofVideoGrabber camera;
+	
 	int curIndex;
+	int cw, ch;
+	int bufferTime;
+	unsigned long captureTime;
 };
