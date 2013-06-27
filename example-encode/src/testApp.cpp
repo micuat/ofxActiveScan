@@ -25,7 +25,7 @@ void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	cv::FileStorage fs(ofToDataPath("config.yml"), cv::FileStorage::READ);
-	int devID, pw, ph, grayLow, grayHigh;
+	int devID, pw, ph;
 	fs["proWidth"] >> pw;
 	fs["proHeight"] >> ph;
 	fs["camWidth"] >> cw;
@@ -68,6 +68,7 @@ void testApp::draw() {
 	ofBackground(0);
 	
 	if( curIndex >= 0 ) {
+		ofSetColor(grayHigh);
 		curPattern.draw(0, 0);
 	} else {
 		camera.draw(0, 0);

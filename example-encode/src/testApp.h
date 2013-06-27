@@ -28,6 +28,7 @@ private:
 	
 	int curIndex;
 	int cw, ch;
+	int grayLow, grayHigh;
 	int bufferTime;
 	unsigned long captureTime;
 };
