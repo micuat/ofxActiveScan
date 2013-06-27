@@ -31,6 +31,11 @@ void testApp::update() {
 }
 
 void testApp::draw() {
+	ofBackground(0);
+	
+//	if( curPattern.bAllocated() ) {
+		curPattern.draw(0, 0);
+//	}
 }
 
 void testApp::keyPressed(int key) {
