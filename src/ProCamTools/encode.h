@@ -10,8 +10,8 @@
 #include "Field.h"
 #include "ImageBmpIO.h"
 
-#include "../Options.h"
-#include "../GrayCode.h"
+#include "Options.h"
+#include "GrayCode.h"
 
 class CEncode
 {

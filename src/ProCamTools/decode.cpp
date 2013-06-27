@@ -7,7 +7,7 @@
 
 #include "stdafx.h"
 
-#include "../BuildFlags.h"
+#include "BuildFlags.h"
 #if defined(USE_IMAGEMAGICK)
 #include "ImageMagickIO.h"
 #elif defined(USE_ATLIMAGE)
@@ -17,8 +17,8 @@
 #endif
 
 #include "ImageBase.h"
-#include "../GrayCode.h"
-#include "../Options.h"
+#include "GrayCode.h"
+#include "Options.h"
 
 using namespace slib;
 

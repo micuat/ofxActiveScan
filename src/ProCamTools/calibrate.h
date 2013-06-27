@@ -16,8 +16,8 @@
 #include "LeastSquare.h"
 #include "Stereo.h"
 
-#include "../Options.h"
-#include "../FundamentalMatrix.h"
+#include "Options.h"
+#include "FundamentalMatrix.h"
 
 #include <stdlib.h>
 #include <time.h>

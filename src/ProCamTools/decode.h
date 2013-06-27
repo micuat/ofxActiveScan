@@ -11,8 +11,8 @@
 #include "ImageBmpIO.h"
 #include "ImageBase.h"
 
-#include "../Options.h"
-#include "../GrayCode.h"
+#include "Options.h"
+#include "GrayCode.h"
 
 class CDecode
 {
