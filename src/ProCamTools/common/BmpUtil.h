@@ -617,7 +617,7 @@ inline int ReadBmp(
 
     if (!(comp==0 || comp==3))
     {
-        TRACE("error: unsupported compressed file (%d).\n", comp);
+        TRACE("error: unsupported compressed file (%lu).\n", comp);
         fclose(fr);
         return -1;
     }
