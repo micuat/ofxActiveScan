@@ -37,7 +37,7 @@ void Ransac(
 		{
 			int r;
 			do {
-				r = (float)rand()/(RAND_MAX+1)*ndata; 
+				r = (float)rand() / ((float)RAND_MAX+1.0) * (float)ndata; 
 			} while (sampled[r]);
 			sampled[r] = true;
 			subset[s] = data[r];
