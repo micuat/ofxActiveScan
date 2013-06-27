@@ -25,4 +25,7 @@
 #include <string>
 
 #define _ASSERTE assert
+
+#ifndef TRACE
 #define TRACE printf
+#endif

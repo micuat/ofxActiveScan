@@ -22,6 +22,8 @@ void testApp::setup() {
 	if (argc != 2)
 		print_usage(argv[0]);
 	
+	ofSetLogLevel(OF_LOG_NOTICE);
+	
 	encode.init(argv[1]);
 	
 	curIndex = 0;
