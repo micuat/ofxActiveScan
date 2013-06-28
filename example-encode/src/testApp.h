@@ -24,4 +24,6 @@ private:
 	int grayLow, grayHigh;
 	int bufferTime;
 	unsigned long captureTime;
+	
+	string rootDir;
 };

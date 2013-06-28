@@ -3,7 +3,9 @@
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	cv::FileStorage fs(ofToDataPath("config.yml"), cv::FileStorage::READ);
+	rootDir = "../../../SharedData/";
+	
+	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
 	int devID;
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
@@ -22,6 +24,8 @@ void testApp::setup() {
 	
 	curIndex = -1;
 	captureTime = 0;
+	
+	ofDirectory::createDirectory(rootDir + "img/", true, true);
 }
 
 void testApp::update() {
@@ -32,7 +36,7 @@ void testApp::update() {
 	camera.update();
 	if(camera.isFrameNew() && needToCapture) {
 		curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
-		curFrame.saveImage(ofToString(curIndex) + ".bmp");
+		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex) + ".bmp");
 		captureTime = curTime;
 		curIndex++;
 		if( curIndex < encode.getSize() ) {
