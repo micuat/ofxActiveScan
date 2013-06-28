@@ -1,10 +1,3 @@
-//
-// Copyright (c) 2009-2011  Shuntaro Yamazaki (shun-yamazaki (at) aist.go.jp) 
-//  and the National Institute of Advanced Industrial Science and Technology   
-//
-// $Id: encode.cpp 4547 2011-05-24 14:04:52Z shun $
-//
-
 #include "testApp.h"
 
 void print_usage(const char *argv0)
