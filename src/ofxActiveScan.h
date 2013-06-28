@@ -14,16 +14,13 @@
 #endif
 //
 
-#include "stdafx.h"
-#include "MiscUtil.h"
-#include "encode.h"
-#include "Options.h"
+#include "ProCamTools/stdafx.h"
+#include "ProCamTools/common/MiscUtil.h"
+#include "ProCamTools/encode.h"
+#include "ofxActiveScanTypes.h"
+#include "ofxActiveScanUtils.h"
 
 namespace ofxActiveScan {
-
-typedef options_t Options;
-
-ofImage toOf(slib::Field<2,float>);
 
 class Encode {
 	int size;
