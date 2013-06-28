@@ -41,7 +41,7 @@
 #include "lapacke_config.h"
 #endif
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && defined(__linux__)
 extern "C" {
 #endif /* __cplusplus */
 
@@ -16298,7 +16298,7 @@ void LAPACK_zsyr( char* uplo, lapack_int* n, lapack_complex_double* alpha,
 void LAPACK_ilaver( const lapack_int* vers_major, const lapack_int* vers_minor,
                      const lapack_int* vers_patch );
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && defined(__linux__)
 }
 #endif /* __cplusplus */
 
