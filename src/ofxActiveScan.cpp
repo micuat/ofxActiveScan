@@ -17,16 +17,15 @@ ofImage toOf(slib::Field<2,float> field) {
 	return img;
 }
 
-int Encode::init(char* fileName) {
-	CEncode encode(fileName);
+int Encode::init(Options op) {
+	CEncode encode(op);
+	width = op.projector_width;
+	height = op.projector_height;
 	
 	size = encode.GetNumImages();
 	for (int i = 0; i < size; i++) {
 		slib::Field<2,float> field;
 		encode.GetImage(i, field);
-		
-		width = field.size(0);
-		height = field.size(1);
 		
 		patterns.push_back(toOf(field));
 	}

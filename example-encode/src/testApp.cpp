@@ -1,26 +1,12 @@
 #include "testApp.h"
 
-void print_usage(const char *argv0)
-{
-	const char *prog = strrchr(argv0, '\\');
-	if (prog)
-		prog++;
-	else
-		prog = argv0;
-	printf("Usage: %s <options>\n", prog);
-	exit(-1);
-}
-
 void testApp::setup() {
-	if (argc != 2)
-		print_usage(argv[0]);
-	
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	cv::FileStorage fs(ofToDataPath("config.yml"), cv::FileStorage::READ);
-	int devID, pw, ph;
-	fs["proWidth"] >> pw;
-	fs["proHeight"] >> ph;
+	int devID;
+	fs["proWidth"] >> options.projector_width;
+	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> cw;
 	fs["camHeight"] >> ch;
 	fs["grayLow"] >> grayLow;
@@ -28,7 +14,7 @@ void testApp::setup() {
 	fs["devID"] >> devID;
 	fs["bufferTime"] >> bufferTime;
 	
-	encode.init(argv[1]);
+	encode.init(options);
 	
 	camera.listDevices();
 	camera.setDeviceID(devID);

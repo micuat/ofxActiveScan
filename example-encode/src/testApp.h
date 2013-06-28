@@ -7,21 +7,14 @@
 
 class testApp : public ofBaseApp {
 public:
-	testApp() {}
-	testApp(int _argc, char** _argv) {
-		argc = _argc;
-		argv = _argv;
-	}
 	void setup();
 	void update();
 	void draw();
 	void keyPressed(int);
 	
 private:
-	int argc;
-	char** argv;
-	
 	ofxActiveScan::Encode encode;
+	ofxActiveScan::Options options;
 	ofImage curPattern;
 	ofImage curFrame;
 	ofVideoGrabber camera;

@@ -17,8 +17,11 @@
 #include "stdafx.h"
 #include "MiscUtil.h"
 #include "encode.h"
+#include "Options.h"
 
 namespace ofxActiveScan {
+
+typedef options_t Options;
 
 ofImage toOf(slib::Field<2,float>);
 
@@ -31,7 +34,7 @@ class Encode {
 public:
 	Encode() {}
 	
-	int init(char*);
+	int init(Options);
 	
 	int getSize();
 	int getWidth();
