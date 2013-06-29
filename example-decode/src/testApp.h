@@ -1,11 +1,5 @@
 #pragma once
 
-#include <stdlib.h>
-
-#include "stdafx.h"
-
-#include "decode.h"
-
 #include "ofMain.h"
 #include "ofxCv.h"
 

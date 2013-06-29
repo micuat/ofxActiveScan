@@ -2,7 +2,7 @@
 
 namespace ofxActiveScan {
 
-ofImage toOf(slib::Field<2,float> field) {
+ofImage toOf(Map2f field) {
 	ofImage img;
 	int w = field.size(0);
 	int h = field.size(1);

@@ -6,22 +6,25 @@ void testApp::setup() {
 	rootDir = "../../../SharedData/";
 	
 	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
-	int devID;
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> cw;
 	fs["camHeight"] >> ch;
 	
-	std::vector<std::string> files(argc-2);
-	for (int i=0; i<argc-2; i++)
-		files[i]=argv[i+2];
+	ofDirectory dir(ofToDataPath(rootDir + "img/", true));
+	dir.listDir();
 	
-	CDecode decode(argv[1]);
+	std::vector<std::string> files;
+	for(int i = 0; i < dir.numFiles(); i++) {
+		files.push_back(dir.getPath(i));
+	}
+	
+	CDecode decode(options);
 	decode.Decode(files);
-	decode.WriteMap(0,"h.map");
-	decode.WriteMap(1,"v.map");
-	decode.WriteMask("mask.bmp");
-	decode.WriteReliable("reliable.bmp");	
+	decode.WriteMap(0,ofToDataPath(rootDir + "h.map", true));
+	decode.WriteMap(1,ofToDataPath(rootDir + "v.map", true));
+	decode.WriteMask(ofToDataPath(rootDir + "mask.bmp", true));
+	decode.WriteReliable(ofToDataPath(rootDir + "reliable.bmp", true));	
 }
 
 void testApp::update() {

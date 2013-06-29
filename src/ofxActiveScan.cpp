@@ -9,7 +9,7 @@ int Encode::init(Options op) {
 	
 	size = encode.GetNumImages();
 	for (int i = 0; i < size; i++) {
-		slib::Field<2,float> field;
+		Map2f field;
 		encode.GetImage(i, field);
 		
 		patterns.push_back(toOf(field));

@@ -17,6 +17,7 @@
 #include "ProCamTools/stdafx.h"
 #include "ProCamTools/common/MiscUtil.h"
 #include "ProCamTools/encode.h"
+#include "ProCamTools/decode.h"
 #include "ofxActiveScanTypes.h"
 #include "ofxActiveScanUtils.h"
 
