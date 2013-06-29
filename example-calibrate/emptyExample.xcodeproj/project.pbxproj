@@ -1100,7 +1100,10 @@
 					"-lpthread",
 					"-mtune=native",
 				);
-				OTHER_LDFLAGS = "$(OF_CORE_LIBS)";
+				OTHER_LDFLAGS = (
+					"$(OF_CORE_LIBS)",
+					../libs/levmar/lib/osx/liblevmar.a,
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;
