@@ -31,6 +31,11 @@
 * Generated November, 2011
 *****************************************************************************/
 
+/* lapack_complex_float and lapack_complex_double
+ reordered due to compile error
+ see: icl.cs.utk.edu/lapack-forum/viewtopic.php?f=2&t=4221
+ Naoto 2013/06/28 */
+
 #ifndef _LAPACKE_H_
 #define _LAPACKE_H_
 
@@ -41,7 +46,19 @@
 #include "lapacke_config.h"
 #endif
 
-#if defined(__cplusplus) && defined(__linux__)
+/* Complex type (single precision) */
+#ifndef lapack_complex_float
+#include <complex.h>
+#define lapack_complex_float    float _Complex
+#endif
+
+/* Complex type (double precision) */
+#ifndef lapack_complex_double
+#include <complex.h>
+#define lapack_complex_double   double _Complex
+#endif
+
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -72,12 +89,6 @@ extern "C" {
 
 #ifndef LAPACK_COMPLEX_CUSTOM
 
-/* Complex type (single precision) */
-#ifndef lapack_complex_float
-#include <complex.h>
-#define lapack_complex_float    float _Complex
-#endif
-
 #ifndef lapack_complex_float_real
 #define lapack_complex_float_real(z)       (creal(z))
 #endif
@@ -87,12 +98,6 @@ extern "C" {
 #endif
 
 lapack_complex_float lapack_make_complex_float( float re, float im );
-
-/* Complex type (double precision) */
-#ifndef lapack_complex_double
-#include <complex.h>
-#define lapack_complex_double   double _Complex
-#endif
 
 #ifndef lapack_complex_double_real
 #define lapack_complex_double_real(z)      (creal(z))
@@ -16298,7 +16303,7 @@ void LAPACK_zsyr( char* uplo, lapack_int* n, lapack_complex_double* alpha,
 void LAPACK_ilaver( const lapack_int* vers_major, const lapack_int* vers_minor,
                      const lapack_int* vers_patch );
 
-#if defined(__cplusplus) && defined(__linux__)
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
