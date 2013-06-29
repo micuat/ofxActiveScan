@@ -15,9 +15,13 @@
 //
 
 #include "ProCamTools/stdafx.h"
+#include "ProCamTools/common/Field.h"
+#include "ProCamTools/common/ImageBmpIO.h"
 #include "ProCamTools/common/MiscUtil.h"
 #include "ProCamTools/encode.h"
 #include "ProCamTools/decode.h"
+#include "ProCamTools/calibrate.h"
+
 #include "ofxActiveScanTypes.h"
 #include "ofxActiveScanUtils.h"
 

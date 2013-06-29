@@ -12,19 +12,19 @@ void testApp::setup() {
 	fs["camHeight"] >> ch;
 	
 	// load correspondences estimated by decode program 
-	slib::Field<2,float> horizontal(argv[2]);
-	slib::Field<2,float> vertical(argv[3]);  
-	slib::Field<2,float> mask;  
-	slib::image::Read(mask, argv[4]);
+	ofxActiveScan::Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
+	ofxActiveScan::Map2f vertical(ofToDataPath(rootDir + "/v.map", true));  
+	ofxActiveScan::Map2f mask;
+	slib::image::Read(mask, ofToDataPath(rootDir + "/mask.bmp", true));
 	
-	CProCamCalibrate calib(argv[1]);
+	CProCamCalibrate calib(options);
 	calib.Calibrate(horizontal,vertical,mask);
 	
-	calib.WriteCamIntrinsic("cam-intrinsic.txt");
-	calib.WriteCamDistortion("cam-distortion.txt");
-	calib.WriteProIntrinsic("pro-intrinsic.txt");
-	calib.WriteProDistortion("pro-distortion.txt");
-	calib.WriteProExtrinsic("pro-extrinsic.txt");
+	calib.WriteCamIntrinsic(ofToDataPath(rootDir + "cam-intrinsic.txt", true));
+	calib.WriteCamDistortion(ofToDataPath(rootDir + "cam-distortion.txt", true));
+	calib.WriteProIntrinsic(ofToDataPath(rootDir + "pro-intrinsic.txt", true));
+	calib.WriteProDistortion(ofToDataPath(rootDir + "pro-distortion.txt", true));
+	calib.WriteProExtrinsic(ofToDataPath(rootDir + "pro-extrinsic.txt", true));
 }
 
 void testApp::update() {

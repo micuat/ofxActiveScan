@@ -5,16 +5,6 @@
 
 #include "ofxActiveScan.h"
 
-#include "stdafx.h"
-
-#include "Field.h"
-#include "ImageBmpIO.h"
-
-#include "calibrate.h"
-
-#undef min
-#undef max
-
 class testApp : public ofBaseApp {
 public:
 	void setup();
@@ -28,7 +18,4 @@ private:
 	int cw, ch;
 	
 	string rootDir;
-	
-	int argc;
-	char** argv;
 };
