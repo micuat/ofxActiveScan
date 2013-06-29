@@ -41,4 +41,18 @@ public:
 	ofImage& getPatternAt(int i);
 };
 
+class Decode {
+	Map2f mapH, mapV, mapMask, mapReliable;
+
+public:
+	Decode() {}
+	
+	int init(Options, string);
+	
+	Map2f& getMapHorizontal();
+	Map2f& getMapVertical();
+	Map2f& getMask();
+	Map2f& getReliable();
+};
+
 }

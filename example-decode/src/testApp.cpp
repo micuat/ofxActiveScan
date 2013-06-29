@@ -11,20 +11,17 @@ void testApp::setup() {
 	fs["camWidth"] >> cw;
 	fs["camHeight"] >> ch;
 	
-	ofDirectory dir(ofToDataPath(rootDir + "img/", true));
-	dir.listDir();
+	decode.init(options, ofToDataPath(rootDir + "img/", true));
 	
-	std::vector<std::string> files;
-	for(int i = 0; i < dir.numFiles(); i++) {
-		files.push_back(dir.getPath(i));
-	}
+	// Save resulting maps
+	decode.getMapHorizontal().Write(ofToDataPath(rootDir + "/h.map", true));
+	decode.getMapVertical().Write(ofToDataPath(rootDir + "/v.map", true));
 	
-	CDecode decode(options);
-	decode.Decode(files);
-	decode.WriteMap(0,ofToDataPath(rootDir + "h.map", true));
-	decode.WriteMap(1,ofToDataPath(rootDir + "v.map", true));
-	decode.WriteMask(ofToDataPath(rootDir + "mask.bmp", true));
-	decode.WriteReliable(ofToDataPath(rootDir + "reliable.bmp", true));	
+	mapMask = ofxActiveScan::toOf(decode.getMask());
+	mapReliable = ofxActiveScan::toOf(decode.getReliable());
+	
+	mapMask.saveImage(ofToDataPath(rootDir + "/mask.bmp"));
+	mapReliable.saveImage(ofToDataPath(rootDir + "/reliable.bmp"));
 }
 
 void testApp::update() {
@@ -32,6 +29,10 @@ void testApp::update() {
 
 void testApp::draw() {
 	ofBackground(0);
+	
+	ofScale(0.5, 0.5);
+	mapMask.draw(0, 0);
+	mapReliable.draw(mapMask.getWidth(), 0);
 }
 
 void testApp::keyPressed(int key) {
