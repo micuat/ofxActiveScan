@@ -13,6 +13,8 @@ public:
 	
 private:
 	ofxActiveScan::Options options;
+	ofMesh mesh;
+	ofEasyCam cam;
 	
 	int cw, ch;
 	

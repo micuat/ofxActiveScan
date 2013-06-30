@@ -104,6 +104,8 @@ void testApp::setup() {
 				result.push_back(p3d);
 				if (p3d[2]<0)
 					nbehind++;
+				
+				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
 			}
 		}
 		if (m_debug && nbehind)
@@ -118,4 +120,12 @@ void testApp::update() {
 }
 
 void testApp::draw() {
+	ofBackground(0);
+	
+	cam.begin();
+	
+	ofScale(100, -100, -100);
+	mesh.drawVertices();
+	
+	cam.end();
 }
