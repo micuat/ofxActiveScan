@@ -33,6 +33,7 @@
 		5C5CC97C177D36AF00102350 /* ofxCvHaarFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5CC96F177D36AF00102350 /* ofxCvHaarFinder.cpp */; };
 		5C5CC97D177D36AF00102350 /* ofxCvImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5CC971177D36AF00102350 /* ofxCvImage.cpp */; };
 		5C5CC97E177D36AF00102350 /* ofxCvShortImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5CC974177D36AF00102350 /* ofxCvShortImage.cpp */; };
+		5CDE6985177FA3370071C0D9 /* triangulate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CDE6984177FA3370071C0D9 /* triangulate.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -252,6 +253,7 @@
 		5C5CC974177D36AF00102350 /* ofxCvShortImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCvShortImage.cpp; sourceTree = "<group>"; };
 		5C5CC975177D36AF00102350 /* ofxCvShortImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCvShortImage.h; sourceTree = "<group>"; };
 		5C5CC976177D36AF00102350 /* ofxOpenCv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOpenCv.h; sourceTree = "<group>"; };
+		5CDE6984177FA3370071C0D9 /* triangulate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = triangulate.cpp; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -447,8 +449,8 @@
 		5C5CC1B1177D257E00102350 /* ProCamTools */ = {
 			isa = PBXGroup;
 			children = (
-				5C5CC1B2177D257E00102350 /* calibrate.h */,
 				5C5CC1B3177D257E00102350 /* common */,
+				5C5CC1B2177D257E00102350 /* calibrate.h */,
 				5C5CC1C5177D257E00102350 /* decode.h */,
 				5C5CC1C6177D257E00102350 /* encode.h */,
 				5C5CC1C7177D257E00102350 /* FundamentalMatrix.cpp */,
@@ -459,6 +461,7 @@
 				5C5CC1CC177D257E00102350 /* ransac.h */,
 				5C5CC1CD177D257E00102350 /* Rotation.h */,
 				5C5CC1CE177D257E00102350 /* stdafx.h */,
+				5CDE6984177FA3370071C0D9 /* triangulate.cpp */,
 				5C5CC1CF177D257E00102350 /* triangulate.h */,
 			);
 			path = ProCamTools;
@@ -1035,6 +1038,7 @@
 				5C5CC97D177D36AF00102350 /* ofxCvImage.cpp in Sources */,
 				5C5CC97E177D36AF00102350 /* ofxCvShortImage.cpp in Sources */,
 				5C07BAAB177DD561008C920F /* ofxActiveScanUtils.cpp in Sources */,
+				5CDE6985177FA3370071C0D9 /* triangulate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
