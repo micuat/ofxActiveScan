@@ -15,6 +15,8 @@ void testApp::setup() {
 	fs["grayHigh"] >> grayHigh;
 	fs["devID"] >> devID;
 	fs["bufferTime"] >> bufferTime;
+	fs["vertical_center"] >> options.projector_horizontal_center;
+	fs["nsamples"] >> options.nsamples;
 	
 	encode.init(options);
 	

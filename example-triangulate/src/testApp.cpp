@@ -11,6 +11,8 @@ void testApp::setup() {
 	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> cw;
 	fs["camHeight"] >> ch;
+	fs["vertical_center"] >> options.projector_horizontal_center;
+	fs["nsamples"] >> options.nsamples;
 	
 	string plyFilename = ofToDataPath(rootDir + "/out.ply", true);
 	m_plyfilename = new char[plyFilename.length() + 1];

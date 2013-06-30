@@ -10,6 +10,8 @@ void testApp::setup() {
 	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> cw;
 	fs["camHeight"] >> ch;
+	fs["vertical_center"] >> options.projector_horizontal_center;
+	fs["nsamples"] >> options.nsamples;
 	
 	// load correspondences estimated by decode program 
 	ofxActiveScan::Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
