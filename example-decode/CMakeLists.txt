@@ -56,7 +56,7 @@ link_directories (${OF_LIBRARY_DIRS})
 add_executable(${CMAKE_PROJECT_NAME}
     ${OFX_PROCAMTOOLS_SOURCE}
     src/main.cpp
-#    src/testApp.cpp
+    src/testApp.cpp
 )
 
 # link target against libopenframeworks (and implicitly against all depending

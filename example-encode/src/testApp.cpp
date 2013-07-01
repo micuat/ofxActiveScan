@@ -38,7 +38,8 @@ void testApp::update() {
 	camera.update();
 	if(camera.isFrameNew() && needToCapture) {
 		curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
-		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex, 2, '0') + ".bmp");
+		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex + 10) + ".bmp");
+//		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex, 2, '0') + ".bmp");
 		captureTime = curTime;
 		curIndex++;
 		if( curIndex < encode.getSize() ) {

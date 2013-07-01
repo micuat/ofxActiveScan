@@ -55,6 +55,8 @@ set (OF_LIBRARY_DIRS
 # define sources
 set (OFX_PROCAMTOOLS_SOURCE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ofxActiveScan.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ofxActiveScanUtils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ProCamTools/triangulate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ProCamTools/FundamentalMatrix.cpp
     PARENT_SCOPE
 )
