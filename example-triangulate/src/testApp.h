@@ -2,8 +2,8 @@
 
 #include "ofMain.h"
 
-#include "ofxActiveScan.h"
 #include "ofxCv.h"
+#include "ofxActiveScan.h"
 
 class testApp : public ofBaseApp {
 public:
