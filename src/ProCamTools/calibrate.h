@@ -64,7 +64,27 @@ public:
 	void WriteProExtrinsic(const std::string& filename) const {
 		m_pro_ext.Write(filename); 
 	}
-
+	
+	slib::CMatrix<3,3,double> GetCamIntrinsic() const { 
+		return m_cam_int;
+	}
+	
+	double GetCamDistortion() const {
+		return m_cam_dist;
+	}
+	
+	slib::CMatrix<3,3,double> GetProIntrinsic() const { 
+		return m_pro_int;
+	}
+	
+	double GetProDistortion() const {
+		return m_pro_dist;
+	}
+	
+	slib::CMatrix<3,4,double> GetProExtrinsic() const {
+		return m_pro_ext; 
+	}
+	
 private:
 	void estimate_fundamental(slib::CMatrix<3,3,double>& fundamental)
 	{
