@@ -28,13 +28,21 @@ void testApp::setup() {
 	std::cerr << "PointCloud after filtering: " << cloud->width * cloud->height 
 	<< " data points (" << pcl::getFieldsList (*cloud) << ")." << endl;
 	
-//	ofxPCL::savePointCloud("table_scene_lms400_inliers.pcd", cloud);
-	
 	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 100, 30);
 	
-	meshes.push_back(ofxPCL::toOF(cloud));
+	ofColor hues[] = {ofColor::red, ofColor::green, ofColor::blue, ofColor::cyan, ofColor::magenta, ofColor::yellow};
+	int colorIndex = 0;
 	for( int i = 0; i < clouds.size(); i++ ) {
-		meshes.push_back(ofxPCL::toOF(clouds[i]));
+		ofVboMesh tmpmesh = ofxPCL::toOF(clouds[i]);
+		for( int j = 0; j < tmpmesh.getNumVertices(); j++ ) {
+			tmpmesh.addColor(hues[colorIndex]);
+		}
+		meshes.push_back(tmpmesh);
+		
+		colorIndex++;
+		if( colorIndex == 6 ) {
+			colorIndex = 0;
+		}
 	}
 	mit = meshes.begin();
 }
@@ -55,6 +63,7 @@ void testApp::draw()
 	glEnable(GL_DEPTH_TEST);
 	
 	mit->drawVertices();
+	
 	
 	cam.end();
 }
