@@ -1,5 +1,3 @@
-// Example from http://pointclouds.org/documentation/tutorials/extract_indices.php
-
 #include <iostream>
 #include "testApp.h"
 
@@ -20,14 +18,6 @@ void testApp::setup() {
 	
 	pcl::io::loadPLYFile(ofToDataPath(rootDir + "/out.ply"), *cloud);
 		
-	std::cerr << "PointCloud before filtering: " << cloud->width * cloud->height 
-	<< " data points (" << pcl::getFieldsList (*cloud) << ")." << endl;
-	
-	ofxPCL::downsample(cloud, ofVec3f(0.01f, 0.01f, 0.01f));
-	
-	std::cerr << "PointCloud after filtering: " << cloud->width * cloud->height 
-	<< " data points (" << pcl::getFieldsList (*cloud) << ")." << endl;
-	
 	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 100, 30);
 	
 	ofColor hues[] = {ofColor::red, ofColor::green, ofColor::blue, ofColor::cyan, ofColor::magenta, ofColor::yellow};

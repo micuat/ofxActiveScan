@@ -3,6 +3,8 @@
 #include "ofMain.h"
 
 #include "ofxCv.h"
+
+#undef Success
 #include "ofxPCL.h"
 #include <pcl/io/ply_io.h>
 
