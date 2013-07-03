@@ -27,12 +27,12 @@ void testApp::setup() {
 							   camIntrinsic, camDistortion,
 							   proIntrinsic, proDistortion, proExtrinsic);
 	
-	cv::FileStorage ofs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
-	ofs << "camIntrinsic"  << ofxActiveScan::toOf(camIntrinsic);
-	ofs << "camDistortion" << camDistortion;
-	ofs << "proIntrinsic"  << ofxActiveScan::toOf(proIntrinsic);
-	ofs << "proDistortion" << proDistortion;
-	ofs << "proExtrinsic"  << ofxActiveScan::toOf(proExtrinsic);
+	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
+	cfs << "camIntrinsic"  << ofxActiveScan::toOf(camIntrinsic);
+	cfs << "camDistortion" << camDistortion;
+	cfs << "proIntrinsic"  << ofxActiveScan::toOf(proIntrinsic);
+	cfs << "proDistortion" << proDistortion;
+	cfs << "proExtrinsic"  << ofxActiveScan::toOf(proExtrinsic);
 }
 
 void testApp::update() {

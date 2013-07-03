@@ -14,6 +14,15 @@ void testApp::setup() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
+	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::READ);
+	cv::Mat cami, proi, proe;
+	double xi1, xi2;
+	cfs["camIntrinsic"] >> cami;
+	cfs["camDistortion"] >> xi2;
+	cfs["proIntrinsic"] >> proi;
+	cfs["proDistortion"] >> xi1;
+	cfs["proExtrinsic"] >> proe;
+	
 	string plyFilename = ofToDataPath(rootDir + "/out.ply", true);
 	m_plyfilename = new char[plyFilename.length() + 1];
 	strcpy(m_plyfilename, plyFilename.c_str());
@@ -29,32 +38,22 @@ void testApp::setup() {
 	ofxActiveScan::Map2f mask;
 	slib::image::Read(mask, ofToDataPath(rootDir + "/mask.bmp", true));
 	
-	CVector<2,double>
+	slib::CVector<2,double>
 		cod1=make_vector<double>((options.projector_width+1)/2.0,options.projector_height*options.projector_horizontal_center),
 		cod2=(make_vector(1.0,1.0)+mask.size())/2;
 
 	// intrinsic matrices of projector and camera
-	CMatrix<3,3,double> matKpro, matKcam;
-	double xi1,xi2;
-	FILE*fr;
-	matKcam.Read(ofToDataPath(rootDir + "cam-intrinsic.txt", true));
-	fr=fopen(ofToDataPath(rootDir + "cam-distortion.txt", true).c_str(),"rb");
-	if (!fr) throw std::runtime_error("failed to open camera distortion");
-	fscanf(fr,"%lf",&xi2);
-	fclose(fr);
-	matKpro.Read(ofToDataPath(rootDir + "pro-intrinsic.txt", true));
-	fr=fopen(ofToDataPath(rootDir + "pro-distortion.txt", true).c_str(),"rb");
-	if (!fr) throw std::runtime_error("failed to open projector distortion");
-	fscanf(fr,"%lf",&xi1);
-	fclose(fr);
-
+	slib::CMatrix<3,3,double> matKpro, matKcam;
+	matKcam = ofxActiveScan::toPC<3, 3, double>(cami);
+	matKpro = ofxActiveScan::toPC<3, 3, double>(proi);
+	
 	// extrinsic matrices of projector and camera
-	CMatrix<3,4,double> proRt, camRt;
-	proRt.Read(ofToDataPath(rootDir + "pro-extrinsic.txt", true));
+	slib::CMatrix<3,4,double> proRt, camRt;
+	proRt = ofxActiveScan::toPC<3, 4, double>(proe);
 	camRt = make_diagonal_matrix(1,1,1).AppendCols(make_vector(0,0,0));//CMatrix<3,4,double>::GetIdentity(); // reconstruction is in camera coordinate frame
 
 	// compute projection matrices of projector and camera
-	std::vector<CMatrix<3,4,double> > matrices(2);
+	std::vector<slib::CMatrix<3,4,double> > matrices(2);
 	matrices[0] = matKcam * camRt; // camera
 	matrices[1] = matKpro * proRt; // projector
 
