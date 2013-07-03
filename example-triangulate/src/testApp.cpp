@@ -6,6 +6,8 @@ void testApp::setup() {
 	
 	rootDir = "../../../SharedData/";
 	
+	cameraMode = EASYCAM_MODE;
+
 	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
@@ -15,13 +17,13 @@ void testApp::setup() {
 	fs["nsamples"] >> options.nsamples;
 	
 	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::READ);
-	cv::Mat cami, proi, proe;
-	double xi1, xi2;
-	cfs["camIntrinsic"] >> cami;
+	cfs["camIntrinsic"] >> camIntrinsic;
 	cfs["camDistortion"] >> xi2;
-	cfs["proIntrinsic"] >> proi;
+	cfs["proIntrinsic"] >> proIntrinsic;
 	cfs["proDistortion"] >> xi1;
-	cfs["proExtrinsic"] >> proe;
+	cfs["proExtrinsic"] >> proExtrinsic;
+	
+	proCalibration.setup(proIntrinsic, cv::Size(options.projector_width, options.projector_height));
 	
 	string plyFilename = ofToDataPath(rootDir + "/out.ply", true);
 	m_plyfilename = new char[plyFilename.length() + 1];
@@ -44,12 +46,12 @@ void testApp::setup() {
 
 	// intrinsic matrices of projector and camera
 	slib::CMatrix<3,3,double> matKpro, matKcam;
-	matKcam = ofxActiveScan::toPC<3, 3, double>(cami);
-	matKpro = ofxActiveScan::toPC<3, 3, double>(proi);
+	matKcam = ofxActiveScan::toPC<3, 3, double>(camIntrinsic);
+	matKpro = ofxActiveScan::toPC<3, 3, double>(proIntrinsic);
 	
 	// extrinsic matrices of projector and camera
 	slib::CMatrix<3,4,double> proRt, camRt;
-	proRt = ofxActiveScan::toPC<3, 4, double>(proe);
+	proRt = ofxActiveScan::toPC<3, 4, double>(proExtrinsic);
 	camRt = make_diagonal_matrix(1,1,1).AppendCols(make_vector(0,0,0));//CMatrix<3,4,double>::GetIdentity(); // reconstruction is in camera coordinate frame
 
 	// compute projection matrices of projector and camera
@@ -121,10 +123,27 @@ void testApp::update() {
 void testApp::draw() {
 	ofBackground(0);
 	
-	cam.begin();
+	if(cameraMode == EASYCAM_MODE) {
+		cam.begin();
+		ofScale(100, -100, -100);
+	} else if(cameraMode == PRO_MODE) {
+		ofSetupScreenPerspective(options.projector_width, options.projector_height);
+		proCalibration.loadProjectionMatrix();
+		cv::Mat extrinsics = proExtrinsic.inv().t();
+		glMultMatrixd((GLdouble*) extrinsics.ptr(0,0));
+	}
 	
-	ofScale(100, -100, -100);
 	mesh.drawVertices();
 	
-	cam.end();
+	if(cameraMode == EASYCAM_MODE) {
+		cam.end();
+	}
+}
+
+void testApp::keyPressed(int key) {
+	switch(key) {
+		case '1': cameraMode = EASYCAM_MODE; break;
+		case '2': cameraMode = PRO_MODE; break;
+		case '3': cameraMode = CAM_MODE; break;
+	}
 }

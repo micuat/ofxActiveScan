@@ -10,11 +10,18 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void keyPressed(int);
 	
 private:
 	ofxActiveScan::Options options;
 	ofMesh mesh;
 	ofEasyCam cam;
+	cv::Mat camIntrinsic, proIntrinsic, proExtrinsic;
+	double xi1, xi2;
+	ofxCv::Intrinsics proCalibration;
+	
+	enum CameraMode {EASYCAM_MODE, PRO_MODE, CAM_MODE};
+	CameraMode cameraMode;
 	
 	int cw, ch;
 	
