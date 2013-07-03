@@ -25,7 +25,7 @@ inline cv::Mat toOf(const slib::CMatrix<Tm, Tn, T> cmat) {
 
 template <int Tm, int Tn, typename T>
 inline slib::CMatrix<Tm, Tn, T> toPC(const cv::Mat m) {
-	//assert(m.rows != Tm || m.cols != Tn);
+	assert(m.rows == Tm && m.cols == Tn);
 	slib::CMatrix<Tm, Tn, T> cmat;
 	
 	for( int i = 0 ; i < Tm ; i++ ) {
