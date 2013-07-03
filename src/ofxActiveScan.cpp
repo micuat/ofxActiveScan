@@ -69,4 +69,19 @@ Map2f& Decode::getReliable() {
 	return mapReliable;
 }
 
+void calibration(Options options, Map2f hmap, Map2f vmap, Map2f mmap, 
+				 slib::CMatrix<3,3,double>& camIntrinsic, double& camDist,
+				 slib::CMatrix<3,3,double>& proIntrinsic, double& proDist,
+				 slib::CMatrix<3,4,double>& proExtrinsic)
+{
+	CProCamCalibrate calib(options);
+	calib.Calibrate(hmap, vmap, mmap);
+	
+	camIntrinsic = calib.GetCamIntrinsic();
+	camDist      = calib.GetCamDistortion();
+	proIntrinsic = calib.GetProIntrinsic();
+	proDist      = calib.GetProDistortion();
+	proExtrinsic = calib.GetProExtrinsic();
+}
+
 };
