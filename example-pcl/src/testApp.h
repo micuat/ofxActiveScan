@@ -39,7 +39,5 @@ public:
 	
 	int cw, ch;
 	
-	int tx, ty;
-	
 	string rootDir;	
 };

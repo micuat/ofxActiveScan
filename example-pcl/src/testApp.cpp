@@ -18,14 +18,12 @@ void testApp::setup() {
 	cfs["proIntrinsic"] >> proIntrinsic;
 	cfs["proExtrinsic"] >> proExtrinsic;
 	
-	tx = ty = 0;
-	
 	ofxPCL::PointCloud cloud(new ofxPCL::PointCloud::value_type);
 	vector<ofxPCL::PointCloud> clouds;
 	
 	pcl::io::loadPLYFile(ofToDataPath(rootDir + "/out.ply"), *cloud);
 		
-	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.05, 100, 30);
+	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 30, 30);
 	
 	ofColor hues[] = {ofColor::red, ofColor::green, ofColor::blue, ofColor::cyan, ofColor::magenta, ofColor::yellow};
 	int colorIndex = 0;
@@ -63,7 +61,7 @@ void testApp::draw()
 		ofScale(1, -1, -1);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(proSize.width, proSize.height);
-		proCalibration.loadProjectionMatrix();
+		proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
 		cv::Mat m = proExtrinsic;
 		cv::Mat extrinsics = (cv::Mat1d(4,4) <<
 							  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
@@ -72,10 +70,9 @@ void testApp::draw()
 							  0, 0, 0, 1);
 		extrinsics = extrinsics.t();
 		glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
-		ofTranslate(tx, ty, 0);
 	} else if(cameraMode == CAM_MODE) {
 		ofSetupScreenPerspective(camSize.width, camSize.height);
-		camCalibration.loadProjectionMatrix();
+		camCalibration.loadProjectionMatrix(0.0001, 100000000.0);
 	}
 	
 	mit->drawVertices();
@@ -92,12 +89,7 @@ void testApp::keyPressed(int key)
 		case '1': cameraMode = EASYCAM_MODE; break;
 		case '2': cameraMode = PRO_MODE; break;
 		case '3': cameraMode = CAM_MODE; break;
-		case OF_KEY_DOWN: ty += 10; break;
-		case OF_KEY_UP: ty -= 10; break;
-		case OF_KEY_RIGHT: tx += 10; break;
-		case OF_KEY_LEFT: tx -= 10; break;
 	}
-	cout << tx << " " << ty << endl;
 	
 	if( key == 'f' ) {
 		ofToggleFullscreen();
