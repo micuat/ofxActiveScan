@@ -14,6 +14,9 @@
 #endif
 //
 
+#include "ofxActiveScanTypes.h"
+#include "ofxActiveScanUtils.h"
+
 #include "ProCamTools/stdafx.h"
 #include "ProCamTools/common/Field.h"
 #include "ProCamTools/common/ImageBmpIO.h"
@@ -27,9 +30,6 @@
 #include "ProCamTools/triangulate.h"
 #include "ProCamTools/FundamentalMatrix.h"
 #include "ProCamTools/Options.h"
-
-#include "ofxActiveScanTypes.h"
-#include "ofxActiveScanUtils.h"
 
 namespace ofxActiveScan {
 
