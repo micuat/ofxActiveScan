@@ -8,8 +8,6 @@ void testApp::setup() {
 	
 	cameraMode = EASYCAM_MODE;
 	
-	tx = ty = 0;
-
 	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
@@ -107,27 +105,12 @@ void testApp::setup() {
 				CVector<3,double> p3d;
 				SolveStereo(p2d, matrices, p3d);
 				
-				p3d *= 100;
-				
 				// save
 				result.push_back(p3d);
 				if (p3d[2]<0)
 					nbehind++;
 				
 				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
-				cv::Mat pprojected, p3, nullmat;
-				nullmat = (cv::Mat1d(3, 4) << 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0);
-				p3 = (cv::Mat1d(4, 1) << p3d[0], p3d[1], p3d[2], 1);
-				
-				/*
-				cout << p2d[0][0] << " " << p2d[0][1] << endl;
-				cout << p2d[1][0] << " " << p2d[1][1] << endl;
-				cout << "3d coordinate " << p3 << endl;
-				pprojected = camIntrinsic * nullmat * p3;
-				cout << "cam plane " << pprojected / pprojected.at<double>(2, 0) << endl;
-				pprojected = proIntrinsic * proExtrinsic * p3;
-				cout << "pro plane " << pprojected / pprojected.at<double>(2, 0) << endl;
-				 */
 			}
 		}
 		if (m_debug && nbehind)
@@ -152,7 +135,7 @@ void testApp::draw() {
 		ofScale(1, -1, -1);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
-		proCalibration.loadProjectionMatrix();
+		proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
 		cv::Mat m = proExtrinsic;
 		cv::Mat extrinsics = (cv::Mat1d(4,4) <<
 						  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
@@ -161,10 +144,9 @@ void testApp::draw() {
 						  0, 0, 0, 1);
 		extrinsics = extrinsics.t();
 		glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
-		ofTranslate(tx, ty, 0);
 	} else if(cameraMode == CAM_MODE) {
 		ofSetupScreenPerspective(camSize.width, camSize.height);
-		camCalibration.loadProjectionMatrix();
+		camCalibration.loadProjectionMatrix(0.0001, 100000000.0);
 	}
 	
 	mesh.drawVertices();
@@ -179,12 +161,7 @@ void testApp::keyPressed(int key) {
 		case '1': cameraMode = EASYCAM_MODE; break;
 		case '2': cameraMode = PRO_MODE; break;
 		case '3': cameraMode = CAM_MODE; break;
-		case OF_KEY_DOWN: ty += 10; break;
-		case OF_KEY_UP: ty -= 10; break;
-		case OF_KEY_RIGHT: tx += 10; break;
-		case OF_KEY_LEFT: tx -= 10; break;
 	}
-	cout << tx << " " << ty << endl;
 	if( key == 'f' ) {
 		ofToggleFullscreen();
 	}

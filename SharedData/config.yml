@@ -1,10 +1,10 @@
 %YAML:1.0
-proWidth: 1024
-proHeight: 768
-camWidth: 1280
-camHeight: 720
+proWidth: 1280
+proHeight: 960
+camWidth: 1024
+camHeight: 768
 grayLow: 0
-grayHigh: 128
+grayHigh: 80
 devID: 0
 bufferTime: 1000
 vertical_center: 1.12
