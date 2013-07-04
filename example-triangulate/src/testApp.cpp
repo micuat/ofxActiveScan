@@ -106,13 +106,15 @@ void testApp::setup() {
 				// triangulate
 				CVector<3,double> p3d;
 				SolveStereo(p2d, matrices, p3d);
-
+				
+				p3d *= 100;
+				
 				// save
 				result.push_back(p3d);
 				if (p3d[2]<0)
 					nbehind++;
 				
-				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2])*500);
+				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
 				cv::Mat pprojected, p3, nullmat;
 				nullmat = (cv::Mat1d(3, 4) << 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0);
 				p3 = (cv::Mat1d(4, 1) << p3d[0], p3d[1], p3d[2], 1);
@@ -179,8 +181,8 @@ void testApp::keyPressed(int key) {
 		case '3': cameraMode = CAM_MODE; break;
 		case OF_KEY_DOWN: ty += 10; break;
 		case OF_KEY_UP: ty -= 10; break;
-		case OF_KEY_LEFT: tx += 10; break;
-		case OF_KEY_RIGHT: tx -= 10; break;
+		case OF_KEY_RIGHT: tx += 10; break;
+		case OF_KEY_LEFT: tx -= 10; break;
 	}
 	cout << tx << " " << ty << endl;
 	if( key == 'f' ) {
