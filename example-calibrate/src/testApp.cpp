@@ -19,14 +19,20 @@ void testApp::setup() {
 	ofxActiveScan::Map2f mask;
 	slib::image::Read(mask, ofToDataPath(rootDir + "/mask.bmp", true));
 	
-	CProCamCalibrate calib(options);
-	calib.Calibrate(horizontal,vertical,mask);
+	slib::CMatrix<3,3,double> camIntrinsic, proIntrinsic;
+	double camDistortion, proDistortion;
+	slib::CMatrix<3,4,double> proExtrinsic;
+
+	ofxActiveScan::calibration(options, horizontal, vertical, mask,
+							   camIntrinsic, camDistortion,
+							   proIntrinsic, proDistortion, proExtrinsic);
 	
-	calib.WriteCamIntrinsic(ofToDataPath(rootDir + "cam-intrinsic.txt", true));
-	calib.WriteCamDistortion(ofToDataPath(rootDir + "cam-distortion.txt", true));
-	calib.WriteProIntrinsic(ofToDataPath(rootDir + "pro-intrinsic.txt", true));
-	calib.WriteProDistortion(ofToDataPath(rootDir + "pro-distortion.txt", true));
-	calib.WriteProExtrinsic(ofToDataPath(rootDir + "pro-extrinsic.txt", true));
+	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
+	cfs << "camIntrinsic"  << ofxActiveScan::toOf(camIntrinsic);
+	cfs << "camDistortion" << camDistortion;
+	cfs << "proIntrinsic"  << ofxActiveScan::toOf(proIntrinsic);
+	cfs << "proDistortion" << proDistortion;
+	cfs << "proExtrinsic"  << ofxActiveScan::toOf(proExtrinsic);
 }
 
 void testApp::update() {

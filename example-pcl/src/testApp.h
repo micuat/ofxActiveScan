@@ -30,7 +30,16 @@ public:
 	vector<ofVboMesh> meshes;
 	vector<ofVboMesh>::iterator mit;
 
+	cv::Mat camIntrinsic, proIntrinsic, proExtrinsic;
+	ofxCv::Intrinsics camCalibration, proCalibration;
+	cv::Size camSize, proSize;
+	
+	enum CameraMode {EASYCAM_MODE, PRO_MODE, CAM_MODE};
+	CameraMode cameraMode;
+	
 	int cw, ch;
+	
+	int tx, ty;
 	
 	string rootDir;	
 };
