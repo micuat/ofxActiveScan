@@ -1,9 +1,15 @@
 #pragma once
 
+#define USE_LIBDC
+
 #include "ofMain.h"
 #include "ofxCv.h"
 
 #include "ofxActiveScan.h"
+
+#ifdef USE_LIBDC
+#include "ofxLibdc.h"
+#endif
 
 class testApp : public ofBaseApp {
 public:
@@ -17,7 +23,12 @@ private:
 	ofxActiveScan::Options options;
 	ofImage curPattern;
 	ofImage curFrame;
+	
+#ifdef USE_LIBDC
+	ofxLibdc::PointGrey camera;
+#else
 	ofVideoGrabber camera;
+#endif
 	
 	int curIndex;
 	int cw, ch;

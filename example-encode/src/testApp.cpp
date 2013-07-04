@@ -20,9 +20,21 @@ void testApp::setup() {
 	
 	encode.init(options);
 	
+#ifdef USE_LIBDC
+	camera.setup();
+	camera.set1394b(true);
+	camera.setSize(cw, ch);
+	camera.setBrightness(0);
+	camera.setGain(0);
+	camera.setExposure(1);
+	camera.setGammaAbs(1);
+	camera.setShutter(1);
+	camera.printFeatures();
+#else
 	camera.listDevices();
 	camera.setDeviceID(devID);
 	camera.initGrabber(cw, ch);
+#endif
 	
 	curIndex = -1;
 	captureTime = 0;
@@ -35,11 +47,13 @@ void testApp::update() {
 	bool needToCapture = (0 <= curIndex) && (curIndex < encode.getSize())
 		&& ((curTime - captureTime) > bufferTime);
 	
-	camera.update();
+#ifdef USE_LIBDC
+	if(camera.grabVideo(curFrame) && needToCapture) {
+#else
+	curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
 	if(camera.isFrameNew() && needToCapture) {
-		curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
+#endif
 		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex + 10) + ".bmp");
-//		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex, 2, '0') + ".bmp");
 		captureTime = curTime;
 		curIndex++;
 		if( curIndex < encode.getSize() ) {
@@ -57,7 +71,8 @@ void testApp::draw() {
 		ofSetColor(grayHigh);
 		curPattern.draw(0, 0);
 	} else {
-		camera.draw(0, 0);
+		curFrame.update();
+		curFrame.draw(0, 0);
 	}
 }
 
