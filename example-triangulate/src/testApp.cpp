@@ -7,12 +7,14 @@ void testApp::setup() {
 	rootDir = "../../../SharedData/";
 	
 	cameraMode = EASYCAM_MODE;
+	
+	tx = ty = 0;
 
 	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
-	fs["camWidth"] >> cw;
-	fs["camHeight"] >> ch;
+	fs["camWidth"] >> camSize.width;
+	fs["camHeight"] >> camSize.height;
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
@@ -23,7 +25,11 @@ void testApp::setup() {
 	cfs["proDistortion"] >> xi1;
 	cfs["proExtrinsic"] >> proExtrinsic;
 	
-	proCalibration.setup(proIntrinsic, cv::Size(options.projector_width, options.projector_height));
+	proSize.width = options.projector_width;
+	proSize.height = options.projector_height;
+	cout << camIntrinsic << endl;
+	cout << proIntrinsic << endl;
+	cout << proExtrinsic << endl;
 	
 	string plyFilename = ofToDataPath(rootDir + "/out.ply", true);
 	m_plyfilename = new char[plyFilename.length() + 1];
@@ -106,7 +112,20 @@ void testApp::setup() {
 				if (p3d[2]<0)
 					nbehind++;
 				
-				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
+				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2])*500);
+				cv::Mat pprojected, p3, nullmat;
+				nullmat = (cv::Mat1d(3, 4) << 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0);
+				p3 = (cv::Mat1d(4, 1) << p3d[0], p3d[1], p3d[2], 1);
+				
+				/*
+				cout << p2d[0][0] << " " << p2d[0][1] << endl;
+				cout << p2d[1][0] << " " << p2d[1][1] << endl;
+				cout << "3d coordinate " << p3 << endl;
+				pprojected = camIntrinsic * nullmat * p3;
+				cout << "cam plane " << pprojected / pprojected.at<double>(2, 0) << endl;
+				pprojected = proIntrinsic * proExtrinsic * p3;
+				cout << "pro plane " << pprojected / pprojected.at<double>(2, 0) << endl;
+				 */
 			}
 		}
 		if (m_debug && nbehind)
@@ -115,6 +134,9 @@ void testApp::setup() {
 	printf("\n");
 	// export triangular mesh in PLY format
 	WritePly(result, mask, m_plyfilename);
+	
+	proCalibration.setup(proIntrinsic, proSize);
+	camCalibration.setup(camIntrinsic, camSize);
 }
 
 void testApp::update() {
@@ -125,12 +147,22 @@ void testApp::draw() {
 	
 	if(cameraMode == EASYCAM_MODE) {
 		cam.begin();
-		ofScale(100, -100, -100);
+		ofScale(1, -1, -1);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
 		proCalibration.loadProjectionMatrix();
-		cv::Mat extrinsics = proExtrinsic.inv().t();
-		glMultMatrixd((GLdouble*) extrinsics.ptr(0,0));
+		cv::Mat m = proExtrinsic;
+		cv::Mat extrinsics = (cv::Mat1d(4,4) <<
+						  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
+						  m.at<double>(1,0), m.at<double>(1,1), m.at<double>(1,2), m.at<double>(1,3),
+						  m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2), m.at<double>(2,3),
+						  0, 0, 0, 1);
+		extrinsics = extrinsics.t();
+		glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
+		ofTranslate(tx, ty, 0);
+	} else if(cameraMode == CAM_MODE) {
+		ofSetupScreenPerspective(camSize.width, camSize.height);
+		camCalibration.loadProjectionMatrix();
 	}
 	
 	mesh.drawVertices();
@@ -145,5 +177,13 @@ void testApp::keyPressed(int key) {
 		case '1': cameraMode = EASYCAM_MODE; break;
 		case '2': cameraMode = PRO_MODE; break;
 		case '3': cameraMode = CAM_MODE; break;
+		case OF_KEY_DOWN: ty += 10; break;
+		case OF_KEY_UP: ty -= 10; break;
+		case OF_KEY_LEFT: tx += 10; break;
+		case OF_KEY_RIGHT: tx -= 10; break;
+	}
+	cout << tx << " " << ty << endl;
+	if( key == 'f' ) {
+		ofToggleFullscreen();
 	}
 }
