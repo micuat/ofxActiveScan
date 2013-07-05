@@ -35,19 +35,7 @@ namespace ofxActiveScan {
 
 vector<ofImage> encode(Options);
 
-class Decode {
-	Map2f mapH, mapV, mapMask, mapReliable;
-
-public:
-	Decode() {}
-	
-	int init(Options, string);
-	
-	Map2f& getMapHorizontal();
-	Map2f& getMapVertical();
-	Map2f& getMask();
-	Map2f& getReliable();
-};
+void decode(Options, Map2f&, Map2f&, Map2f&, Map2f&, string);
 
 void calibrate(Options, Map2f, Map2f, Map2f, 
 			   Matd&, double&,

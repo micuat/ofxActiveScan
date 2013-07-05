@@ -13,7 +13,6 @@ public:
 	void keyPressed(int);
 	
 private:
-	ofxActiveScan::Decode decode;
 	ofxActiveScan::Options options;
 	ofxActiveScan::Map2f mapHorizontal, mapVertical;
 	ofImage mapMask, mapReliable;

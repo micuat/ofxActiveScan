@@ -17,7 +17,9 @@ vector<ofImage> encode(Options op) {
 	return patterns;
 }
 
-int Decode::init(Options op, string path) {
+void decode(Options op, Map2f& mapH, Map2f& mapV,
+			Map2f& mapMask, Map2f& mapReliable, string path)
+{
 	CDecode decode(op);
 	
 	ofDirectory dir(ofToDataPath(path, true));
@@ -35,22 +37,6 @@ int Decode::init(Options op, string path) {
 	mapV = decode.GetMap(1);
 	mapMask = decode.GetMask();
 	mapReliable = decode.GetReliable();
-}
-
-Map2f& Decode::getMapHorizontal() {
-	return mapH;
-}
-
-Map2f& Decode::getMapVertical() {
-	return mapV;
-}
-
-Map2f& Decode::getMask() {
-	return mapMask;
-}
-
-Map2f& Decode::getReliable() {
-	return mapReliable;
 }
 
 void calibrate(Options options, Map2f hmap, Map2f vmap, Map2f mmap, 

@@ -1,5 +1,7 @@
 #include "testApp.h"
 
+using namespace ofxActiveScan;
+
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
@@ -13,15 +15,16 @@ void testApp::setup() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
-	decode.init(options, ofToDataPath(rootDir + "img/", true));
+	Map2f asMask, asReliable;
+	decode(options, mapHorizontal, mapVertical, asMask, asReliable,
+		   ofToDataPath(rootDir + "img/", true));
 	
 	// Save resulting maps
-	decode.getMapHorizontal().Write(ofToDataPath(rootDir + "/h.map", true));
-	decode.getMapVertical().Write(ofToDataPath(rootDir + "/v.map", true));
+	mapHorizontal.Write(ofToDataPath(rootDir + "/h.map", true));
+	mapVertical.Write(ofToDataPath(rootDir + "/v.map", true));
 	
-	mapMask = ofxActiveScan::toOf(decode.getMask());
-	mapReliable = ofxActiveScan::toOf(decode.getReliable());
-	
+	mapMask = toOf(asMask);
+	mapReliable = toOf(asReliable);
 	mapMask.saveImage(ofToDataPath(rootDir + "/mask.bmp"));
 	mapReliable.saveImage(ofToDataPath(rootDir + "/reliable.bmp"));
 }
