@@ -71,8 +71,12 @@ void calibration(Options, Map2f, Map2f, Map2f,
 				 slib::CMatrix<3,4,double>&);
 
 ofMesh triangulate(Options, Map2f, Map2f, Map2f, 
-					slib::CMatrix<3,3,double>, double,
-					slib::CMatrix<3,3,double>, double,
-					slib::CMatrix<3,4,double>);
+				   Matd, double,
+				   Matd, double, Matd);
+
+ofMesh triangulate(Options, Map2f, Map2f, Map2f, 
+				   slib::CMatrix<3,3,double>, double,
+				   slib::CMatrix<3,3,double>, double,
+				   slib::CMatrix<3,4,double>);
 	
 }

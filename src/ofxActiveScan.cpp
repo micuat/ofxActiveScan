@@ -84,10 +84,21 @@ void calibration(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 	proExtrinsic = calib.GetProExtrinsic();
 }
 
+ofMesh triangulate(Options o, Map2f hmap, Map2f vmap, Map2f mmap,
+				   Matd cKd, double cD,
+				   Matd pKd, double pD, Matd Rtd)
+{
+	slib::CMatrix<3,3,double> cK(cKd.ptr());
+	slib::CMatrix<3,3,double> pK(pKd.ptr());
+	slib::CMatrix<3,4,double> Rt(Rtd.ptr());
+	
+	return triangulate(o, hmap, vmap, mmap, cK, cD, pK, pD, Rt);
+}
+
 ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap, 
-					slib::CMatrix<3,3,double> matKcam, double camDist,
-					slib::CMatrix<3,3,double> matKpro, double proDist,
-					slib::CMatrix<3,4,double> proRt)
+				   slib::CMatrix<3,3,double> matKcam, double camDist,
+				   slib::CMatrix<3,3,double> matKpro, double proDist,
+				   slib::CMatrix<3,4,double> proRt)
 {
 	ofMesh mesh;
 	

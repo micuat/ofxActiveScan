@@ -1,5 +1,7 @@
 #include "testApp.h"
 
+using namespace ofxActiveScan;
+
 // entry point
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -30,16 +32,15 @@ void testApp::setup() {
 	cout << proExtrinsic << endl;
 	
 	// horizontal and vertical correspondences between projector and camera
-	ofxActiveScan::Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
-	ofxActiveScan::Map2f vertical(ofToDataPath(rootDir + "/v.map", true));
+	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
+	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));
 	
-	ofxActiveScan::Map2f mask;
+	Map2f mask;
 	slib::image::Read(mask, ofToDataPath(rootDir + "/mask.bmp", true));
 
-	mesh = ofxActiveScan::triangulate(options, horizontal, vertical, mask,
-									  ofxActiveScan::toPC<3, 3, double>(camIntrinsic), camDist,
-									  ofxActiveScan::toPC<3, 3, double>(proIntrinsic), proDist,
-									  ofxActiveScan::toPC<3, 4, double>(proExtrinsic));
+	mesh = triangulate(options, horizontal, vertical, mask,
+					   toAS(camIntrinsic), camDist,
+					   toAS(proIntrinsic), proDist, toAS(proExtrinsic));
 	mesh.save(ofToDataPath(rootDir + "/out.ofmesh"), true);
 	
 	proCalibration.setup(proIntrinsic, proSize);
