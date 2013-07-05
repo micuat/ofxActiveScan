@@ -39,7 +39,7 @@ inline cv::Mat toOf(const Matd cmat) {
 }
 
 template <int Tm, int Tn, typename T>
-inline slib::CMatrix<Tm, Tn, T> toAS(const cv::Mat m) {
+inline slib::CMatrix<Tm, Tn, T> toAs(const cv::Mat m) {
 	assert(m.rows == Tm && m.cols == Tn);
 	slib::CMatrix<Tm, Tn, T> cmat;
 	
@@ -52,7 +52,7 @@ inline slib::CMatrix<Tm, Tn, T> toAS(const cv::Mat m) {
 	return cmat;
 }
 
-inline Matd toAS(const cv::Mat m) {
+inline Matd toAs(const cv::Mat m) {
 	int mr = m.rows;
 	int mc = m.cols;
 	
@@ -68,5 +68,6 @@ inline Matd toAS(const cv::Mat m) {
 }
 
 ofImage toOf(Map2f);
+Map2f toAs(ofImage);
 
 };

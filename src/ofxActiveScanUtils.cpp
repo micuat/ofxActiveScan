@@ -17,4 +17,18 @@ ofImage toOf(Map2f field) {
 	return img;
 }
 
+Map2f toAs(ofImage img) {
+	int w = img.getWidth();
+	int h = img.getHeight();
+	Map2f m(w, h);
+	
+	for( int y = 0 ; y < h ; y++ ) {
+		for( int x = 0 ; x < w ; x++ ) {
+			m.cell(x, y) = img.getColor(x, y).getBrightness() / 255.0;
+		}
+	}
+	
+	return m;
+}
+
 };

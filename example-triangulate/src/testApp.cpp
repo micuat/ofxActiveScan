@@ -35,14 +35,15 @@ void testApp::setup() {
 	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
 	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));
 	
-	Map2f mask;
-	slib::image::Read(mask, ofToDataPath(rootDir + "/mask.bmp", true));
+	ofImage mask;
+	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
 
-	mesh = triangulate(options, horizontal, vertical, mask,
-					   toAS(camIntrinsic), camDist,
-					   toAS(proIntrinsic), proDist, toAS(proExtrinsic));
-	mesh.save(ofToDataPath(rootDir + "/out.ofmesh"), true);
+	mesh = triangulate(options, horizontal, vertical, toAs(mask),
+					   toAs(camIntrinsic), camDist,
+					   toAs(proIntrinsic), proDist, toAs(proExtrinsic));
+	mesh.save(ofToDataPath(rootDir + "/out.ofmesh"));
 	
+	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);
 	camCalibration.setup(camIntrinsic, camSize);
 }
