@@ -10,7 +10,7 @@
 namespace ofxActiveScan {
 
 template <int Tm, int Tn, typename T>
-inline cv::Mat toOf(const slib::CMatrix<Tm, Tn, T> cmat) {
+inline cv::Mat toCv(const slib::CMatrix<Tm, Tn, T> cmat) {
 	// it would be better to dump array and construct cv::Mat with array
 	cv::Mat m = cv::Mat_<T>(Tm, Tn);
 	
@@ -23,7 +23,7 @@ inline cv::Mat toOf(const slib::CMatrix<Tm, Tn, T> cmat) {
 	return m;
 }
 
-inline cv::Mat toOf(const Matd cmat) {
+inline cv::Mat toCv(const Matd cmat) {
 	int mr = cmat.GetNumRows();
 	int mc = cmat.GetNumCols();
 	

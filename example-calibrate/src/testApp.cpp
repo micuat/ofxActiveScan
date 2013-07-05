@@ -30,11 +30,11 @@ void testApp::setup() {
 			  proIntrinsic, proDistortion, proExtrinsic);
 	
 	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.dummy.yml"), cv::FileStorage::WRITE);
-	cfs << "camIntrinsic"  << toOf(camIntrinsic);
+	cfs << "camIntrinsic"  << toCv(camIntrinsic);
 	cfs << "camDistortion" << camDistortion;
-	cfs << "proIntrinsic"  << toOf(proIntrinsic);
+	cfs << "proIntrinsic"  << toCv(proIntrinsic);
 	cfs << "proDistortion" << proDistortion;
-	cfs << "proExtrinsic"  << toOf(proExtrinsic);
+	cfs << "proExtrinsic"  << toCv(proExtrinsic);
 }
 
 void testApp::update() {
