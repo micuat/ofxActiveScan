@@ -17,7 +17,7 @@ private:
 	ofMesh mesh;
 	ofEasyCam cam;
 	cv::Mat camIntrinsic, proIntrinsic, proExtrinsic;
-	double xi1, xi2;
+	double camDist, proDist;
 	ofxCv::Intrinsics camCalibration, proCalibration;
 	cv::Size camSize, proSize;
 	
