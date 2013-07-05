@@ -1,5 +1,7 @@
 #include "testApp.h"
 
+using namespace ofxActiveScan;
+
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
@@ -14,25 +16,25 @@ void testApp::setup() {
 	fs["nsamples"] >> options.nsamples;
 	
 	// load correspondences estimated by decode program 
-	ofxActiveScan::Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
-	ofxActiveScan::Map2f vertical(ofToDataPath(rootDir + "/v.map", true));  
-	ofxActiveScan::Map2f mask;
+	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
+	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));  
+	Map2f mask;
 	slib::image::Read(mask, ofToDataPath(rootDir + "/mask.bmp", true));
 	
-	slib::CMatrix<3,3,double> camIntrinsic, proIntrinsic;
+	Matd camIntrinsic, proIntrinsic;
 	double camDistortion, proDistortion;
-	slib::CMatrix<3,4,double> proExtrinsic;
+	Matd proExtrinsic;
 
-	ofxActiveScan::calibration(options, horizontal, vertical, mask,
-							   camIntrinsic, camDistortion,
-							   proIntrinsic, proDistortion, proExtrinsic);
+	calibrate(options, horizontal, vertical, mask,
+			  camIntrinsic, camDistortion,
+			  proIntrinsic, proDistortion, proExtrinsic);
 	
-	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
-	cfs << "camIntrinsic"  << ofxActiveScan::toOf(camIntrinsic);
+	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.dummy.yml"), cv::FileStorage::WRITE);
+	cfs << "camIntrinsic"  << toOf(camIntrinsic);
 	cfs << "camDistortion" << camDistortion;
-	cfs << "proIntrinsic"  << ofxActiveScan::toOf(proIntrinsic);
+	cfs << "proIntrinsic"  << toOf(proIntrinsic);
 	cfs << "proDistortion" << proDistortion;
-	cfs << "proExtrinsic"  << ofxActiveScan::toOf(proExtrinsic);
+	cfs << "proExtrinsic"  << toOf(proExtrinsic);
 }
 
 void testApp::update() {

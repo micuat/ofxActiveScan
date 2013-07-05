@@ -23,6 +23,21 @@ inline cv::Mat toOf(const slib::CMatrix<Tm, Tn, T> cmat) {
 	return m;
 }
 
+inline cv::Mat toOf(const Matd cmat) {
+	int mr = cmat.GetNumRows();
+	int mc = cmat.GetNumCols();
+	
+	cv::Mat m = cv::Mat_<double>(mr, mc);
+	
+	for( int i = 0 ; i < mr ; i++ ) {
+		for( int j = 0 ; j < mc ; j++ ) {
+			m.at<double>(i, j) = cmat(i, j);
+		}
+	}
+	
+	return m;
+}
+
 template <int Tm, int Tn, typename T>
 inline slib::CMatrix<Tm, Tn, T> toAS(const cv::Mat m) {
 	assert(m.rows == Tm && m.cols == Tn);

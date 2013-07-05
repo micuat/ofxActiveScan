@@ -65,10 +65,10 @@ public:
 	Map2f& getReliable();
 };
 
-void calibration(Options, Map2f, Map2f, Map2f, 
-				 slib::CMatrix<3,3,double>&, double&,
-				 slib::CMatrix<3,3,double>&, double&,
-				 slib::CMatrix<3,4,double>&);
+void calibrate(Options, Map2f, Map2f, Map2f, 
+			   Matd&, double&,
+			   Matd&, double&,
+			   Matd&);
 
 ofMesh triangulate(Options, Map2f, Map2f, Map2f, 
 				   Matd, double,
