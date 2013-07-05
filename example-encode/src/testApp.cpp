@@ -18,7 +18,7 @@ void testApp::setup() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
-	encode.init(options);
+	patterns = ofxActiveScan::encode(options);
 	
 #ifdef USE_LIBDC
 	camera.setup();
@@ -44,7 +44,7 @@ void testApp::setup() {
 
 void testApp::update() {
 	unsigned long curTime = ofGetSystemTime();
-	bool needToCapture = (0 <= curIndex) && (curIndex < encode.getSize())
+	bool needToCapture = (0 <= curIndex) && (curIndex < patterns.size())
 		&& ((curTime - captureTime) > bufferTime);
 	
 #ifdef USE_LIBDC
@@ -56,8 +56,8 @@ void testApp::update() {
 		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex + 10) + ".bmp");
 		captureTime = curTime;
 		curIndex++;
-		if( curIndex < encode.getSize() ) {
-			curPattern = encode.getPatternAt(curIndex);
+		if( curIndex < patterns.size() ) {
+			curPattern = patterns[curIndex];
 		} else {
 			curIndex = -1;
 		}
@@ -79,7 +79,7 @@ void testApp::draw() {
 void testApp::keyPressed(int key) {
 	if(key == ' ') {
 		curIndex = 0;
-		curPattern = encode.getPatternAt(curIndex);
+		curPattern = patterns[curIndex];
 		captureTime = ofGetSystemTime();
 	}
 	if( key == 'f' ) {

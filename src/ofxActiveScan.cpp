@@ -2,35 +2,19 @@
 
 namespace ofxActiveScan {
 
-int Encode::init(Options op) {
-	CEncode encode(op);
-	width = op.projector_width;
-	height = op.projector_height;
+vector<ofImage> encode(Options op) {
+	vector<ofImage> patterns;
 	
-	size = encode.GetNumImages();
-	for (int i = 0; i < size; i++) {
+	CEncode encode(op);
+	
+	for(int i = 0; i < encode.GetNumImages(); i++) {
 		Map2f field;
 		encode.GetImage(i, field);
 		
 		patterns.push_back(toOf(field));
 	}
-	return 0;
-}
-
-int Encode::getSize() {
-	return size;
-}
-
-int Encode::getWidth() {
-	return width;
-}
-
-int Encode::getHeight() {
-	return height;
-}
-
-ofImage& Encode::getPatternAt(int i) {
-	return patterns[i];
+	
+	return patterns;
 }
 
 int Decode::init(Options op, string path) {

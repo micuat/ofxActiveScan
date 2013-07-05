@@ -33,23 +33,7 @@
 
 namespace ofxActiveScan {
 
-class Encode {
-	int size;
-	int width;
-	int height;
-	vector<ofImage> patterns;
-
-public:
-	Encode() {}
-	
-	int init(Options);
-	
-	int getSize();
-	int getWidth();
-	int getHeight();
-	
-	ofImage& getPatternAt(int i);
-};
+vector<ofImage> encode(Options);
 
 class Decode {
 	Map2f mapH, mapV, mapMask, mapReliable;

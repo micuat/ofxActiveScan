@@ -19,7 +19,7 @@ public:
 	void keyPressed(int);
 	
 private:
-	ofxActiveScan::Encode encode;
+	vector<ofImage> patterns;
 	ofxActiveScan::Options options;
 	ofImage curPattern;
 	ofImage curFrame;
