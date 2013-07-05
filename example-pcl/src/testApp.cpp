@@ -22,7 +22,7 @@ void testApp::setup() {
 	vector<ofxPCL::PointCloud> clouds;
 	
 	ofMesh orgMesh;
-	orgMesh.load(ofToDataPath(rootDir + "/out.ofmesh"));
+	orgMesh.load(ofToDataPath(rootDir + "/out.ply"));
 	cloud = ofxPCL::toPCL<ofxPCL::PointCloud>(orgMesh);
 	
 	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 30, 30);

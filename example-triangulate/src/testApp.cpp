@@ -41,7 +41,7 @@ void testApp::setup() {
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					   toAs(camIntrinsic), camDist,
 					   toAs(proIntrinsic), proDist, toAs(proExtrinsic));
-	mesh.save(ofToDataPath(rootDir + "/out.ofmesh"));
+	mesh.save(ofToDataPath(rootDir + "/out.ply"));
 	
 	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);
