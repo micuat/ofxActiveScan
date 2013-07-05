@@ -18,14 +18,14 @@ void testApp::setup() {
 	// load correspondences estimated by decode program 
 	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
 	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));  
-	Map2f mask;
-	slib::image::Read(mask, ofToDataPath(rootDir + "/mask.bmp", true));
+	ofImage mask;
+	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
 	
 	Matd camIntrinsic, proIntrinsic;
 	double camDistortion, proDistortion;
 	Matd proExtrinsic;
 
-	calibrate(options, horizontal, vertical, mask,
+	calibrate(options, horizontal, vertical, toAs(mask),
 			  camIntrinsic, camDistortion,
 			  proIntrinsic, proDistortion, proExtrinsic);
 	
