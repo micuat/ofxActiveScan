@@ -6,7 +6,6 @@
 
 #undef Success
 #include "ofxPCL.h"
-#include <pcl/io/ply_io.h>
 
 class testApp : public ofBaseApp
 {

@@ -21,8 +21,10 @@ void testApp::setup() {
 	ofxPCL::PointCloud cloud(new ofxPCL::PointCloud::value_type);
 	vector<ofxPCL::PointCloud> clouds;
 	
-	pcl::io::loadPLYFile(ofToDataPath(rootDir + "/out.ply"), *cloud);
-		
+	ofMesh orgMesh;
+	orgMesh.load(ofToDataPath(rootDir + "/out.ofmesh"));
+	cloud = ofxPCL::toPCL<ofxPCL::PointCloud>(orgMesh);
+	
 	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 30, 30);
 	
 	ofColor hues[] = {ofColor::red, ofColor::green, ofColor::blue, ofColor::cyan, ofColor::magenta, ofColor::yellow};
