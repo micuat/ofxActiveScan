@@ -49,6 +49,22 @@ void testApp::setup() {
 }
 
 void testApp::update() {
+	int n = mesh.getNumVertices();
+	float nearestDistance = 0;
+	ofVec2f mouse(mouseX, mouseY);
+	for(int i = 0; i < n; i++) {
+		ofVec3f p = mesh.getVertex(i);
+		cv::Mat pCv = (cv::Mat1d(4, 1) << p.x, p.y, p.z, 1);
+		cv::Mat pPlane = proIntrinsic * proExtrinsic * pCv;
+		pPlane = pPlane / pPlane.at<double>(2, 0);
+		ofVec2f cur = ofVec2f(pPlane.at<double>(0, 0), pPlane.at<double>(1, 0));
+		float distance = cur.distance(mouse);
+		if(i == 0 || distance < nearestDistance) {
+			nearestDistance = distance;
+			nearestVertex = cur;
+			nearestIndex = i;
+		}
+	}
 }
 
 void testApp::draw() {
@@ -59,7 +75,15 @@ void testApp::draw() {
 		ofScale(1, -1, -1);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
-		proCalibration.loadProjectionMatrix(DBL_MIN, DBL_MAX);
+		
+		ofPushStyle();
+		ofNoFill();
+		ofSetColor(ofColor::yellow);
+		ofSetLineWidth(2);
+		ofCircle(nearestVertex, 4);
+		ofPopStyle();
+		
+		proCalibration.loadProjectionMatrix(0.001, 1000000000.0);
 		cv::Mat m = proExtrinsic;
 		cv::Mat extrinsics = (cv::Mat1d(4,4) <<
 						  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
@@ -70,7 +94,7 @@ void testApp::draw() {
 		glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
 	} else if(cameraMode == CAM_MODE) {
 		ofSetupScreenPerspective(camSize.width, camSize.height);
-		camCalibration.loadProjectionMatrix(DBL_MIN, DBL_MAX);
+		camCalibration.loadProjectionMatrix(0.001, 1000000000.0);
 	}
 	
 	mesh.drawVertices();
@@ -89,4 +113,11 @@ void testApp::keyPressed(int key) {
 	if( key == 'f' ) {
 		ofToggleFullscreen();
 	}
+	ofVec3f p = mesh.getVertex(nearestIndex);
+	cv::Mat pCv = (cv::Mat1d(4, 1) << p.x, p.y, p.z, 1);
+	cv::Mat pPlane = proIntrinsic * proExtrinsic * pCv;
+	pPlane = pPlane / pPlane.at<double>(2, 0);
+	cout << nearestVertex << " " << pPlane << endl;
+	ofVec2f mouse(mouseX, mouseY);
+	cout << nearestVertex.distance(mouse) << " " << mouse << endl;
 }
