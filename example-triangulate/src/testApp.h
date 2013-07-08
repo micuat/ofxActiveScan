@@ -33,4 +33,6 @@ private:
 	
 	vector<vector<cv::Point3f> > objectPoints;
 	vector<vector<cv::Point2f> > imagePoints;
+	vector<cv::Point3f>::iterator curObjectPoint;
+	vector<cv::Point2f>::iterator curImagePoint;
 };

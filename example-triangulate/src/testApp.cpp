@@ -49,24 +49,30 @@ void testApp::setup() {
 	
 	objectPoints.resize(1);
 	imagePoints.resize(1);
+	
+	curObjectPoint = objectPoints[0].end();
+	curImagePoint = imagePoints[0].end();
 }
 
 void testApp::update() {
-	// Mouse Picking
-	int n = mesh.getNumVertices();
-	float nearestDistance = 0;
-	ofVec2f mouse(mouseX, mouseY);
-	for(int i = 0; i < n; i++) {
-		ofVec3f p = mesh.getVertex(i);
-		cv::Mat pCv = (cv::Mat1d(4, 1) << p.x, p.y, p.z, 1);
-		cv::Mat pPlane = proIntrinsic * proExtrinsic * pCv;
-		pPlane = pPlane / pPlane.at<double>(2, 0);
-		ofVec2f cur = ofVec2f(pPlane.at<double>(0, 0), pPlane.at<double>(1, 0));
-		float distance = cur.distance(mouse);
-		if(i == 0 || distance < nearestDistance) {
-			nearestDistance = distance;
-			nearestVertex = cur;
-			nearestIndex = i;
+	// if not selected
+	if( curObjectPoint == objectPoints[0].end() ) {
+		// Mouse Picking
+		int n = mesh.getNumVertices();
+		float nearestDistance = 0;
+		ofVec2f mouse(mouseX, mouseY);
+		for(int i = 0; i < n; i++) {
+			ofVec3f p = mesh.getVertex(i);
+			cv::Mat pCv = (cv::Mat1d(4, 1) << p.x, p.y, p.z, 1);
+			cv::Mat pPlane = proIntrinsic * proExtrinsic * pCv;
+			pPlane = pPlane / pPlane.at<double>(2, 0);
+			ofVec2f cur = ofVec2f(pPlane.at<double>(0, 0), pPlane.at<double>(1, 0));
+			float distance = cur.distance(mouse);
+			if(i == 0 || distance < nearestDistance) {
+				nearestDistance = distance;
+				nearestVertex = cur;
+				nearestIndex = i;
+			}
 		}
 	}
 }
@@ -80,11 +86,19 @@ void testApp::draw() {
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
 		
+		// draw circle
 		ofPushStyle();
-		ofNoFill();
-		ofSetColor(ofColor::yellow);
 		ofSetLineWidth(2);
-		ofCircle(nearestVertex, 4);
+		if( curObjectPoint == objectPoints[0].end() ) {
+			ofNoFill();
+			ofSetColor(ofColor::yellow);
+			ofCircle(nearestVertex, 4);
+		} else {
+			ofFill();
+			ofSetColor(ofColor::cyan);
+			ofCircle(curImagePoint->x, curImagePoint->y, 4);
+		}
+		
 		ofPopStyle();
 		
 		proCalibration.loadProjectionMatrix(0.001, 1000000000.0);
@@ -120,14 +134,27 @@ void testApp::keyPressed(int key) {
 	if( key == ' ' ) {
 		objectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(nearestIndex)));
 		imagePoints[0].push_back(ofxCv::toCv(nearestVertex));
+		
+		curObjectPoint = objectPoints[0].end() - 1;
+		curImagePoint = imagePoints[0].end() - 1;
 	}
-	if( key == OF_KEY_UP ) {
+	if( key == OF_KEY_RETURN ) {
+		curObjectPoint = objectPoints[0].end();
+		curImagePoint = imagePoints[0].end();
 	}
-	if( key == OF_KEY_DOWN ) {
-	}
-	if( key == OF_KEY_LEFT ) {
-	}
-	if( key == OF_KEY_RIGHT ) {
+	if( curObjectPoint != objectPoints[0].end() ) {
+		if( key == OF_KEY_UP ) {
+			--(curImagePoint->y);
+		}
+		if( key == OF_KEY_DOWN ) {
+			++(curImagePoint->y);
+		}
+		if( key == OF_KEY_LEFT ) {
+			--(curImagePoint->x);
+		}
+		if( key == OF_KEY_RIGHT ) {
+			++(curImagePoint->x);
+		}
 	}
 	if( key == 'c' ) {
 		// Re-Calibration
@@ -141,7 +168,7 @@ void testApp::keyPressed(int key) {
 			cv::Mat m = proIntrinsic;
 			proIntrinsic = (cv::Mat1d(3,3) <<
 					m.at<double>(0,0), m.at<double>(0,1), proSize.width/2,
-					m.at<double>(1,0), m.at<double>(1,1), proSize.height/2,
+					m.at<double>(1,0), m.at<double>(1,1), proSize.height - 1,
 					m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2));
 		
 			cv::calibrateCamera(objectPoints, imagePoints, proSize, proIntrinsic,
