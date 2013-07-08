@@ -46,9 +46,13 @@ void testApp::setup() {
 	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);
 	camCalibration.setup(camIntrinsic, camSize);
+	
+	objectPoints.resize(1);
+	imagePoints.resize(1);
 }
 
 void testApp::update() {
+	// Mouse Picking
 	int n = mesh.getNumVertices();
 	float nearestDistance = 0;
 	ofVec2f mouse(mouseX, mouseY);
@@ -64,6 +68,22 @@ void testApp::update() {
 			nearestVertex = cur;
 			nearestIndex = i;
 		}
+	}
+	
+	// Re-Calibration
+	if( objectPoints[0].size() >= 6 ) {
+		cv::Mat distCoeffs;
+		vector<cv::Mat> rvecs, tvecs;
+
+		cv::calibrateCamera(objectPoints, imagePoints, proSize, proIntrinsic, distCoeffs, rvecs, tvecs);
+		
+		cv::Mat r;
+		cv::Rodrigues(rvecs[0], r);
+		cv::Mat t = tvecs[0];
+		proExtrinsic = (cv::Mat1d(3,4) <<
+						r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), t.at<double>(0,0),
+						r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), t.at<double>(1,0),
+						r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2,0));
 	}
 }
 
@@ -113,6 +133,18 @@ void testApp::keyPressed(int key) {
 	if( key == 'f' ) {
 		ofToggleFullscreen();
 	}
+	if( key == ' ' ) {
+		// add objectPoints & imagePoints here
+	}
+	if( key == OF_KEY_UP ) {
+	}
+	if( key == OF_KEY_DOWN ) {
+	}
+	if( key == OF_KEY_LEFT ) {
+	}
+	if( key == OF_KEY_RIGHT ) {
+	}
+	
 	ofVec3f p = mesh.getVertex(nearestIndex);
 	cv::Mat pCv = (cv::Mat1d(4, 1) << p.x, p.y, p.z, 1);
 	cv::Mat pPlane = proIntrinsic * proExtrinsic * pCv;

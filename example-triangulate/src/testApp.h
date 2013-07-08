@@ -30,4 +30,7 @@ private:
 	
 	ofVec2f nearestVertex;
 	int nearestIndex;
+	
+	vector<vector<cv::Point3f> > objectPoints;
+	vector<vector<cv::Point2f> > imagePoints;
 };
