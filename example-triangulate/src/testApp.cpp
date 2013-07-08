@@ -74,8 +74,15 @@ void testApp::update() {
 	if( objectPoints[0].size() >= 6 ) {
 		cv::Mat distCoeffs;
 		vector<cv::Mat> rvecs, tvecs;
-
-		cv::calibrateCamera(objectPoints, imagePoints, proSize, proIntrinsic, distCoeffs, rvecs, tvecs);
+		
+		cv::Mat m = proIntrinsic;
+		proIntrinsic = (cv::Mat1d(3,3) <<
+						m.at<double>(0,0), m.at<double>(0,1), proSize.width/2,
+						m.at<double>(1,0), m.at<double>(1,1), proSize.height/2,
+						m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2));
+		
+		cv::calibrateCamera(objectPoints, imagePoints, proSize, proIntrinsic,
+							distCoeffs, rvecs, tvecs, CV_CALIB_USE_INTRINSIC_GUESS);
 		
 		cv::Mat r;
 		cv::Rodrigues(rvecs[0], r);
@@ -134,7 +141,8 @@ void testApp::keyPressed(int key) {
 		ofToggleFullscreen();
 	}
 	if( key == ' ' ) {
-		// add objectPoints & imagePoints here
+		objectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(nearestIndex)));
+		imagePoints[0].push_back(ofxCv::toCv(nearestVertex));
 	}
 	if( key == OF_KEY_UP ) {
 	}
