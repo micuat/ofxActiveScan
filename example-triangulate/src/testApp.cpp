@@ -160,7 +160,7 @@ void testApp::keyPressed(int key) {
 				objectPoints.push_back(ofxCv::toCv(mesh.getVertex(objectPointsRef[k])));
 			}
 			
-			cv::Mat distCoeffs;
+			cv::Mat distCoeffs = (cv::Mat1d(4,1) << proDist, proDist, 0, 0);
 			cv::Mat m = proExtrinsic;
 			cv::Mat r = (cv::Mat1d(3,3) <<
 					m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2),
@@ -171,7 +171,7 @@ void testApp::keyPressed(int key) {
 			tvec = (cv::Mat1d(3,1) <<
 					m.at<double>(0,3), m.at<double>(1,3), m.at<double>(2,3));
 			
-			cv::solvePnP(objectPoints, imagePoints, proIntrinsic,distCoeffs, rvec, tvec, true);
+			cv::solvePnP(objectPoints, imagePoints, proIntrinsic, distCoeffs, rvec, tvec, true);
 			
 			cv::Rodrigues(rvec, r);
 			cv::Mat t = tvec;
