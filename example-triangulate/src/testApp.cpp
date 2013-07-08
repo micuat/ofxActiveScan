@@ -27,17 +27,13 @@ void testApp::setup() {
 	
 	proSize.width = options.projector_width;
 	proSize.height = options.projector_height;
-	cout << camIntrinsic << endl;
-	cout << proIntrinsic << endl;
-	cout << proExtrinsic << endl;
 	
 	// horizontal and vertical correspondences between projector and camera
-	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
-	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));
+	horizontal = Map2f(ofToDataPath(rootDir + "/h.map", true));
+	vertical = Map2f(ofToDataPath(rootDir + "/v.map", true));
 	
-	ofImage mask;
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
-
+	
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					   toAs(camIntrinsic), camDist,
 					   toAs(proIntrinsic), proDist, toAs(proExtrinsic));
@@ -47,16 +43,12 @@ void testApp::setup() {
 	proCalibration.setup(proIntrinsic, proSize);
 	camCalibration.setup(camIntrinsic, camSize);
 	
-	objectPoints.resize(1);
-	imagePoints.resize(1);
-	
-	curObjectPoint = objectPoints[0].end();
-	curImagePoint = imagePoints[0].end();
+	curImagePoint = imagePoints.end();
 }
 
 void testApp::update() {
 	// if not selected
-	if( curObjectPoint == objectPoints[0].end() ) {
+	if( curImagePoint == imagePoints.end() ) {
 		// Mouse Picking
 		int n = mesh.getNumVertices();
 		float nearestDistance = 0;
@@ -89,7 +81,7 @@ void testApp::draw() {
 		// draw circle
 		ofPushStyle();
 		ofSetLineWidth(2);
-		if( curObjectPoint == objectPoints[0].end() ) {
+		if( curImagePoint == imagePoints.end() ) {
 			ofNoFill();
 			ofSetColor(ofColor::yellow);
 			ofCircle(nearestVertex, 4);
@@ -132,17 +124,15 @@ void testApp::keyPressed(int key) {
 		ofToggleFullscreen();
 	}
 	if( key == ' ' ) {
-		objectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(nearestIndex)));
-		imagePoints[0].push_back(ofxCv::toCv(nearestVertex));
+		objectPointsRef.push_back(nearestIndex);
+		imagePoints.push_back(ofxCv::toCv(nearestVertex));
 		
-		curObjectPoint = objectPoints[0].end() - 1;
-		curImagePoint = imagePoints[0].end() - 1;
+		curImagePoint = imagePoints.end() - 1;
 	}
 	if( key == OF_KEY_RETURN ) {
-		curObjectPoint = objectPoints[0].end();
-		curImagePoint = imagePoints[0].end();
+		curImagePoint = imagePoints.end();
 	}
-	if( curObjectPoint != objectPoints[0].end() ) {
+	if( curImagePoint != imagePoints.end() ) {
 		if( key == OF_KEY_UP ) {
 			--(curImagePoint->y);
 		}
@@ -157,10 +147,15 @@ void testApp::keyPressed(int key) {
 		}
 	}
 	if( key == 'c' ) {
-		// Re-Calibration
-		if( objectPoints[0].size() >= 6 ) {
-			cout << proIntrinsic << endl;
-			cout << proExtrinsic << endl;
+		if( objectPointsRef.size() >= 6 ) {
+			// Re-Calibration
+			ofLogNotice() << "Re-calibrate extrinsics";
+			
+			// Convert object point reference to actual points
+			vector<cv::Point3f> objectPoints;
+			for( int k = 0 ; k < objectPointsRef.size() ; k++ ) {
+				objectPoints.push_back(ofxCv::toCv(mesh.getVertex(objectPointsRef[k])));
+			}
 			
 			cv::Mat distCoeffs;
 			cv::Mat m = proExtrinsic;
@@ -173,9 +168,7 @@ void testApp::keyPressed(int key) {
 			tvec = (cv::Mat1d(3,1) <<
 					m.at<double>(0,3), m.at<double>(1,3), m.at<double>(2,3));
 			
-			cv::Mat op(objectPoints[0]);
-			cv::Mat ip(imagePoints[0]);
-			cv::solvePnP(objectPoints[0], imagePoints[0], proIntrinsic,distCoeffs, rvec, tvec, 1);
+			cv::solvePnP(objectPoints, imagePoints, proIntrinsic,distCoeffs, rvec, tvec, true);
 			
 			cv::Rodrigues(rvec, r);
 			cv::Mat t = tvec;
@@ -184,16 +177,18 @@ void testApp::keyPressed(int key) {
 					r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), t.at<double>(1,0),
 					r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2,0));
 			
-			cout << proIntrinsic << endl;
-			cout << proExtrinsic << endl;
+			cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
+			cfs << "camIntrinsic" << camIntrinsic;
+			cfs << "camDistortion" << camDist;
+			cfs << "proIntrinsic" << proIntrinsic;
+			cfs << "proDistortion" << proDist;
+			cfs << "proExtrinsic" << proExtrinsic;
+			
+			// Re-Triangulation
+			mesh = triangulate(options, horizontal, vertical, toAs(mask),
+					toAs(camIntrinsic), camDist,
+					toAs(proIntrinsic), proDist, toAs(proExtrinsic));
+			mesh.save(ofToDataPath(rootDir + "/out.ply"));
 		}
 	}
-	
-	ofVec3f p = mesh.getVertex(nearestIndex);
-	cv::Mat pCv = (cv::Mat1d(4, 1) << p.x, p.y, p.z, 1);
-	cv::Mat pPlane = proIntrinsic * proExtrinsic * pCv;
-	pPlane = pPlane / pPlane.at<double>(2, 0);
-	cout << nearestVertex << " " << pPlane << endl;
-	ofVec2f mouse(mouseX, mouseY);
-	cout << nearestVertex.distance(mouse) << " " << mouse << endl;
 }

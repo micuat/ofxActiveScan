@@ -14,6 +14,8 @@ public:
 	
 private:
 	ofxActiveScan::Options options;
+	ofxActiveScan::Map2f horizontal, vertical;
+	ofImage mask;
 	ofMesh mesh;
 	ofEasyCam cam;
 	cv::Mat camIntrinsic, proIntrinsic, proExtrinsic;
@@ -31,8 +33,7 @@ private:
 	ofVec2f nearestVertex;
 	int nearestIndex;
 	
-	vector<vector<cv::Point3f> > objectPoints;
-	vector<vector<cv::Point2f> > imagePoints;
-	vector<cv::Point3f>::iterator curObjectPoint;
+	vector<int> objectPointsRef;
+	vector<cv::Point2f> imagePoints;
 	vector<cv::Point2f>::iterator curImagePoint;
 };
