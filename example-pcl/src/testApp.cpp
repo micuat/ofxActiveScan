@@ -63,7 +63,7 @@ void testApp::draw()
 		ofScale(1, -1, -1);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(proSize.width, proSize.height);
-		proCalibration.loadProjectionMatrix(DBL_MIN, DBL_MAX);
+		proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
 		cv::Mat m = proExtrinsic;
 		cv::Mat extrinsics = (cv::Mat1d(4,4) <<
 							  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
@@ -74,7 +74,7 @@ void testApp::draw()
 		glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
 	} else if(cameraMode == CAM_MODE) {
 		ofSetupScreenPerspective(camSize.width, camSize.height);
-		camCalibration.loadProjectionMatrix(DBL_MIN, DBL_MAX);
+		camCalibration.loadProjectionMatrix(0.0001, 100000000.0);
 	}
 	
 	mit->drawVertices();
