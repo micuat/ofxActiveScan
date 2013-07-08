@@ -69,29 +69,6 @@ void testApp::update() {
 			nearestIndex = i;
 		}
 	}
-	
-	// Re-Calibration
-	if( objectPoints[0].size() >= 6 ) {
-		cv::Mat distCoeffs;
-		vector<cv::Mat> rvecs, tvecs;
-		
-		cv::Mat m = proIntrinsic;
-		proIntrinsic = (cv::Mat1d(3,3) <<
-						m.at<double>(0,0), m.at<double>(0,1), proSize.width/2,
-						m.at<double>(1,0), m.at<double>(1,1), proSize.height/2,
-						m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2));
-		
-		cv::calibrateCamera(objectPoints, imagePoints, proSize, proIntrinsic,
-							distCoeffs, rvecs, tvecs, CV_CALIB_USE_INTRINSIC_GUESS);
-		
-		cv::Mat r;
-		cv::Rodrigues(rvecs[0], r);
-		cv::Mat t = tvecs[0];
-		proExtrinsic = (cv::Mat1d(3,4) <<
-						r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), t.at<double>(0,0),
-						r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), t.at<double>(1,0),
-						r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2,0));
-	}
 }
 
 void testApp::draw() {
@@ -151,6 +128,37 @@ void testApp::keyPressed(int key) {
 	if( key == OF_KEY_LEFT ) {
 	}
 	if( key == OF_KEY_RIGHT ) {
+	}
+	if( key == 'c' ) {
+		// Re-Calibration
+		if( objectPoints[0].size() >= 6 ) {
+			cout << proIntrinsic << endl;
+			cout << proExtrinsic << endl;
+			
+			cv::Mat distCoeffs;
+			vector<cv::Mat> rvecs, tvecs;
+			
+			cv::Mat m = proIntrinsic;
+			proIntrinsic = (cv::Mat1d(3,3) <<
+					m.at<double>(0,0), m.at<double>(0,1), proSize.width/2,
+					m.at<double>(1,0), m.at<double>(1,1), proSize.height/2,
+					m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2));
+		
+			cv::calibrateCamera(objectPoints, imagePoints, proSize, proIntrinsic,
+				distCoeffs, rvecs, tvecs, CV_CALIB_USE_INTRINSIC_GUESS);
+			
+			cv::Mat r;
+			cv::Rodrigues(rvecs[0], r);
+			cv::Mat t = tvecs[0];
+			proExtrinsic = (cv::Mat1d(3,4) <<
+					r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), t.at<double>(0,0),
+					r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), t.at<double>(1,0),
+					r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2,0));
+			
+			cout << proIntrinsic << endl;
+			cout << proExtrinsic << endl;
+			proCalibration.setup(proIntrinsic, proSize);
+		}
 	}
 	
 	ofVec3f p = mesh.getVertex(nearestIndex);
