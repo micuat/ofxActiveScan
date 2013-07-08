@@ -34,6 +34,8 @@ void testApp::setup() {
 	
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
 	
+	
+	ofLogNotice() << "Start triangulation with initial calibration parameters";
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					   toAs(camIntrinsic), camDist,
 					   toAs(proIntrinsic), proDist, toAs(proExtrinsic));
@@ -147,7 +149,8 @@ void testApp::keyPressed(int key) {
 		}
 	}
 	if( key == 'c' ) {
-		if( objectPointsRef.size() >= 6 ) {
+		int minPointNum = 6;
+		if( objectPointsRef.size() >= minPointNum ) {
 			// Re-Calibration
 			ofLogNotice() << "Re-calibrate extrinsics";
 			
@@ -177,6 +180,7 @@ void testApp::keyPressed(int key) {
 					r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), t.at<double>(1,0),
 					r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2,0));
 			
+			// save to yml; may need to preserve previous result
 			cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
 			cfs << "camIntrinsic" << camIntrinsic;
 			cfs << "camDistortion" << camDist;
@@ -185,10 +189,14 @@ void testApp::keyPressed(int key) {
 			cfs << "proExtrinsic" << proExtrinsic;
 			
 			// Re-Triangulation
+			ofLogNotice() << "Re-triangulate mesh";
+			
 			mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					toAs(camIntrinsic), camDist,
 					toAs(proIntrinsic), proDist, toAs(proExtrinsic));
 			mesh.save(ofToDataPath(rootDir + "/out.ply"));
+		} else {
+			ofLogError() << "Minimum " + ofToString(minPointNum) + " points required for re-calibration";
 		}
 	}
 }
