@@ -20,35 +20,61 @@ Dependencies
 
 * ofxOpenCv
 * [ofxCv](https://github.com/kylemcdonald/ofxCv)
+* [ofxLibdc (optional)](https://github.com/kylemcdonald/ofxLibdc)
 * [ofxPCL (optional)](https://github.com/satoruhiga/ofxPCL)
+
+**Following instructions to be updated**
 
 
 config.yml
 --------
 
+Set parameters for example projects:
+
+* proWidth/proHeight/camWidth/camHeight
+* grayLow/grayHigh
+* devID
+* bufferTime
+* vertical_center
+* nsamples
+
 
 example-encode
 --------
+
+Project and capture structured light patterns.
 
 
 example-decode
 --------
 
+Decode results from example-encode.
+
 
 example-calibrate
 --------
+
+Solve camera/projector intrinsic parameters and extrinsic paramters from
+decoded results.
 
 
 example-triangulate
 --------
 
+Finally reconstruct a 3D point cloud from calibration parameters
+and decoded results.
+
 
 example-recalibrate
 --------
 
+Manually adjust calibration parameters.
+
 
 example-pcl
 --------
+
+PCL segmentation demo for projection mapping.
 
 
 License
