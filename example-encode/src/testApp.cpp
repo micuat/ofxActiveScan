@@ -38,6 +38,9 @@ void testApp::setup() {
 	fs["nsamples"] >> options.nsamples;
 	
 	patterns = ofxActiveScan::encode(options);
+	ofFloatImage blank;
+	blank.allocate(options.projector_width, options.projector_height, OF_IMAGE_GRAYSCALE);
+	patterns.push_back(blank);
 	
 #ifdef USE_LIBDC
 	camera.setup();
@@ -72,13 +75,16 @@ void testApp::update() {
 	curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
 	if(camera.isFrameNew() && needToCapture) {
 #endif
-		curFrame.saveImage(rootDir + "img/" + ofToString(curIndex + 10) + ".bmp");
-		captureTime = curTime;
-		curIndex++;
-		if( curIndex < patterns.size() ) {
+		if( curIndex < patterns.size() - 1 ) {
+			curFrame.saveImage(rootDir + "img/" + ofToString(curIndex + 10) + ".bmp");
+			captureTime = curTime;
+			curIndex++;
 			curPattern = patterns[curIndex];
 		} else {
+			// last frame is for color mapping
+			curFrame.saveImage(rootDir + "camPerspective.jpg");
 			curIndex = -1;
+			captureTime = 0;
 		}
 	}
 }
