@@ -54,12 +54,13 @@ void testApp::setup() {
 	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
 	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));
 	
-	ofImage mask;
+	ofImage mask, camPerspective;
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
-
+	ofLoadImage(camPerspective, ofToDataPath(rootDir + "/camPerspective.jpg"));
+	
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					   toAs(camIntrinsic), camDist,
-					   toAs(proIntrinsic), proDist, toAs(proExtrinsic));
+					   toAs(proIntrinsic), proDist, toAs(proExtrinsic), camPerspective);
 	mesh.save(ofToDataPath(rootDir + "/out.ply"));
 	
 	// set parameters for projection
@@ -76,6 +77,7 @@ void testApp::draw() {
 	if(cameraMode == EASYCAM_MODE) {
 		cam.begin();
 		ofScale(1, -1, -1);
+		ofScale(1000, 1000, 1000);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
 		proCalibration.loadProjectionMatrix(0.0001, 100000000.0);

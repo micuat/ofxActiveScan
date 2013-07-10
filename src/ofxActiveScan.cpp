@@ -75,19 +75,19 @@ void calibrate(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 
 ofMesh triangulate(Options o, Map2f hmap, Map2f vmap, Map2f mmap,
 				   Matd cKd, double cD,
-				   Matd pKd, double pD, Matd Rtd)
+				   Matd pKd, double pD, Matd Rtd, ofImage cp)
 {
 	slib::CMatrix<3,3,double> cK(cKd.ptr());
 	slib::CMatrix<3,3,double> pK(pKd.ptr());
 	slib::CMatrix<3,4,double> Rt(Rtd.ptr());
 	
-	return triangulate(o, hmap, vmap, mmap, cK, cD, pK, pD, Rt);
+	return triangulate(o, hmap, vmap, mmap, cK, cD, pK, pD, Rt, cp);
 }
 
 ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap, 
 				   slib::CMatrix<3,3,double> matKcam, double camDist,
 				   slib::CMatrix<3,3,double> matKpro, double proDist,
-				   slib::CMatrix<3,4,double> proRt)
+				   slib::CMatrix<3,4,double> proRt, ofImage cp)
 {
 	ofMesh mesh;
 	
@@ -149,6 +149,9 @@ ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 					nbehind++;
 				
 				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
+				if( cp.bAllocated() ) {
+					mesh.addColor(cp.getColor(x, y));
+				}
 			}
 		}
 		if (nbehind)

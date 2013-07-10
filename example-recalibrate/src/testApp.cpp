@@ -52,12 +52,12 @@ void testApp::setup() {
 	vertical = Map2f(ofToDataPath(rootDir + "/v.map", true));
 	
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
-	
+	ofLoadImage(camPerspective, ofToDataPath(rootDir + "/camPerspective.jpg"));
 	
 	ofLogNotice() << "Start triangulation with initial calibration parameters";
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
-					   toAs(camIntrinsic), camDist,
-					   toAs(proIntrinsic), proDist, toAs(proExtrinsic));
+			toAs(camIntrinsic), camDist,
+			toAs(proIntrinsic), proDist, toAs(proExtrinsic), camPerspective);
 	mesh.save(ofToDataPath(rootDir + "/out.ply"));
 	
 	// set parameters for projection
@@ -96,6 +96,7 @@ void testApp::draw() {
 	if(cameraMode == EASYCAM_MODE) {
 		cam.begin();
 		ofScale(1, -1, -1);
+		ofScale(1000, 1000, 1000);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
 		
@@ -222,7 +223,7 @@ void testApp::keyPressed(int key) {
 			
 			mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					toAs(camIntrinsic), camDist,
-					toAs(proIntrinsic), proDist, toAs(proExtrinsic));
+					toAs(proIntrinsic), proDist, toAs(proExtrinsic), camPerspective);
 			mesh.save(ofToDataPath(rootDir + "/out.ply"));
 		} else {
 			ofLogError() << "Minimum " + ofToString(minPointNum) + " points required for re-calibration";

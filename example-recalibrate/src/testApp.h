@@ -35,6 +35,7 @@ private:
 	ofxActiveScan::Options options;
 	ofxActiveScan::Map2f horizontal, vertical;
 	ofImage mask;
+	ofImage camPerspective;
 	ofMesh mesh;
 	ofEasyCam cam;
 	cv::Mat camIntrinsic, proIntrinsic, proExtrinsic;
