@@ -38,9 +38,9 @@ public:
 	void keyPressed(int);
 	
 private:
-	vector<ofImage> patterns;
+	vector<ofFloatImage> patterns;
 	ofxActiveScan::Options options;
-	ofImage curPattern;
+	ofFloatImage curPattern;
 	ofImage curFrame;
 	
 #ifdef USE_LIBDC

@@ -76,6 +76,7 @@ void testApp::update()
 void testApp::draw()
 {
 	ofBackground(0);
+	glPointSize(2.0);
 	
 	if(cameraMode == EASYCAM_MODE) {
 		cam.begin();

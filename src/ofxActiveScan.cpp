@@ -21,8 +21,8 @@
 
 namespace ofxActiveScan {
 
-vector<ofImage> encode(Options op) {
-	vector<ofImage> patterns;
+vector<ofFloatImage> encode(Options op) {
+	vector<ofFloatImage> patterns;
 	
 	CEncode encode(op);
 	
@@ -30,7 +30,7 @@ vector<ofImage> encode(Options op) {
 		Map2f field;
 		encode.GetImage(i, field);
 		
-		patterns.push_back(toOf(field));
+		patterns.push_back(toOfF(field));
 	}
 	
 	return patterns;

@@ -21,6 +21,15 @@
 
 namespace ofxActiveScan {
 
+ofFloatImage toOfF(Map2f field) {
+	ofFloatImage img;
+	int w = field.size(0);
+	int h = field.size(1);
+	
+	img.setFromPixels(field.ptr(), w, h, OF_IMAGE_GRAYSCALE);
+	return img;
+}
+
 ofImage toOf(Map2f field) {
 	ofImage img;
 	int w = field.size(0);
