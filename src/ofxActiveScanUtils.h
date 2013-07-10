@@ -67,6 +67,29 @@ inline Matd toAs(const cv::Mat m) {
 	return cmat;
 }
 
+inline Vec2d toAs(const cv::Point2d p) {
+	Vec2d v;
+	v[0] = p.x;
+	v[1] = p.y;
+	return v;
+}
+
+inline Vec3d toAs(const cv::Point3d p) {
+	Vec3d v;
+	v[0] = p.x;
+	v[1] = p.y;
+	v[2] = p.z;
+	return v;
+}
+
+inline cv::Point2d toCv(const Vec2d p) {
+	return cv::Point2d(p[0], p[1]);
+}
+
+inline cv::Point3d toCv(const Vec3d p) {
+	return cv::Point3d(p[0], p[1], p[2]);
+}
+
 ofImage toOf(Map2f);
 Map2f toAs(ofImage);
 
