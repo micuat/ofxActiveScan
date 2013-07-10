@@ -154,13 +154,23 @@ void testApp::keyPressed(int key) {
 			// Re-Calibration
 			ofLogNotice() << "Re-calibrate extrinsics";
 			
-			// Convert object point reference to actual points
 			vector<cv::Point3f> objectPoints;
+			vector<cv::Point2f> undistImagePoints;
+			Vec2d proPrincipal;
+			proPrincipal[0] = (options.projector_width+1) / 2.0;
+			proPrincipal[1] = options.projector_height * options.projector_horizontal_center;
+			
 			for( int k = 0 ; k < objectPointsRef.size() ; k++ ) {
+				// Convert object point reference to actual points (this is required after retriangulation)
 				objectPoints.push_back(ofxCv::toCv(mesh.getVertex(objectPointsRef[k])));
+				
+				// Undistort image points
+				Vec2d undistP;
+				slib::fmatrix::CancelRadialDistortion(proDist, proPrincipal, toAs(imagePoints[k]), undistP);
+				undistImagePoints.push_back(toCv(undistP));
 			}
 			
-			cv::Mat distCoeffs = (cv::Mat1d(4,1) << proDist, proDist, 0, 0);
+			cv::Mat distCoeffs;
 			cv::Mat m = proExtrinsic;
 			cv::Mat r = (cv::Mat1d(3,3) <<
 					m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2),
@@ -171,7 +181,7 @@ void testApp::keyPressed(int key) {
 			tvec = (cv::Mat1d(3,1) <<
 					m.at<double>(0,3), m.at<double>(1,3), m.at<double>(2,3));
 			
-			cv::solvePnP(objectPoints, imagePoints, proIntrinsic, distCoeffs, rvec, tvec, true);
+			cv::solvePnP(objectPoints, undistImagePoints, proIntrinsic, distCoeffs, rvec, tvec, true);
 			
 			cv::Rodrigues(rvec, r);
 			cv::Mat t = tvec;
