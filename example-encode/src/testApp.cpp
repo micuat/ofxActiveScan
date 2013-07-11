@@ -72,6 +72,7 @@ void testApp::update() {
 #ifdef USE_LIBDC
 	if(camera.grabVideo(curFrame) && needToCapture) {
 #else
+	camera.grabFrame();
 	curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
 	if(camera.isFrameNew() && needToCapture) {
 #endif
