@@ -38,7 +38,7 @@ void testApp::setup() {
 	fs["nsamples"] >> options.nsamples;
 	
 	patterns = ofxActiveScan::encode(options);
-	ofFloatImage blank;
+	ofImage blank;
 	blank.allocate(options.projector_width, options.projector_height, OF_IMAGE_GRAYSCALE);
 	patterns.push_back(blank);
 	

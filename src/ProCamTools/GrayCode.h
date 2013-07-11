@@ -36,15 +36,39 @@ int ConvertGrayToBinary(const unsigned long graycode)
 
 // generate a single bit plane of gray-code pattern
 inline 
-void GenerateGrayCodeImage(const int direction, const int level, Field<2,float> &bmp)
+void GenerateGrayCodeImage(const int direction, const int level, Field<2,unsigned char> &bmp, bool cmpl = false)
 {
-	for (int y = 0; y < bmp.size(1); y++)
-	{
+	if( direction == 0 ) {
 		for (int x = 0; x < bmp.size(0); x++)
 		{
-			int binary = direction ? y : x;
+			int binary = x;
 			int gray = binary ^ (binary >> 1);
-			bmp.cell(x, y) = (gray & (1 << level)) ? 1 : 0;
+			unsigned char coded;
+			if( !cmpl ) {
+				coded = (gray & (1 << level)) ? 255 : 0;
+			} else {
+				coded = (gray & (1 << level)) ? 0 : 255;
+			}
+			for (int y = 0; y < bmp.size(1); y++)
+			{
+				bmp.cell(x, y) = coded;
+			}
+		}
+	} else {
+		for (int y = 0; y < bmp.size(1); y++)
+		{
+			int binary = y;
+			int gray = binary ^ (binary >> 1);
+			unsigned char coded;
+			if( !cmpl ) {
+				coded = (gray & (1 << level)) ? 255 : 0;
+			} else {
+				coded = (gray & (1 << level)) ? 0 : 255;
+			}
+			for (int x = 0; x < bmp.size(0); x++)
+			{
+				bmp.cell(x, y) = coded;
+			}
 		}
 	}
 }
@@ -87,15 +111,21 @@ void CountGraycodeUncertainty(const Field<2,float> &diff, const float threshold,
 // generate moire pattern images.
 // 'period' is the phase period of sinusoidal curve in pixel
 inline 
-void GeneratePhaseCodeImage(const int direction, const int period, const int phase, Field<2,float> &bmp)
+void GeneratePhaseCodeImage(const int direction, const int period, const int phase, Field<2,unsigned char> &bmp)
 {
-	std::vector<float> table(period);
+	std::vector<unsigned char> table(period);
 	for (int i = 0; i < period; i++)
-		table[i] = sin(2.0 * M_PI * (i + phase) / period) / 2.0 + 0.5;
+		table[i] = (sin(2.0 * M_PI * (i + phase) / period) / 2.0 + 0.5) * 255;
 
-	for (int y = 0; y < bmp.size(1); y++)
-		for (int x = 0; x < bmp.size(0); x++)
-			bmp.cell(x, y) = table[(direction ? y : x) % period];
+	if( direction == 0 ) {
+		for (int y = 0; y < bmp.size(1); y++)
+			for (int x = 0; x < bmp.size(0); x++)
+				bmp.cell(x, y) = table[x % period];
+	} else {
+		for (int y = 0; y < bmp.size(1); y++)
+			for (int x = 0; x < bmp.size(0); x++)
+				bmp.cell(x, y) = table[y % period];
+	}
 }
 
 // generate phase image from moire pattern images.

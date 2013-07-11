@@ -109,7 +109,7 @@ inline cv::Point3d toCv(const Vec3d p) {
 	return cv::Point3d(p[0], p[1], p[2]);
 }
 
-ofFloatImage toOfF(Map2f);
+ofImage toOf(Map2u);
 ofImage toOf(Map2f);
 Map2f toAs(ofImage);
 

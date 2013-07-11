@@ -28,13 +28,13 @@ public:
 		return n;
 	}
 
-	void WriteImage(int id, const std::string& filename) const {
+/*	void WriteImage(int id, const std::string& filename) const {
 		slib::Field<2,float> image;
 		GetImage(id,image);
 		slib::image::Write(image,filename);
 	}
-
-	void GetImage(int id, slib::Field<2,float>& image) const {
+*/
+	void GetImage(int id, slib::Field<2,unsigned char>& image) const {
 		image.Initialize(m_options.projector_width,m_options.projector_height);
 		if ( m_options.horizontal) {
 			if (id < m_options.get_num_bits(0)*2) {
@@ -64,17 +64,13 @@ public:
 	}
 
 private:
-	void get_gray(int direction, int id, slib::Field<2,float>& image) const {
+	void get_gray(int direction, int id, slib::Field<2,unsigned char>& image) const {
 		int level = m_options.get_num_bits(direction)  - 1 - id / 2;
-		GenerateGrayCodeImage(direction, level, image);
-		// complementary image
-		if (id % 2)
-			for (int y = 0; y < image.size(1); y++)
-				for (int x = 0; x < image.size(0); x++)
-					image.cell(x, y) = 1 - image.cell(x, y);
+		// id%2 == 1 if complementary
+		GenerateGrayCodeImage(direction, level, image, id%2);
 	}
 
-	void get_phase(int direction, int id, slib::Field<2,float>& image) const {
+	void get_phase(int direction, int id, slib::Field<2,unsigned char>& image) const {
 			GeneratePhaseCodeImage(direction, m_options.num_fringes, id, image);
 	}
 

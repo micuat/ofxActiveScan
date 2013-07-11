@@ -52,7 +52,7 @@
 
 namespace ofxActiveScan {
 
-vector<ofFloatImage> encode(Options);
+vector<ofImage> encode(Options);
 
 void decode(Options, Map2f&, Map2f&, Map2f&, Map2f&, string);
 
