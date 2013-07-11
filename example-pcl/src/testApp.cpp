@@ -44,7 +44,7 @@ void testApp::setup() {
 	orgMesh.load(ofToDataPath(rootDir + "/out.ply"));
 	cloud = ofxPCL::toPCL<ofxPCL::PointCloud>(orgMesh);
 	
-	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 30, 30);
+	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 20, 30);
 	
 	ofColor hues[] = {ofColor::red, ofColor::green, ofColor::blue, ofColor::cyan, ofColor::magenta, ofColor::yellow};
 	int colorIndex = 0;
@@ -63,7 +63,9 @@ void testApp::setup() {
 	mit = meshes.begin();
 	
 	proCalibration.setup(proIntrinsic, proSize);
-	camCalibration.setup(camIntrinsic, camSize);	
+	camCalibration.setup(camIntrinsic, camSize);
+	
+	count = 0;
 }
 
 //--------------------------------------------------------------
@@ -98,6 +100,14 @@ void testApp::draw()
 	}
 	
 	mit->drawVertices();
+	if( count > 2 ) {
+		advance(mit, 1);
+		if( mit == meshes.end() ) {
+			mit = meshes.begin();
+		}
+		count = 0;
+	}
+	count++;
 	
 	if(cameraMode == EASYCAM_MODE) {
 		cam.end();
@@ -116,13 +126,6 @@ void testApp::keyPressed(int key)
 	if( key == 'f' ) {
 		ofToggleFullscreen();
 	}
-	
-	if(key == ' ') {
-		advance(mit, 1);
-		if( mit == meshes.end() ) {
-			mit = meshes.begin();
-		}
-	}	
 }
 
 //--------------------------------------------------------------

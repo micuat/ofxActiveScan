@@ -58,4 +58,6 @@ public:
 	int cw, ch;
 	
 	string rootDir;	
+	
+	int count;
 };
