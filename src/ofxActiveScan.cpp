@@ -41,8 +41,9 @@ void decode(Options op, Map2f& mapH, Map2f& mapV,
 {
 	CDecode decode(op);
 	
-	ofDirectory dir(ofToDataPath(path, true));
+	ofDirectory dir(ofToDataPath(path));
 	dir.listDir();
+	dir.sort();
 	
 	std::vector<std::string> files;
 	for(int i = 0; i < dir.numFiles(); i++) {
