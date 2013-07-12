@@ -343,6 +343,82 @@ public:
 	}
 };
 
+//----------------------------------------------------------------------
+// vector
+//----------------------------------------------------------------------
+
+template <int nDimension, typename T>
+class CVector : public CMatrix<nDimension,1,T>
+{
+public:
+
+	//---------- initializers
+	CVector(void) : CMatrix<nDimension,1,T>() {}
+
+	explicit CVector(T const * const element) 
+		: CMatrix<nDimension,1,T>(element) {}
+
+	// copy
+	CVector(const CVector& vec) 
+		: CMatrix<nDimension,1,T>(vec) {}
+
+	const CVector& operator =(const CVector& vec)
+	{
+		CMatrix<nDimension,1,T>::operator=(vec);
+		return *this;
+	}
+
+	// coersion
+	template <typename T2>
+	CVector(const CMatrix<nDimension,1,T2>& vec)
+		: CMatrix<nDimension,1,T>(vec) {}
+
+	template <typename T2>
+	const CVector& operator =(const CMatrix<nDimension,1,T2>& vec)
+	{
+		CMatrix<nDimension,1,T>::operator=(vec);
+		return *this;
+	}
+
+	//---------- operators
+	T& operator [](const int n)
+	{
+		_ASSERTE(n<nDimension);
+		return CMatrix<nDimension,1,T>::m[n];
+	}
+
+	T const& operator [](const int n) const
+	{
+		_ASSERTE(n<nDimension);
+		return CMatrix<nDimension,1,T>::m[n];
+	}
+};
+
+// construction
+template <typename T>
+inline
+CVector<2, T> make_vector(T const& e1, T const& e2)
+{
+	T element[] = { e1, e2 };
+	return CVector<2, T>(element);
+}
+
+template <typename T>
+inline
+CVector<3, T> make_vector(T const& e1, T const& e2, T const& e3)
+{
+	T element[] = { e1, e2, e3 };
+	return CVector<3, T>(element);
+}
+
+template <typename T>
+inline
+CVector<4, T> make_vector(T const& e1, T const& e2, T const& e3, T const& e4)
+{
+	T element[] = { e1, e2, e3, e4 };
+	return CVector<4, T>(element);
+}
+
 // construction
 template <typename T>
 inline
@@ -520,82 +596,6 @@ CMatrix<4,4,T> inverse_of(const CMatrix<4,4,T>& a)
 			TRACE(" % g", double((mat)(i__,j__))); \
 		TRACE(" ]\n"); \
 	} \
-}
-
-//----------------------------------------------------------------------
-// vector
-//----------------------------------------------------------------------
-
-template <int nDimension, typename T>
-class CVector : public CMatrix<nDimension,1,T>
-{
-public:
-
-	//---------- initializers
-	CVector(void) : CMatrix<nDimension,1,T>() {}
-
-	explicit CVector(T const * const element) 
-		: CMatrix<nDimension,1,T>(element) {}
-
-	// copy
-	CVector(const CVector& vec) 
-		: CMatrix<nDimension,1,T>(vec) {}
-
-	const CVector& operator =(const CVector& vec)
-	{
-		CMatrix<nDimension,1,T>::operator=(vec);
-		return *this;
-	}
-
-	// coersion
-	template <typename T2>
-	CVector(const CMatrix<nDimension,1,T2>& vec)
-		: CMatrix<nDimension,1,T>(vec) {}
-
-	template <typename T2>
-	const CVector& operator =(const CMatrix<nDimension,1,T2>& vec)
-	{
-		CMatrix<nDimension,1,T>::operator=(vec);
-		return *this;
-	}
-
-	//---------- operators
-	T& operator [](const int n)
-	{
-		_ASSERTE(n<nDimension);
-		return CMatrix<nDimension,1,T>::m[n];
-	}
-
-	T const& operator [](const int n) const
-	{
-		_ASSERTE(n<nDimension);
-		return CMatrix<nDimension,1,T>::m[n];
-	}
-};
-
-// construction
-template <typename T>
-inline
-CVector<2, T> make_vector(T const& e1, T const& e2)
-{
-	T element[] = { e1, e2 };
-	return CVector<2, T>(element);
-}
-
-template <typename T>
-inline
-CVector<3, T> make_vector(T const& e1, T const& e2, T const& e3)
-{
-	T element[] = { e1, e2, e3 };
-	return CVector<3, T>(element);
-}
-
-template <typename T>
-inline
-CVector<4, T> make_vector(T const& e1, T const& e2, T const& e3, T const& e4)
-{
-	T element[] = { e1, e2, e3, e4 };
-	return CVector<4, T>(element);
 }
 
 // vector utils
