@@ -43,10 +43,19 @@ void testApp::setup() {
 	Matd camIntrinsic, proIntrinsic;
 	double camDistortion, proDistortion;
 	Matd proExtrinsic;
-
-	calibrate(options, horizontal, vertical, toAs(mask),
-			  camIntrinsic, camDistortion,
-			  proIntrinsic, proDistortion, proExtrinsic);
+	
+	bool success = false;
+	while( !success ) {
+		try {
+			calibrate(options, horizontal, vertical, toAs(mask),
+					  camIntrinsic, camDistortion,
+					  proIntrinsic, proDistortion, proExtrinsic);
+			success = true;
+		} catch ( std::runtime_error &e ) {
+			ofLogVerbose() << "Caught exception : " << e.what();
+			ofLogVerbose() << "Retrying calibration";
+		}
+	}
 	
 	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
 	cfs << "camIntrinsic"  << toCv(camIntrinsic);
