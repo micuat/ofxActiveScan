@@ -38,6 +38,40 @@ void levmar_2dnorm(double *p, double *x, int m, int n, void *data) {
 	}
 }
 
+void levmar_3dnorm(double *p, double *x, int m, int n, void *data) {
+	cv::Point3d *d;
+	
+	d = static_cast<cv::Point3d *>(data);
+	
+	/*
+	cv::Mat Rx = (cv::Mat1d(3, 3) << 1, 0, 0,
+		      0, cos(p[0]), sin(p[0]),
+		      0, -sin(p[0]), cos(p[0]));
+	cv::Mat Ry = (cv::Mat1d(3, 3) << cos(p[1]), 0, -sin(p[1]),
+		      0, 1, 0,
+		      sin(p[1]), 0, cos(p[1]));
+	cv::Mat Rz = (cv::Mat1d(3, 3) << cos(p[2]), sin(p[2]), 0,
+		      -sin(p[2]), cos(p[2]), 0,
+		      0, 0, 1);
+	*/
+	
+	cv::Mat rvec = (cv::Mat1d(3, 1) << p[0], p[1], p[2]);
+	cv::Mat r;
+	cv::Rodrigues(rvec, r);
+	
+	cv::Mat Rt = (cv::Mat1d(4, 4) << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), p[3],
+		      r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), p[4],
+		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), p[5],
+		      0, 0, 0, 1);
+	
+	for( int i = 0 ; i < n ; i++ ) {
+		cv::Mat orig = (cv::Mat1d(4, 1) << d[i*2].x, d[i*2].y, d[i*2].z, 1);
+		cv::Mat transformed = Rt * orig;
+		cv::Mat target = (cv::Mat1d(4, 1) << d[i*2 + 1].x, d[i*2 + 1].y, d[i*2 + 1].z, 1);
+		x[i] = cv::norm(transformed, target);
+	}
+}
+
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
@@ -60,18 +94,30 @@ void testApp::setup() {
 	*/
 	
 	int ret;
-	double p[3], x[4];
-	int m, n;
+	vector<double> p, x;
 	double opts[LM_OPTS_SZ], info[LM_INFO_SZ];
-	vector<cv::Point2d> data;
-	data.push_back(cv::Point2d(0.0, 0.0));
+	vector<cv::Point3d> data;
+/*	data.push_back(cv::Point2d(0.0, 0.0));
 	data.push_back(cv::Point2d(2.0, -2.0));
 	data.push_back(cv::Point2d(1.0, 0.0));
 	data.push_back(cv::Point2d(2.0, -1.0));
 	data.push_back(cv::Point2d(0.0, 1.0));
 	data.push_back(cv::Point2d(1.0, -2.0));
 	data.push_back(cv::Point2d(-1.0, -1.0));
-	data.push_back(cv::Point2d(3.0, -3.0));
+	data.push_back(cv::Point2d(3.0, -3.0)); */
+	
+	data.push_back(cv::Point3d(0, 0, 0));
+	data.push_back(cv::Point3d(1, 0, 1));
+	data.push_back(cv::Point3d(1, 0, 0));
+	data.push_back(cv::Point3d(1, 1, 1));
+	data.push_back(cv::Point3d(1, 1, 0));
+	data.push_back(cv::Point3d(1, 1, 0));
+	data.push_back(cv::Point3d(0, 1, 0));
+	data.push_back(cv::Point3d(1, 0, 0));
+	data.push_back(cv::Point3d(0, 0, 1));
+	data.push_back(cv::Point3d(0, 0, 1));
+	data.push_back(cv::Point3d(-1, 0, 1));
+	data.push_back(cv::Point3d(0, -1, 1));
 	
 	opts[0] = LM_INIT_MU;
 	opts[1] = 1E-15;
@@ -79,27 +125,33 @@ void testApp::setup() {
 	opts[3] = 1E-20;
 	opts[4] = LM_DIFF_DELTA;
 	
-	m = 3;
-	n = 4;
-	p[0] = 0.0;
-	p[1] = 0.0;
-	p[2] = 0.0;
-	x[0] = 0.0;
-	x[1] = 0.0;
-	x[2] = 0.0;
-	x[3] = 0.0;
-	ret = dlevmar_dif(levmar_2dnorm, p, x, m, n, 10000, opts, info, NULL, NULL, &data[0]);
+	p.resize(6);
+	x.resize(6);
+	
+	for( int i = 0 ; i < p.size() ; i++ ) {
+		p[i] = 0.0;
+	}
+	for( int i = 0 ; i < x.size() ; i++ ) {
+		// minimize norm
+		x[i] = 0.0;
+	}
+	
+	ret = dlevmar_dif(levmar_3dnorm, &p[0], &x[0], p.size(), x.size(), 1000, opts, info, NULL, NULL, &data[0]);
 	
 	ofLog(OF_LOG_VERBOSE, "Levenberg-Marquardt returned %d in %g iter, reason %g", ret, info[5], info[6]);
 	ofLog(OF_LOG_VERBOSE, "Solution:");
 	
-	for( int i = 0 ; i < m ; ++i )
+	for( int i = 0 ; i < p.size() ; ++i )
 		ofLog(OF_LOG_VERBOSE, "%.7g", p[i]);
 	
 	ofLog(OF_LOG_VERBOSE, "Minimization info:");
 	
 	for( int i = 0 ; i < LM_INFO_SZ ; ++i )
 		ofLog(OF_LOG_VERBOSE, "%g", info[i]);
+	
+	levmar_3dnorm(&p[0], &x[0], p.size(), x.size(), &data[0]);
+	for( int i = 0 ; i < x.size() ; ++i )	
+		ofLogVerbose() << x[i];
 }
 
 void testApp::update() {
