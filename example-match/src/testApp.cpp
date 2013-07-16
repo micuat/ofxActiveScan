@@ -22,18 +22,19 @@
 using namespace ofxActiveScan;
 
 void levmar_2dnorm(double *p, double *x, int m, int n, void *data) {
-	int i;
-	double x0, x1, dif0, dif1;
-	double *d;
+	cv::Point2d *d;
 	
-	d = (double *)data;
+	d = static_cast<cv::Point2d *>(data);
 	
-	for( i = 0 ; i < n ; i++ ) {
-		x0 = d[i*4] * cos(p[0]) - d[i*4+1] * sin(p[0]) + p[1];
-		x1 = d[i*4] * sin(p[0]) + d[i*4+1] * cos(p[0]) + p[2];
-		dif0 = x0 - d[i*4+2];
-		dif1 = x1 - d[i*4+3];
-		x[i] = dif0 * dif0 + dif1 * dif1;
+	cv::Mat Rt = (cv::Mat1d(3, 3) << cos(p[0]), -sin(p[0]), p[1],
+		      sin(p[0]), cos(p[0]), p[2],
+		      0, 0, 1);
+	
+	for( int i = 0 ; i < n ; i++ ) {
+		cv::Mat orig = (cv::Mat1d(3, 1) << d[i*2].x, d[i*2].y, 1);
+		cv::Mat transformed = Rt * orig;
+		cv::Mat target = (cv::Mat1d(3, 1) << d[i*2 + 1].x, d[i*2 + 1].y, 1);
+		x[i] = cv::norm(transformed, target);
 	}
 }
 
@@ -62,11 +63,15 @@ void testApp::setup() {
 	double p[3], x[4];
 	int m, n;
 	double opts[LM_OPTS_SZ], info[LM_INFO_SZ];
-	double data[] = {0.0, 0.0, 2.0, -2.0,
-	1.0, 0.0, 2.0, -1.0,
-	0.0, 1.0, 1.0, -2.0,
-	-1.0, -1.0, 3.0, -3.0
-	};
+	vector<cv::Point2d> data;
+	data.push_back(cv::Point2d(0.0, 0.0));
+	data.push_back(cv::Point2d(2.0, -2.0));
+	data.push_back(cv::Point2d(1.0, 0.0));
+	data.push_back(cv::Point2d(2.0, -1.0));
+	data.push_back(cv::Point2d(0.0, 1.0));
+	data.push_back(cv::Point2d(1.0, -2.0));
+	data.push_back(cv::Point2d(-1.0, -1.0));
+	data.push_back(cv::Point2d(3.0, -3.0));
 	
 	opts[0] = LM_INIT_MU;
 	opts[1] = 1E-15;
@@ -83,19 +88,18 @@ void testApp::setup() {
 	x[1] = 0.0;
 	x[2] = 0.0;
 	x[3] = 0.0;
-	ret = dlevmar_dif(levmar_2dnorm, p, x, m, n, 10000, opts, info, NULL, NULL, data);
+	ret = dlevmar_dif(levmar_2dnorm, p, x, m, n, 10000, opts, info, NULL, NULL, &data[0]);
 	
-	printf("Levenberg-Marquardt returned %d in %g iter, reason %g\nSolution: ", ret, info[5], info[6]);
+	ofLog(OF_LOG_VERBOSE, "Levenberg-Marquardt returned %d in %g iter, reason %g", ret, info[5], info[6]);
+	ofLog(OF_LOG_VERBOSE, "Solution:");
 	
 	for( int i = 0 ; i < m ; ++i )
-		cout << p[i] << " ";
+		ofLog(OF_LOG_VERBOSE, "%.7g", p[i]);
 	
-	cout << "\n\nMinimization info:\n";
+	ofLog(OF_LOG_VERBOSE, "Minimization info:");
 	
 	for( int i = 0 ; i < LM_INFO_SZ ; ++i )
-		cout << info[i] << " ";
-	
-	cout << endl;
+		ofLog(OF_LOG_VERBOSE, "%g", info[i]);
 }
 
 void testApp::update() {
