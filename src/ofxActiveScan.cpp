@@ -162,7 +162,7 @@ ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 	return mesh;
 }
 
-cv::Mat& findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target)
+cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target)
 {
 	int ret;
 	vector<double> p, x;

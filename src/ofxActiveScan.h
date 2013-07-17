@@ -72,7 +72,7 @@ ofMesh triangulate(Options, Map2f, Map2f, Map2f,
 				   slib::CMatrix<3,3,double>, double,
 				   slib::CMatrix<3,4,double>, ofImage);
 
-cv::Mat& findTransform(vector<cv::Point3d>&, vector<cv::Point3d>&);
+cv::Mat findTransform(vector<cv::Point3d>&, vector<cv::Point3d>&);
 
 // callback function for levmar
 //void levmar_2dNorm(double *, double *, int, int, void *);

@@ -42,18 +42,7 @@ void testApp::setup() {
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
 	*/
 	
-	int ret;
-	vector<double> p, x;
-	double opts[LM_OPTS_SZ], info[LM_INFO_SZ];
 	vector<cv::Point3d> input, target;
-/*	data.push_back(cv::Point2d(0.0, 0.0));
-	data.push_back(cv::Point2d(2.0, -2.0));
-	data.push_back(cv::Point2d(1.0, 0.0));
-	data.push_back(cv::Point2d(2.0, -1.0));
-	data.push_back(cv::Point2d(0.0, 1.0));
-	data.push_back(cv::Point2d(1.0, -2.0));
-	data.push_back(cv::Point2d(-1.0, -1.0));
-	data.push_back(cv::Point2d(3.0, -3.0)); */
 	
 	input.push_back(cv::Point3d(0, 0, 0));
 	target.push_back(cv::Point3d(1, 0, 1));
