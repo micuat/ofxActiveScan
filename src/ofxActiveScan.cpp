@@ -162,7 +162,7 @@ ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 	return mesh;
 }
 
-cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target)
+cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target, int nIteration)
 {
 	// minimum 7 points required for rotation(3 params), translate(3 params), scale(1 param)
 	assert(input.size() == target.size() && input.size() >= 7);
@@ -194,7 +194,7 @@ cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target)
 		x[i] = 0.0;
 	}
 	
-	ret = dlevmar_dif(levmar_3dNorm, &p[0], &x[0], p.size(), x.size(), 1000, opts, info, NULL, NULL, &data[0]);
+	ret = dlevmar_dif(levmar_3dNorm, &p[0], &x[0], p.size(), x.size(), nIteration, opts, info, NULL, NULL, &data[0]);
 	
 	ofLog(OF_LOG_VERBOSE, "Levenberg-Marquardt returned %d in %g iter, reason %g", ret, info[5], info[6]);
 	ofLog(OF_LOG_VERBOSE, "Solution:");
@@ -215,6 +215,7 @@ cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target)
 	cv::Mat r;
 	cv::Rodrigues(rvec, r);
 	
+	r = r * p[6];
 	cv::Mat Rt = (cv::Mat1d(4, 4) << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), p[3],
 		      r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), p[4],
 		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), p[5],
@@ -249,6 +250,7 @@ void levmar_3dNorm(double *p, double *x, int m, int n, void *data) {
 	cv::Mat r;
 	cv::Rodrigues(rvec, r);
 	
+	r = r * p[6];
 	cv::Mat Rt = (cv::Mat1d(4, 4) << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), p[3],
 		      r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), p[4],
 		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), p[5],

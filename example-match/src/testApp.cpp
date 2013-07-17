@@ -83,7 +83,7 @@ void testApp::draw() {
 	ofNoFill();
 	ofSetColor(ofColor::yellow);
 	ofSetLineWidth(2);
-	ofCircle(ofVec2f(nearestVertex), 4);
+	ofCircle(nearestVertex, 4);
 	ofSetLineWidth(1);
 }
 
@@ -94,14 +94,14 @@ void testApp::keyPressed(int key) {
 	if( key == ' ' ) {
 		cout << nearestVertex << endl;
 		if( curMesh == mesh.begin() ) {
-			inputPoints.push_back(ofxCv::toCv(nearestVertex));
+			inputPoints.push_back(ofxCv::toCv(curMesh->getVertex(nearestIndex)));
 		}
 		if( curMesh == mesh.begin() + 1) {
-			targetPoints.push_back(ofxCv::toCv(nearestVertex));
+			targetPoints.push_back(ofxCv::toCv(curMesh->getVertex(nearestIndex)));
 		}
 	}
 	if( key == 'c' ) {
-		cv::Mat Rt = findTransform(inputPoints, targetPoints);
+		cv::Mat Rt = findTransform(inputPoints, targetPoints, 20000);
 		
 		cout << Rt << endl;
 	}
