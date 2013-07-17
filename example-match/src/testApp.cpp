@@ -83,13 +83,22 @@ void testApp::draw() {
 	ofNoFill();
 	ofSetColor(ofColor::yellow);
 	ofSetLineWidth(2);
-	ofCircle(nearestVertex, 4);
+	ofCircle(ofVec2f(nearestVertex), 4);
 	ofSetLineWidth(1);
 }
 
 void testApp::keyPressed(int key) {
 	if( key == '0' || key == '1' ) {
 		curMesh = mesh.begin() + (key - '0');
+	}
+	if( key == ' ' ) {
+		cout << nearestVertex << endl;
+		if( curMesh == mesh.begin() ) {
+			inputPoints.push_back(ofxCv::toCv(nearestVertex));
+		}
+		if( curMesh == mesh.begin() + 1) {
+			targetPoints.push_back(ofxCv::toCv(nearestVertex));
+		}
 	}
 	if( key == 'c' ) {
 		cv::Mat Rt = findTransform(inputPoints, targetPoints);

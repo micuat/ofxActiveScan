@@ -44,6 +44,6 @@ private:
 	
 	string rootDir;
 	
-	ofVec2f nearestVertex;
+	ofVec3f nearestVertex;
 	int nearestIndex;
 };
