@@ -35,6 +35,10 @@ public:
 	
 private:
 	ofxActiveScan::Options options;
+	vector<ofVboMesh> mesh;
+	vector<ofVboMesh>::iterator curMesh;
+	vector<cv::Point3d> inputPoints, targetPoints;
+	ofEasyCam cam;
 	
 	int cw, ch;
 	

@@ -42,24 +42,11 @@ void testApp::setup() {
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
 	*/
 	
-	vector<cv::Point3d> input, target;
+	mesh.resize(2);
+	mesh[0].load(ofToDataPath("out.ply"));
+	mesh[1].load(ofToDataPath("out2.ply"));
 	
-	input.push_back(cv::Point3d(0, 0, 0));
-	target.push_back(cv::Point3d(1, 0, 1));
-	input.push_back(cv::Point3d(1, 0, 0));
-	target.push_back(cv::Point3d(1, 1, 1));
-	input.push_back(cv::Point3d(1, 1, 0));
-	target.push_back(cv::Point3d(1, 1, 0));
-	input.push_back(cv::Point3d(0, 1, 0));
-	target.push_back(cv::Point3d(1, 0, 0));
-	input.push_back(cv::Point3d(0, 0, 1));
-	target.push_back(cv::Point3d(0, 0, 1));
-	input.push_back(cv::Point3d(-1, 0, 1));
-	target.push_back(cv::Point3d(0, -1, 1));
-	
-	cv::Mat Rt = findTransform(input, target);
-	
-	cout << Rt << endl;
+	curMesh = mesh.begin();
 }
 
 void testApp::update() {
@@ -67,7 +54,24 @@ void testApp::update() {
 
 void testApp::draw() {
 	ofBackground(0);
+	
+	cam.begin();
+	ofScale(1, -1, -1);
+	ofScale(1000, 1000, 1000);
+	ofTranslate(0, 0, -2);
+	
+	curMesh->drawVertices();
+	
+	cam.end();
 }
 
 void testApp::keyPressed(int key) {
+	if( key == '0' || key == '1' ) {
+		curMesh = mesh.begin() + (key - '0');
+	}
+	if( key == 'c' ) {
+		cv::Mat Rt = findTransform(inputPoints, targetPoints);
+		
+		cout << Rt << endl;
+	}
 }
