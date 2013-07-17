@@ -164,6 +164,9 @@ ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 
 cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target)
 {
+	// minimum 7 points required for rotation(3 params), translate(3 params), scale(1 param)
+	assert(input.size() == target.size() && input.size() >= 7);
+	
 	int ret;
 	vector<double> p, x;
 	double opts[LM_OPTS_SZ], info[LM_INFO_SZ];
