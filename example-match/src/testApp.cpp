@@ -47,9 +47,25 @@ void testApp::setup() {
 	mesh[1].load(ofToDataPath("out2.ply"));
 	
 	curMesh = mesh.begin();
+	
+	cam.cacheMatrices(true);
 }
 
 void testApp::update() {
+	int n = curMesh->getNumVertices();
+	float nearestDistance = 0;
+	ofVec2f mouse(mouseX, mouseY);
+	for(int i = 0; i < n; i++) {
+		ofVec3f p = curMesh->getVertex(i);
+		ofVec3f cur = cam.worldToScreen(ofVec3f(p.x*1000.0, p.y*-1000.0, p.z*-1000.0 + 2000.0));
+		float distance = cur.distance(mouse);
+		if(i == 0 || distance < nearestDistance) {
+			nearestDistance = distance;
+			nearestVertex = cur;
+			nearestIndex = i;
+		}
+	}
+
 }
 
 void testApp::draw() {
@@ -63,6 +79,12 @@ void testApp::draw() {
 	curMesh->drawVertices();
 	
 	cam.end();
+	
+	ofNoFill();
+	ofSetColor(ofColor::yellow);
+	ofSetLineWidth(2);
+	ofCircle(nearestVertex, 4);
+	ofSetLineWidth(1);
 }
 
 void testApp::keyPressed(int key) {

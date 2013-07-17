@@ -43,4 +43,7 @@ private:
 	int cw, ch;
 	
 	string rootDir;
+	
+	ofVec2f nearestVertex;
+	int nearestIndex;
 };
