@@ -35,6 +35,7 @@
 
 #include "ofxActiveScanTypes.h"
 #include "ofxActiveScanUtils.h"
+#include "ofxActiveScanTransform.h"
 
 #include "ProCamTools/stdafx.h"
 #include "ProCamTools/common/Field.h"
@@ -49,8 +50,6 @@
 #include "ProCamTools/triangulate.h"
 #include "ProCamTools/FundamentalMatrix.h"
 #include "ProCamTools/Options.h"
-
-#include "levmar.h"
 
 namespace ofxActiveScan {
 
@@ -71,13 +70,5 @@ ofMesh triangulate(Options, Map2f, Map2f, Map2f,
 				   slib::CMatrix<3,3,double>, double,
 				   slib::CMatrix<3,3,double>, double,
 				   slib::CMatrix<3,4,double>, ofImage);
-
-cv::Mat findTransform(vector<cv::Point3d>&, vector<cv::Point3d>&, int nIteration = 1000);
-
-// callback function for levmar
-//void levmar_2dNorm(double *, double *, int, int, void *);
-void levmar_3dNorm(double *, double *, int, int, void *);
-
-ofMesh transformMesh(ofMesh, cv::Mat);
 
 }
