@@ -21,6 +21,7 @@
 
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofHideCursor();
 	
 	rootDir = "../../../SharedData/";
 	
@@ -43,7 +44,7 @@ void testApp::setup() {
 	patterns.push_back(blank);
 	
 #ifdef USE_LIBDC
-	camera.setup();
+	camera.setup(devID);
 	camera.set1394b(true);
 	camera.setSize(cw, ch);
 	camera.setBrightness(0);
