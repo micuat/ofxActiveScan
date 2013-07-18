@@ -52,7 +52,9 @@ void testApp::setup() {
 	vertical = Map2f(ofToDataPath(rootDir + "/v.map", true));
 	
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
-	ofLoadImage(camPerspective, ofToDataPath(rootDir + "/camPerspective.jpg"));
+	// use this when camPerspective is a color image
+	//ofLoadImage(camPerspective, ofToDataPath(rootDir + "/camPerspective.jpg"));
+	ofLoadImage(camPerspective, ofToDataPath(rootDir + "/mask.bmp"));
 	
 	ofLogNotice() << "Start triangulation with initial calibration parameters";
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
@@ -97,6 +99,7 @@ void testApp::draw() {
 		cam.begin();
 		ofScale(1, -1, -1);
 		ofScale(1000, 1000, 1000);
+		ofTranslate(0, 0, -2);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
 		

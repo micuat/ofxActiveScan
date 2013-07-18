@@ -78,6 +78,7 @@ void testApp::draw() {
 		cam.begin();
 		ofScale(1, -1, -1);
 		ofScale(1000, 1000, 1000);
+		ofTranslate(0, 0, -2);
 	} else if(cameraMode == PRO_MODE) {
 		ofSetupScreenPerspective(options.projector_width, options.projector_height);
 		proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
