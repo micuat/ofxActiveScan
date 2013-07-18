@@ -77,4 +77,7 @@ cv::Mat findTransform(vector<cv::Point3d>&, vector<cv::Point3d>&, int nIteration
 // callback function for levmar
 //void levmar_2dNorm(double *, double *, int, int, void *);
 void levmar_3dNorm(double *, double *, int, int, void *);
+
+ofMesh transformMesh(ofMesh, cv::Mat);
+
 }

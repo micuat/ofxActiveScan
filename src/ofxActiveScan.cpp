@@ -264,4 +264,19 @@ void levmar_3dNorm(double *p, double *x, int m, int n, void *data) {
 	}
 }
 
+ofMesh transformMesh(ofMesh mesh, cv::Mat Rt) {
+	ofMesh m;
+	for( int i = 0 ; i < mesh.getNumVertices() ; i++ ) {
+		ofVec3f orig = mesh.getVertex(i);
+		cv::Mat o = (cv::Mat1d(4, 1) << orig.x, orig.y, orig.z, 1);
+		cv::Mat t = Rt * o;
+		ofVec3f transformed(t.at<double>(0,0), t.at<double>(1,0), t.at<double>(2,0));
+		
+		m.addVertex(transformed);
+		//m.addColor(mesh.getColor(i));
+	}
+	
+	return m;
+}
+
 };

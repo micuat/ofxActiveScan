@@ -47,6 +47,7 @@ void testApp::setup() {
 	mesh[1].load(ofToDataPath("out2.ply"));
 	
 	curMesh = mesh.begin();
+	transformed = false;
 	
 	cam.cacheMatrices(true);
 }
@@ -76,7 +77,12 @@ void testApp::draw() {
 	ofScale(1000, 1000, 1000);
 	ofTranslate(0, 0, -2);
 	
-	curMesh->drawVertices();
+	if( transformed ) {
+		mesh[0].drawVertices();
+		mesh[1].drawVertices();
+	} else {
+		curMesh->drawVertices();
+	}
 	
 	cam.end();
 	
@@ -104,5 +110,9 @@ void testApp::keyPressed(int key) {
 		cv::Mat Rt = findTransform(inputPoints, targetPoints, 20000);
 		
 		cout << Rt << endl;
+		
+		mesh[0] = transformMesh(mesh[0], Rt);
+		
+		transformed = true;
 	}
 }

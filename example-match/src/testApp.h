@@ -40,6 +40,8 @@ private:
 	vector<cv::Point3d> inputPoints, targetPoints;
 	ofEasyCam cam;
 	
+	bool transformed;
+	
 	int cw, ch;
 	
 	string rootDir;
