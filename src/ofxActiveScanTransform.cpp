@@ -42,7 +42,7 @@ cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target, i
 	opts[3] = 1E-20;
 	opts[4] = LM_DIFF_DELTA;
 	
-	p.resize(input.size());
+	p.resize(7);
 	x.resize(target.size());
 	
 	for( int i = 0 ; i < p.size() ; i++ ) {
@@ -132,7 +132,7 @@ ofMesh transformMesh(ofMesh mesh, cv::Mat Rt) {
 		ofVec3f transformed(t.at<double>(0,0), t.at<double>(1,0), t.at<double>(2,0));
 		
 		m.addVertex(transformed);
-		//m.addColor(mesh.getColor(i));
+		m.addColor(mesh.getColor(i));
 	}
 	
 	return m;
