@@ -280,8 +280,12 @@ void EstimateFundamentalMatrixGeometric(const std::vector<CVector<2,double> >& p
 	int itmax = 1000;
 
 	const fundamental_geometric_data_t adata = { p1, p2, };
+	double x[n];
+	for( int i = 0 ; i < n ; i++ ) {
+		x[i] = 0.0;
+	}
 	dlevmar_dif(fundamental_sampson_error, 
-		p, 0, m, n,
+		p, x, m, n,
 		itmax, opts, info, 
 		0, 0, (void *)&adata);
 	print_levmar_info(info);
@@ -616,8 +620,12 @@ void EstimateRadialFundamentalMatrixGeometric(
 	int itmax = 1000;
 
 	const radial_geometric_data_t adata = { p1, p2, cod1, cod2 };
+	double x[n];
+	for( int i = 0 ; i < n ; i++ ) {
+		x[i] = 0.0;
+	}
 	dlevmar_dif(radial_sampson_error, 
-		p, 0, m, n,
+		p, x, m, n,
 		itmax, opts, info, 
 		0, 0, (void *)&adata);
 	print_levmar_info(info);
@@ -858,9 +866,12 @@ void EstimateRadialFundamentalMatrixApriori(
 	int itmax = 1000;
 
 	const radial_geometric_data_t adata = { p1, p2, cod1, cod2 };
-
+	double x[n];
+	for( int i = 0 ; i < n ; i++ ) {
+		x[i] = 0.0;
+	}
 	dlevmar_dif(apriori_sampson_error, 
-		parameter, 0, m, n,
+		parameter, x, m, n,
 		itmax, opts, info, 
 		0, 0, (void *)&adata);
 	print_levmar_info(info);
