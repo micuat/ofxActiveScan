@@ -83,6 +83,62 @@ cv::Mat findTransform(vector<cv::Point3d>& input, vector<cv::Point3d>& target, i
 	return Rt;
 }
 
+cv::Mat findTransform(ofMesh& input, ofMesh& target, int nIteration)
+{
+	// minimum 7 points required for rotation(3 params), translate(3 params), scale(1 param)
+	assert(input.getNumVertices() >= 7);
+	
+	int ret;
+	vector<double> p, x;
+	double opts[LM_OPTS_SZ], info[LM_INFO_SZ];
+	vector<ofMesh> data;
+	
+	data.push_back(input);
+	data.push_back(target);
+	
+	opts[0] = LM_INIT_MU;
+	opts[1] = 1E-15;
+	opts[2] = 1E-15;
+	opts[3] = 1E-20;
+	opts[4] = LM_DIFF_DELTA;
+	
+	p.resize(7);
+	x.resize(target.getNumIndices());
+	
+	for( int i = 0 ; i < p.size() ; i++ ) {
+		p[i] = 0.0;
+	}
+	for( int i = 0 ; i < x.size() ; i++ ) {
+		// minimize norm
+		x[i] = 0.0;
+	}
+	
+	ret = dlevmar_dif(levmar_3dNormMesh, &p[0], &x[0], p.size(), x.size(), nIteration, opts, info, NULL, NULL, &data[0]);
+	
+	ofLog(OF_LOG_VERBOSE, "Levenberg-Marquardt returned %d in %g iter, reason %g", ret, info[5], info[6]);
+	ofLog(OF_LOG_VERBOSE, "Solution:");
+	
+	for( int i = 0 ; i < p.size() ; ++i )
+		ofLog(OF_LOG_VERBOSE, "%.7g", p[i]);
+	
+	ofLog(OF_LOG_VERBOSE, "Minimization info:");
+	
+	for( int i = 0 ; i < LM_INFO_SZ ; ++i )
+		ofLog(OF_LOG_VERBOSE, "%g", info[i]);
+	
+	cv::Mat rvec = (cv::Mat1d(3, 1) << p[0], p[1], p[2]);
+	cv::Mat r;
+	cv::Rodrigues(rvec, r);
+	
+	r = r * p[6];
+	cv::Mat Rt = (cv::Mat1d(4, 4) << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), p[3],
+		      r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), p[4],
+		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), p[5],
+		      0, 0, 0, 1);
+	
+	return Rt;
+}
+
 /*
 void levmar_2dNorm(double *p, double *x, int m, int n, void *data) {
 	cv::Point2d *d;
@@ -120,6 +176,45 @@ void levmar_3dNorm(double *p, double *x, int m, int n, void *data) {
 		cv::Mat transformed = Rt * orig;
 		cv::Mat target = (cv::Mat1d(4, 1) << d[i*2 + 1].x, d[i*2 + 1].y, d[i*2 + 1].z, 1);
 		x[i] = cv::norm(transformed, target);
+	}
+}
+
+void levmar_3dNormMesh(double *p, double *x, int m, int n, void *data) {
+	ofMesh *d;
+	d = static_cast<ofMesh *>(data);
+	
+	cv::Mat rvec = (cv::Mat1d(3, 1) << p[0], p[1], p[2]);
+	cv::Mat r;
+	cv::Rodrigues(rvec, r);
+	
+	r = r * p[6];
+	cv::Mat Rt = (cv::Mat1d(4, 4) << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), p[3],
+		      r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), p[4],
+		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), p[5],
+		      0, 0, 0, 1);
+	
+	vector<ofVec3f> mwork;
+	mwork = d[1].getVertices();
+	
+	for( int i = 0 ; i < d[0].getNumVertices() ; i++ ) {
+		cv::Mat orig = (cv::Mat1d(4, 1) << d[0].getVertex(i).x, d[0].getVertex(i).y, d[0].getVertex(i).z, 1);
+		cv::Mat transformed = Rt * orig;
+		
+		ofVec3f ot(transformed.at<double>(0), transformed.at<double>(1), transformed.at<double>(2));
+		/*ofVec3f nearest = mwork.at(0);
+		float dist = nearest.distance(ot);
+		int index = 0;
+		for( int j = 1 ; j < mwork.size() ; j++ ) {
+			ofVec3f cur = mwork.at(j);
+			if( cur.distance(ot) < dist ) {
+				dist = cur.distance(ot);
+				nearest = cur;
+				index = j;
+			}
+		}
+		mwork.erase(mwork.begin() + index);
+		x[i] = dist;*/
+		x[i] = mwork.at(i).distance(ot);
 	}
 }
 

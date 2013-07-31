@@ -29,10 +29,12 @@
 namespace ofxActiveScan {
 
 cv::Mat findTransform(vector<cv::Point3d>&, vector<cv::Point3d>&, int nIteration = 1000);
+cv::Mat findTransform(ofMesh&, ofMesh&, int nIteration = 1000);
 
 // callback function for levmar
 //void levmar_2dNorm(double *, double *, int, int, void *);
 void levmar_3dNorm(double *, double *, int, int, void *);
+void levmar_3dNormMesh(double *, double *, int, int, void *);
 
 ofMesh transformMesh(ofMesh, cv::Mat);
 
