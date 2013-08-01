@@ -103,7 +103,7 @@ cv::Mat findTransform(ofMesh& input, ofMesh& target, int nIteration)
 	opts[4] = LM_DIFF_DELTA;
 	
 	p.resize(7);
-	x.resize(target.getNumIndices());
+	x.resize(target.getNumVertices());
 	
 	for( int i = 0 ; i < p.size() ; i++ ) {
 		p[i] = 0.0;
