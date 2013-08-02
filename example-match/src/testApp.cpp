@@ -49,24 +49,17 @@ void testApp::setup() {
 	curMesh = mesh.begin();
 	transformed = false;
 	
+	for( int i = 0 ; i < mesh[0].getNumVertices() ; i++ ) {
+		mesh[0].setColor(i, ofColor::red);
+	}
+	for( int i = 0 ; i < mesh[1].getNumVertices() ; i++ ) {
+		mesh[1].setColor(i, ofColor::green);
+	}
+	
 	cam.cacheMatrices(true);
 }
 
 void testApp::update() {
-	int n = curMesh->getNumVertices();
-	float nearestDistance = 0;
-	ofVec2f mouse(mouseX, mouseY);
-	for(int i = 0; i < n; i++) {
-		ofVec3f p = curMesh->getVertex(i);
-		ofVec3f cur = cam.worldToScreen(ofVec3f(p.x*1000.0, p.y*-1000.0, p.z*-1000.0 + 2000.0));
-		float distance = cur.distance(mouse);
-		if(i == 0 || distance < nearestDistance) {
-			nearestDistance = distance;
-			nearestVertex = cur;
-			nearestIndex = i;
-		}
-	}
-
 }
 
 void testApp::draw() {
@@ -80,38 +73,43 @@ void testApp::draw() {
 	if( transformed ) {
 		mesh[0].drawVertices();
 		mesh[1].drawVertices();
+		avg.drawVertices();
 	} else {
 		curMesh->drawVertices();
+		avg.drawVertices();
 	}
 	
 	cam.end();
-	
-	ofNoFill();
-	ofSetColor(ofColor::yellow);
-	ofSetLineWidth(2);
-	ofCircle(nearestVertex, 4);
-	ofSetLineWidth(1);
 }
 
 void testApp::keyPressed(int key) {
 	if( key == '0' || key == '1' ) {
 		curMesh = mesh.begin() + (key - '0');
 	}
-	if( key == ' ' ) {
-		cout << nearestVertex << endl;
-		if( curMesh == mesh.begin() ) {
-			inputPoints.push_back(ofxCv::toCv(curMesh->getVertex(nearestIndex)));
-		}
-		if( curMesh == mesh.begin() + 1) {
-			targetPoints.push_back(ofxCv::toCv(curMesh->getVertex(nearestIndex)));
-		}
-	}
 	if( key == 'c' ) {
-		cv::Mat Rt = findTransform(inputPoints, targetPoints, 20000);
+		ofMesh tmp, tmp2, input, target;
 		
-		cout << Rt << endl;
+		tmp.load(ofToDataPath("part/out.ply"));
+		tmp2.load(ofToDataPath("part/out2.ply"));
+		
+		for( int i = 0 ; i < tmp.getNumVertices() ; i+=100 ) {
+			input.addVertex(tmp.getVertex(i));
+			target.addVertex(tmp2.getVertex(i));
+		}
+		
+		ofLogNotice() << "Input points: " << input.getNumVertices();
+		
+		cv::Mat Rt = findTransform(input, target, 2000);
+		
+		ofLogNotice() << Rt << endl;
 		
 		mesh[0] = transformMesh(mesh[0], Rt);
+		ofMesh mesh0 = transformMesh(tmp, Rt);
+		
+		for( int i = 0 ; i < mesh0.getNumVertices() ; i++ ) {
+			avg.addVertex((mesh0.getVertex(i) + tmp2.getVertex(i)) / 2);
+			avg.addColor(ofColor::white);
+		}
 		
 		transformed = true;
 	}

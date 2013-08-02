@@ -37,7 +37,7 @@ private:
 	ofxActiveScan::Options options;
 	vector<ofVboMesh> mesh;
 	vector<ofVboMesh>::iterator curMesh;
-	vector<cv::Point3d> inputPoints, targetPoints;
+	ofVboMesh avg;
 	ofEasyCam cam;
 	
 	bool transformed;
@@ -45,7 +45,4 @@ private:
 	int cw, ch;
 	
 	string rootDir;
-	
-	ofVec2f nearestVertex;
-	int nearestIndex;
 };
