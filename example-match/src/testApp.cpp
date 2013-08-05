@@ -24,17 +24,7 @@ using namespace ofxActiveScan;
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	rootDir = "../../../SharedData/";
-	
 	/*
-	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
-	fs["proWidth"] >> options.projector_width;
-	fs["proHeight"] >> options.projector_height;
-	fs["camWidth"] >> cw;
-	fs["camHeight"] >> ch;
-	fs["vertical_center"] >> options.projector_horizontal_center;
-	fs["nsamples"] >> options.nsamples;
-	
 	// load correspondences estimated by decode program 
 	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
 	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));  
@@ -42,12 +32,71 @@ void testApp::setup() {
 	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
 	*/
 	
-	mesh.resize(2);
-	mesh[0].load(ofToDataPath("out.ply"));
-	mesh[1].load(ofToDataPath("out2.ply"));
+	if( rootDir.size() != 2 ) {
+		ofLogError() << "Wrong argument number";
+		exit();
+	}
 	
-	curMesh = mesh.begin();
-	transformed = false;
+	vector<ofImage> masks;
+	ofImage mask;
+	masks.resize(rootDir.size());
+	ofLoadImage(masks[0], ofToDataPath(rootDir[0] + "/mask.bmp"));
+	ofLoadImage(masks[1], ofToDataPath(rootDir[1] + "/mask.bmp"));
+	
+	mask = masks[0];
+	
+	// Find camera pixels shared by two projectors
+	for (int y=0; y<mask.getHeight(); y++) {
+		for (int x=0; x<mask.getWidth(); x++) {
+			if( masks[0].getColor(x, y).getLightness() < 128
+				|| masks[1].getColor(x, y).getLightness() < 128 ) {
+				//cout << x << ' ' << y << endl;
+				mask.setColor(x, y, 0);
+			}
+		}
+	}
+	
+	for( int i = 0 ; i < rootDir.size() ; i++ ) {
+		ofxActiveScan::Options options;
+		cv::Size camSize, proSize;
+		
+		cv::FileStorage fs(ofToDataPath(rootDir[i] + "/config.yml"), cv::FileStorage::READ);
+		fs["proWidth"] >> options.projector_width;
+		fs["proHeight"] >> options.projector_height;
+		fs["camWidth"] >> cw;
+		fs["camHeight"] >> ch;
+		fs["vertical_center"] >> options.projector_horizontal_center;
+		fs["nsamples"] >> options.nsamples;
+		
+		Map2f horizontal(ofToDataPath(rootDir[i] + "/h.map", true));
+		Map2f vertical(ofToDataPath(rootDir[i] + "/v.map", true));  
+		
+		ofImage orgMask;
+		ofLoadImage(orgMask, ofToDataPath(rootDir[i] + "/mask.bmp"));
+		
+		cv::Mat camIntrinsic, proIntrinsic, proExtrinsic;
+		double camDist, proDist;
+		
+		cv::FileStorage cfs(ofToDataPath(rootDir[i] + "/calibration.yml"), cv::FileStorage::READ);
+		cfs["camIntrinsic"] >> camIntrinsic;
+		cfs["camDistortion"] >> camDist;
+		cfs["proIntrinsic"] >> proIntrinsic;
+		cfs["proDistortion"] >> proDist;
+		cfs["proExtrinsic"] >> proExtrinsic;
+		
+		overlapMesh.push_back(
+			triangulate(options, horizontal, vertical, toAs(mask),
+					toAs(camIntrinsic), camDist,
+					toAs(proIntrinsic), proDist, toAs(proExtrinsic), mask)
+		);
+		
+		mesh.push_back(
+			triangulate(options, horizontal, vertical, toAs(orgMask),
+					toAs(camIntrinsic), camDist,
+					toAs(proIntrinsic), proDist, toAs(proExtrinsic), orgMask)
+		);
+	}
+	
 	
 	for( int i = 0 ; i < mesh[0].getNumVertices() ; i++ ) {
 		mesh[0].setColor(i, ofColor::red);
@@ -55,6 +104,32 @@ void testApp::setup() {
 	for( int i = 0 ; i < mesh[1].getNumVertices() ; i++ ) {
 		mesh[1].setColor(i, ofColor::green);
 	}
+	
+	ofMesh input, target;
+	
+	// Downsample to reduce complexity
+	for( int i = 0 ; i < overlapMesh[0].getNumVertices() ; i+=100 ) {
+		input.addVertex(overlapMesh[0].getVertex(i));
+		target.addVertex(overlapMesh[1].getVertex(i));
+	}
+	
+	ofLogNotice() << "Input points: " << input.getNumVertices();
+	
+	cv::Mat Rt = findTransform(input, target, 2000);
+	
+	ofLogNotice() << Rt << endl;
+	
+	mesh[0] = transformMesh(mesh[0], Rt);
+	overlapMesh[0] = transformMesh(overlapMesh[0], Rt);
+	
+	// Average point cloud
+	for( int i = 0 ; i < overlapMesh[0].getNumVertices() ; i++ ) {
+		avg.addVertex((overlapMesh[0].getVertex(i) + overlapMesh[1].getVertex(i)) / 2);
+		avg.addColor(ofColor::white);
+	}
+	
+	curMesh = mesh.begin();
+	transformed = false;
 	
 	cam.cacheMatrices(true);
 }
@@ -76,41 +151,18 @@ void testApp::draw() {
 		avg.drawVertices();
 	} else {
 		curMesh->drawVertices();
-		avg.drawVertices();
+	//	avg.drawVertices();
 	}
 	
 	cam.end();
 }
 
 void testApp::keyPressed(int key) {
-	if( key == '0' || key == '1' ) {
-		curMesh = mesh.begin() + (key - '0');
+	if( key == '1' || key == '2' ) {
+		curMesh = mesh.begin() + (key - '1');
+		transformed = false;
 	}
-	if( key == 'c' ) {
-		ofMesh tmp, tmp2, input, target;
-		
-		tmp.load(ofToDataPath("part/out.ply"));
-		tmp2.load(ofToDataPath("part/out2.ply"));
-		
-		for( int i = 0 ; i < tmp.getNumVertices() ; i+=100 ) {
-			input.addVertex(tmp.getVertex(i));
-			target.addVertex(tmp2.getVertex(i));
-		}
-		
-		ofLogNotice() << "Input points: " << input.getNumVertices();
-		
-		cv::Mat Rt = findTransform(input, target, 2000);
-		
-		ofLogNotice() << Rt << endl;
-		
-		mesh[0] = transformMesh(mesh[0], Rt);
-		ofMesh mesh0 = transformMesh(tmp, Rt);
-		
-		for( int i = 0 ; i < mesh0.getNumVertices() ; i++ ) {
-			avg.addVertex((mesh0.getVertex(i) + tmp2.getVertex(i)) / 2);
-			avg.addColor(ofColor::white);
-		}
-		
+	if( key == '0' ) {
 		transformed = true;
 	}
 }

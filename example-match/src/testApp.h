@@ -33,9 +33,12 @@ public:
 	void draw();
 	void keyPressed(int);
 	
+	vector<string> rootDir;
+	
 private:
 	ofxActiveScan::Options options;
 	vector<ofVboMesh> mesh;
+	vector<ofVboMesh> overlapMesh;
 	vector<ofVboMesh>::iterator curMesh;
 	ofVboMesh avg;
 	ofEasyCam cam;
@@ -43,6 +46,4 @@ private:
 	bool transformed;
 	
 	int cw, ch;
-	
-	string rootDir;
 };
