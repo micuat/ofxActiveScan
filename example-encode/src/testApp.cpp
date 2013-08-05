@@ -23,9 +23,7 @@ void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofHideCursor();
 	
-	rootDir = "../../../SharedData/";
-	
-	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
+	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	int devID;
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
@@ -62,7 +60,7 @@ void testApp::setup() {
 	curIndex = -1;
 	captureTime = 0;
 	
-	ofDirectory::createDirectory(rootDir + "img/", true, true);
+	ofDirectory::createDirectory(rootDir[0] + "img/", true, true);
 }
 
 void testApp::update() {
@@ -78,13 +76,13 @@ void testApp::update() {
 	if(camera.isFrameNew() && needToCapture) {
 #endif
 		if( curIndex < patterns.size() - 1 ) {
-			curFrame.saveImage(rootDir + "img/" + ofToString(curIndex + 10) + ".bmp");
+			curFrame.saveImage(rootDir[0] + "img/" + ofToString(curIndex + 10) + ".bmp");
 			captureTime = curTime;
 			curIndex++;
 			curPattern = patterns[curIndex];
 		} else {
 			// last frame is for color mapping
-			curFrame.saveImage(rootDir + "camPerspective.jpg");
+			curFrame.saveImage(rootDir[0] + "camPerspective.jpg");
 			curIndex = -1;
 			captureTime = 0;
 		}

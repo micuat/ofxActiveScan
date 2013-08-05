@@ -24,9 +24,7 @@ using namespace ofxActiveScan;
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	rootDir = "../../../SharedData/";
-	
-	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
+	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> cw;
@@ -35,10 +33,10 @@ void testApp::setup() {
 	fs["nsamples"] >> options.nsamples;
 	
 	// load correspondences estimated by decode program 
-	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
-	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));  
+	Map2f horizontal(ofToDataPath(rootDir[0] + "/h.map", true));
+	Map2f vertical(ofToDataPath(rootDir[0] + "/v.map", true));  
 	ofImage mask;
-	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
+	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.bmp"));
 	
 	Matd camIntrinsic, proIntrinsic;
 	double camDistortion, proDistortion;
@@ -57,7 +55,7 @@ void testApp::setup() {
 		}
 	}
 	
-	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
+	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
 	cfs << "camIntrinsic"  << toCv(camIntrinsic);
 	cfs << "camDistortion" << camDistortion;
 	cfs << "proIntrinsic"  << toCv(proIntrinsic);

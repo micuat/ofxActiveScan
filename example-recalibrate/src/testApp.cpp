@@ -25,11 +25,9 @@ using namespace ofxActiveScan;
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	rootDir = "../../../SharedData/";
-	
 	cameraMode = EASYCAM_MODE;
 	
-	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
+	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> camSize.width;
@@ -37,7 +35,7 @@ void testApp::setup() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
-	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::READ);
+	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::READ);
 	cfs["camIntrinsic"] >> camIntrinsic;
 	cfs["camDistortion"] >> camDist;
 	cfs["proIntrinsic"] >> proIntrinsic;
@@ -48,19 +46,19 @@ void testApp::setup() {
 	proSize.height = options.projector_height;
 	
 	// horizontal and vertical correspondences between projector and camera
-	horizontal = Map2f(ofToDataPath(rootDir + "/h.map", true));
-	vertical = Map2f(ofToDataPath(rootDir + "/v.map", true));
+	horizontal = Map2f(ofToDataPath(rootDir[0] + "/h.map", true));
+	vertical = Map2f(ofToDataPath(rootDir[0] + "/v.map", true));
 	
-	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
+	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.bmp"));
 	// use this when camPerspective is a color image
-	//ofLoadImage(camPerspective, ofToDataPath(rootDir + "/camPerspective.jpg"));
-	ofLoadImage(camPerspective, ofToDataPath(rootDir + "/mask.bmp"));
+	//ofLoadImage(camPerspective, ofToDataPath(rootDir[0] + "/camPerspective.jpg"));
+	ofLoadImage(camPerspective, ofToDataPath(rootDir[0] + "/mask.bmp"));
 	
 	ofLogNotice() << "Start triangulation with initial calibration parameters";
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
 			toAs(camIntrinsic), camDist,
 			toAs(proIntrinsic), proDist, toAs(proExtrinsic), camPerspective);
-	mesh.save(ofToDataPath(rootDir + "/out.ply"));
+	mesh.save(ofToDataPath(rootDir[0] + "/out.ply"));
 	
 	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);
@@ -214,7 +212,7 @@ void testApp::keyPressed(int key) {
 					r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2,0));
 			
 			// save to yml; may need to preserve previous result
-			cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::WRITE);
+			cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
 			cfs << "camIntrinsic" << camIntrinsic;
 			cfs << "camDistortion" << camDist;
 			cfs << "proIntrinsic" << proIntrinsic;
@@ -227,7 +225,7 @@ void testApp::keyPressed(int key) {
 			mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					toAs(camIntrinsic), camDist,
 					toAs(proIntrinsic), proDist, toAs(proExtrinsic), camPerspective);
-			mesh.save(ofToDataPath(rootDir + "/out.ply"));
+			mesh.save(ofToDataPath(rootDir[0] + "/out.ply"));
 		} else {
 			ofLogError() << "Minimum " + ofToString(minPointNum) + " points required for re-calibration";
 		}

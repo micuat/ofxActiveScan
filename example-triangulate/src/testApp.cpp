@@ -25,11 +25,9 @@ using namespace ofxActiveScan;
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	rootDir = "../../../SharedData/";
-	
 	cameraMode = EASYCAM_MODE;
 	
-	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
+	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> camSize.width;
@@ -37,7 +35,7 @@ void testApp::setup() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
-	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::READ);
+	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::READ);
 	cfs["camIntrinsic"] >> camIntrinsic;
 	cfs["camDistortion"] >> camDist;
 	cfs["proIntrinsic"] >> proIntrinsic;
@@ -51,17 +49,17 @@ void testApp::setup() {
 	cout << proExtrinsic << endl;
 	
 	// horizontal and vertical correspondences between projector and camera
-	Map2f horizontal(ofToDataPath(rootDir + "/h.map", true));
-	Map2f vertical(ofToDataPath(rootDir + "/v.map", true));
+	Map2f horizontal(ofToDataPath(rootDir[0] + "/h.map", true));
+	Map2f vertical(ofToDataPath(rootDir[0] + "/v.map", true));
 	
 	ofImage mask, camPerspective;
-	ofLoadImage(mask, ofToDataPath(rootDir + "/mask.bmp"));
-	ofLoadImage(camPerspective, ofToDataPath(rootDir + "/camPerspective.jpg"));
+	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.bmp"));
+	ofLoadImage(camPerspective, ofToDataPath(rootDir[0] + "/camPerspective.jpg"));
 	
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),
 					   toAs(camIntrinsic), camDist,
 					   toAs(proIntrinsic), proDist, toAs(proExtrinsic), camPerspective);
-	mesh.save(ofToDataPath(rootDir + "/out.ply"));
+	mesh.save(ofToDataPath(rootDir[0] + "/out.ply"));
 	
 	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);

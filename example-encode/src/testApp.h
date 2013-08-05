@@ -37,6 +37,8 @@ public:
 	void draw();
 	void keyPressed(int);
 	
+	vector<string> rootDir;
+	
 private:
 	vector<ofImage> patterns;
 	ofxActiveScan::Options options;
@@ -54,6 +56,4 @@ private:
 	int grayLow, grayHigh;
 	int bufferTime;
 	unsigned long captureTime;
-	
-	string rootDir;
 };

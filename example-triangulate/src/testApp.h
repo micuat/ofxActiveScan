@@ -31,6 +31,8 @@ public:
 	void draw();
 	void keyPressed(int);
 	
+	vector<string> rootDir;
+	
 private:
 	ofxActiveScan::Options options;
 	ofMesh mesh;
@@ -44,6 +46,4 @@ private:
 	CameraMode cameraMode;
 	
 	int cw, ch;
-	
-	string rootDir;
 };

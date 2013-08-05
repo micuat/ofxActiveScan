@@ -24,15 +24,13 @@
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	rootDir = "../../../SharedData/";
-	
-	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
+	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> proSize.width;
 	fs["proHeight"] >> proSize.height;
 	fs["camWidth"] >> camSize.width;
 	fs["camHeight"] >> camSize.height;
 	
-	cv::FileStorage cfs(ofToDataPath(rootDir + "/calibration.yml"), cv::FileStorage::READ);
+	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::READ);
 	cfs["camIntrinsic"] >> camIntrinsic;
 	cfs["proIntrinsic"] >> proIntrinsic;
 	cfs["proExtrinsic"] >> proExtrinsic;
@@ -41,7 +39,7 @@ void testApp::setup() {
 	vector<ofxPCL::PointCloud> clouds;
 	
 	ofMesh orgMesh;
-	orgMesh.load(ofToDataPath(rootDir + "/out.ply"));
+	orgMesh.load(ofToDataPath(rootDir[0] + "/out.ply"));
 	cloud = ofxPCL::toPCL<ofxPCL::PointCloud>(orgMesh);
 	
 	clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, 0.005, 20, 30);

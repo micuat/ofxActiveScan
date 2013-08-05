@@ -24,9 +24,7 @@ using namespace ofxActiveScan;
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	rootDir = "../../../SharedData/";
-	
-	cv::FileStorage fs(ofToDataPath(rootDir + "/config.yml"), cv::FileStorage::READ);
+	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
 	fs["camWidth"] >> cw;
@@ -36,16 +34,16 @@ void testApp::setup() {
 	
 	Map2f asMask, asReliable;
 	decode(options, mapHorizontal, mapVertical, asMask, asReliable,
-		   ofToDataPath(rootDir + "img/", true));
+		   ofToDataPath(rootDir[0] + "/img/", true));
 	
 	// Save resulting maps
-	mapHorizontal.Write(ofToDataPath(rootDir + "/h.map", true));
-	mapVertical.Write(ofToDataPath(rootDir + "/v.map", true));
+	mapHorizontal.Write(ofToDataPath(rootDir[0] + "/h.map", true));
+	mapVertical.Write(ofToDataPath(rootDir[0] + "/v.map", true));
 	
 	mapMask = toOf(asMask);
 	mapReliable = toOf(asReliable);
-	mapMask.saveImage(ofToDataPath(rootDir + "/mask.bmp"));
-	mapReliable.saveImage(ofToDataPath(rootDir + "/reliable.bmp"));
+	mapMask.saveImage(ofToDataPath(rootDir[0] + "/mask.bmp"));
+	mapReliable.saveImage(ofToDataPath(rootDir[0] + "/reliable.bmp"));
 }
 
 void testApp::update() {

@@ -57,7 +57,7 @@ public:
 	
 	int cw, ch;
 	
-	string rootDir;	
+	vector<string> rootDir;
 	
 	int count;
 };

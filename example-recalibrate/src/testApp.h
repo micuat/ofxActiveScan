@@ -31,6 +31,8 @@ public:
 	void draw();
 	void keyPressed(int);
 	
+	vector<string> rootDir;
+	
 private:
 	ofxActiveScan::Options options;
 	ofxActiveScan::Map2f horizontal, vertical;
@@ -47,8 +49,6 @@ private:
 	CameraMode cameraMode;
 	
 	int cw, ch;
-	
-	string rootDir;
 	
 	ofVec2f nearestVertex;
 	int nearestIndex;

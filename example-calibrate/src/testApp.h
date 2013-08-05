@@ -31,10 +31,10 @@ public:
 	void draw();
 	void keyPressed(int);
 	
+	vector<string> rootDir;
+	
 private:
 	ofxActiveScan::Options options;
 	
 	int cw, ch;
-	
-	string rootDir;
 };

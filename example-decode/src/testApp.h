@@ -31,12 +31,12 @@ public:
 	void draw();
 	void keyPressed(int);
 	
+	vector<string> rootDir;
+	
 private:
 	ofxActiveScan::Options options;
 	ofxActiveScan::Map2f mapHorizontal, mapVertical;
 	ofImage mapMask, mapReliable;
 	
 	int cw, ch;
-	
-	string rootDir;
 };
