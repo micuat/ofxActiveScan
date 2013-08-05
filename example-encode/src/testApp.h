@@ -19,7 +19,7 @@
 
 #pragma once
 
-#define USE_LIBDC
+//#define USE_LIBDC
 
 #include "ofMain.h"
 #include "ofxCv.h"
@@ -33,9 +33,11 @@
 class testApp : public ofBaseApp {
 public:
 	void setup();
+	void init();
 	void update();
 	void draw();
 	void keyPressed(int);
+	void dragEvent(ofDragInfo);
 	
 private:
 	vector<ofImage> patterns;
@@ -55,5 +57,7 @@ private:
 	int bufferTime;
 	unsigned long captureTime;
 	
-	string rootDir;
+	vector<string> rootDir;
+	
+	bool pathLoaded;
 };
