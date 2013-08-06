@@ -27,9 +27,11 @@
 class testApp : public ofBaseApp {
 public:
 	void setup();
+	void init();
 	void update();
 	void draw();
 	void keyPressed(int);
+	void dragEvent(ofDragInfo);
 	
 	vector<string> rootDir;
 	
@@ -39,4 +41,6 @@ private:
 	ofImage mapMask, mapReliable;
 	
 	int cw, ch;
+	
+	bool pathLoaded;
 };

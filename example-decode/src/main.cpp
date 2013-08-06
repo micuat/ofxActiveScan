@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
 	testApp * app = new testApp;
 	
 	if( argc == 1 ) {
-		app->rootDir.push_back("../../SharedData/");
+		//app->rootDir.push_back("../../SharedData/");
 	} else {
 		for( int i = 1 ; i < argc ; i++ ) {
 			string arg = argv[i];

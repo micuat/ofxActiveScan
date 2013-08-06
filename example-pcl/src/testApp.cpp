@@ -22,6 +22,15 @@
 
 //--------------------------------------------------------------
 void testApp::setup() {
+	if( rootDir.size() > 0 ) {
+		init();
+		pathLoaded = true;
+	} else {
+		pathLoaded = false;
+	}
+}
+
+void testApp::init() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
@@ -76,39 +85,44 @@ void testApp::update()
 void testApp::draw()
 {
 	ofBackground(0);
-	glPointSize(2.0);
 	
-	if(cameraMode == EASYCAM_MODE) {
-		cam.begin();
-		ofScale(1, -1, -1);
-	} else if(cameraMode == PRO_MODE) {
-		ofSetupScreenPerspective(proSize.width, proSize.height);
-		proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
-		cv::Mat m = proExtrinsic;
-		cv::Mat extrinsics = (cv::Mat1d(4,4) <<
-							  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
-							  m.at<double>(1,0), m.at<double>(1,1), m.at<double>(1,2), m.at<double>(1,3),
-							  m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2), m.at<double>(2,3),
-							  0, 0, 0, 1);
-		extrinsics = extrinsics.t();
-		glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
-	} else if(cameraMode == CAM_MODE) {
-		ofSetupScreenPerspective(camSize.width, camSize.height);
-		camCalibration.loadProjectionMatrix(0.0001, 100000000.0);
-	}
-	
-	mit->drawVertices();
-	if( count > 2 ) {
-		advance(mit, 1);
-		if( mit == meshes.end() ) {
-			mit = meshes.begin();
+	if( pathLoaded ) {
+		
+		glPointSize(2.0);
+		
+		if(cameraMode == EASYCAM_MODE) {
+			cam.begin();
+			ofScale(1, -1, -1);
+		} else if(cameraMode == PRO_MODE) {
+			ofSetupScreenPerspective(proSize.width, proSize.height);
+			proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
+			cv::Mat m = proExtrinsic;
+			cv::Mat extrinsics = (cv::Mat1d(4,4) <<
+								  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
+								  m.at<double>(1,0), m.at<double>(1,1), m.at<double>(1,2), m.at<double>(1,3),
+								  m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2), m.at<double>(2,3),
+								  0, 0, 0, 1);
+			extrinsics = extrinsics.t();
+			glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
+		} else if(cameraMode == CAM_MODE) {
+			ofSetupScreenPerspective(camSize.width, camSize.height);
+			camCalibration.loadProjectionMatrix(0.0001, 100000000.0);
 		}
-		count = 0;
-	}
-	count++;
-	
-	if(cameraMode == EASYCAM_MODE) {
-		cam.end();
+		
+		mit->drawVertices();
+		if( count > 2 ) {
+			advance(mit, 1);
+			if( mit == meshes.end() ) {
+				mit = meshes.begin();
+			}
+			count = 0;
+		}
+		count++;
+		
+		if(cameraMode == EASYCAM_MODE) {
+			cam.end();
+		}
+		
 	}
 }
 
@@ -171,5 +185,11 @@ void testApp::gotMessage(ofMessage msg)
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo)
 {
-	
+	if( !pathLoaded ) {
+		for( int i = 0 ; i < dragInfo.files.size() ; i++ ) {
+			rootDir.push_back(dragInfo.files[i]);
+		}
+		init();
+		pathLoaded = true;
+	}
 }

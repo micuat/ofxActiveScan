@@ -31,6 +31,7 @@ class testApp : public ofBaseApp
 
 public:
 	void setup();
+	void init();
 	void update();
 	void draw();
 
@@ -60,4 +61,6 @@ public:
 	vector<string> rootDir;
 	
 	int count;
+	
+	bool pathLoaded;
 };

@@ -27,9 +27,11 @@
 class testApp : public ofBaseApp {
 public:
 	void setup();
+	void init();
 	void update();
 	void draw();
 	void keyPressed(int);
+	void dragEvent(ofDragInfo);
 	
 	vector<string> rootDir;
 	
@@ -56,4 +58,6 @@ private:
 	vector<int> objectPointsRef;
 	vector<cv::Point2f> imagePoints;
 	vector<cv::Point2f>::iterator curImagePoint;
+	
+	bool pathLoaded;
 };

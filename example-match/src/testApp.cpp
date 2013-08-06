@@ -22,6 +22,15 @@
 using namespace ofxActiveScan;
 
 void testApp::setup() {
+	if( rootDir.size() > 0 ) {
+		init();
+		pathLoaded = true;
+	} else {
+		pathLoaded = false;
+	}
+}
+
+void testApp::init() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	/*
@@ -208,7 +217,7 @@ void testApp::setup() {
 	curMesh = mesh.begin();
 	transformed = false;
 	
-	cam.cacheMatrices(true);
+	//cam.cacheMatrices(true);
 }
 
 void testApp::update() {
@@ -217,29 +226,47 @@ void testApp::update() {
 void testApp::draw() {
 	ofBackground(0);
 	
-	cam.begin();
-	ofScale(1, -1, -1);
-	ofScale(1000, 1000, 1000);
-	ofTranslate(0, 0, -2);
-	
-	if( transformed ) {
-		mesh[0].drawVertices();
-		mesh[1].drawVertices();
-		avg.drawVertices();
-	} else {
-		curMesh->drawVertices();
-	//	avg.drawVertices();
+	if( pathLoaded ) {
+		
+		cam.begin();
+		ofScale(1, -1, -1);
+		ofScale(1000, 1000, 1000);
+		ofTranslate(0, 0, -2);
+		
+		if( transformed ) {
+			mesh[0].drawVertices();
+			mesh[1].drawVertices();
+			avg.drawVertices();
+		} else {
+			curMesh->drawVertices();
+		//	avg.drawVertices();
+		}
+		
+		cam.end();
+		
 	}
-	
-	cam.end();
 }
 
 void testApp::keyPressed(int key) {
-	if( key == '1' || key == '2' ) {
-		curMesh = mesh.begin() + (key - '1');
-		transformed = false;
+	if( pathLoaded ) {
+		
+		if( key == '1' || key == '2' ) {
+			curMesh = mesh.begin() + (key - '1');
+			transformed = false;
+		}
+		if( key == '0' ) {
+			transformed = true;
+		}
+		
 	}
-	if( key == '0' ) {
-		transformed = true;
+}
+
+void testApp::dragEvent(ofDragInfo dragInfo){
+	if( !pathLoaded ) {
+		for( int i = 0 ; i < dragInfo.files.size() ; i++ ) {
+			rootDir.push_back(dragInfo.files[i]);
+		}
+		init();
+		pathLoaded = true;
 	}
 }

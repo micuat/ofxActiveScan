@@ -137,8 +137,8 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 	if( !pathLoaded ) {
 		for( int i = 0 ; i < dragInfo.files.size() ; i++ ) {
 			rootDir.push_back(dragInfo.files[i]);
-			init();
-			pathLoaded = true;
 		}
+		init();
+		pathLoaded = true;
 	}
 }

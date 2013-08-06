@@ -23,6 +23,15 @@ using namespace ofxActiveScan;
 
 // entry point
 void testApp::setup() {
+	if( rootDir.size() > 0 ) {
+		init();
+		pathLoaded = true;
+	} else {
+		pathLoaded = false;
+	}
+}
+
+void testApp::init() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	cameraMode = EASYCAM_MODE;
@@ -70,43 +79,62 @@ void testApp::update() {
 }
 
 void testApp::draw() {
-	ofBackground(0);
-	
-	if(cameraMode == EASYCAM_MODE) {
-		cam.begin();
-		ofScale(1, -1, -1);
-		ofScale(1000, 1000, 1000);
-		ofTranslate(0, 0, -2);
-	} else if(cameraMode == PRO_MODE) {
-		ofSetupScreenPerspective(options.projector_width, options.projector_height);
-		proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
-		cv::Mat m = proExtrinsic;
-		cv::Mat extrinsics = (cv::Mat1d(4,4) <<
-						  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
-						  m.at<double>(1,0), m.at<double>(1,1), m.at<double>(1,2), m.at<double>(1,3),
-						  m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2), m.at<double>(2,3),
-						  0, 0, 0, 1);
-		extrinsics = extrinsics.t();
-		glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
-	} else if(cameraMode == CAM_MODE) {
-		ofSetupScreenPerspective(camSize.width, camSize.height);
-		camCalibration.loadProjectionMatrix(0.0001, 100000000.0);
-	}
-	
-	mesh.drawVertices();
-	
-	if(cameraMode == EASYCAM_MODE) {
-		cam.end();
+	if( pathLoaded ) {
+
+		ofBackground(0);
+		
+		if(cameraMode == EASYCAM_MODE) {
+			cam.begin();
+			ofScale(1, -1, -1);
+			ofScale(1000, 1000, 1000);
+			ofTranslate(0, 0, -2);
+		} else if(cameraMode == PRO_MODE) {
+			ofSetupScreenPerspective(options.projector_width, options.projector_height);
+			proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
+			cv::Mat m = proExtrinsic;
+			cv::Mat extrinsics = (cv::Mat1d(4,4) <<
+							  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
+							  m.at<double>(1,0), m.at<double>(1,1), m.at<double>(1,2), m.at<double>(1,3),
+							  m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2), m.at<double>(2,3),
+							  0, 0, 0, 1);
+			extrinsics = extrinsics.t();
+			glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
+		} else if(cameraMode == CAM_MODE) {
+			ofSetupScreenPerspective(camSize.width, camSize.height);
+			camCalibration.loadProjectionMatrix(0.0001, 100000000.0);
+		}
+		
+		mesh.drawVertices();
+		
+		if(cameraMode == EASYCAM_MODE) {
+			cam.end();
+		}
+		
 	}
 }
 
 void testApp::keyPressed(int key) {
-	switch(key) {
-		case '1': cameraMode = EASYCAM_MODE; break;
-		case '2': cameraMode = PRO_MODE; break;
-		case '3': cameraMode = CAM_MODE; break;
+	if( pathLoaded ) {
+			
+		switch(key) {
+			case '1': cameraMode = EASYCAM_MODE; break;
+			case '2': cameraMode = PRO_MODE; break;
+			case '3': cameraMode = CAM_MODE; break;
+		}
+		
 	}
+	
 	if( key == 'f' ) {
 		ofToggleFullscreen();
+	}
+}
+
+void testApp::dragEvent(ofDragInfo dragInfo){
+	if( !pathLoaded ) {
+		for( int i = 0 ; i < dragInfo.files.size() ; i++ ) {
+			rootDir.push_back(dragInfo.files[i]);
+		}
+		init();
+		pathLoaded = true;
 	}
 }

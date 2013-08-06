@@ -22,6 +22,15 @@
 using namespace ofxActiveScan;
 
 void testApp::setup() {
+	if( rootDir.size() > 0 ) {
+		init();
+		pathLoaded = true;
+	} else {
+		pathLoaded = false;
+	}
+}
+
+void testApp::init() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
@@ -71,4 +80,15 @@ void testApp::draw() {
 }
 
 void testApp::keyPressed(int key) {
+}
+
+
+void testApp::dragEvent(ofDragInfo dragInfo){
+	if( !pathLoaded ) {
+		for( int i = 0 ; i < dragInfo.files.size() ; i++ ) {
+			rootDir.push_back(dragInfo.files[i]);
+		}
+		init();
+		pathLoaded = true;
+	}
 }
