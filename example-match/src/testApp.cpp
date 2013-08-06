@@ -56,17 +56,21 @@ void testApp::setup() {
 		}
 	}
 	
+	vector<cv::Mat> ci, pi, pe;
+	vector<Options> options;
+	vector<Map2f> horizontals, verticals;
+	
 	for( int i = 0 ; i < rootDir.size() ; i++ ) {
-		ofxActiveScan::Options options;
+		Options op;
 		cv::Size camSize, proSize;
 		
 		cv::FileStorage fs(ofToDataPath(rootDir[i] + "/config.yml"), cv::FileStorage::READ);
-		fs["proWidth"] >> options.projector_width;
-		fs["proHeight"] >> options.projector_height;
+		fs["proWidth"] >> op.projector_width;
+		fs["proHeight"] >> op.projector_height;
 		fs["camWidth"] >> cw;
 		fs["camHeight"] >> ch;
-		fs["vertical_center"] >> options.projector_horizontal_center;
-		fs["nsamples"] >> options.nsamples;
+		fs["vertical_center"] >> op.projector_horizontal_center;
+		fs["nsamples"] >> op.nsamples;
 		
 		Map2f horizontal(ofToDataPath(rootDir[i] + "/h.map", true));
 		Map2f vertical(ofToDataPath(rootDir[i] + "/v.map", true));  
@@ -84,17 +88,25 @@ void testApp::setup() {
 		cfs["proDistortion"] >> proDist;
 		cfs["proExtrinsic"] >> proExtrinsic;
 		
+		ci.push_back(camIntrinsic);
+		pi.push_back(proIntrinsic);
+		pe.push_back(proExtrinsic);
+		
 		overlapMesh.push_back(
-			triangulate(options, horizontal, vertical, toAs(mask),
+			triangulate(op, horizontal, vertical, toAs(mask),
 					toAs(camIntrinsic), camDist,
 					toAs(proIntrinsic), proDist, toAs(proExtrinsic), mask)
 		);
 		
 		mesh.push_back(
-			triangulate(options, horizontal, vertical, toAs(orgMask),
+			triangulate(op, horizontal, vertical, toAs(orgMask),
 					toAs(camIntrinsic), camDist,
 					toAs(proIntrinsic), proDist, toAs(proExtrinsic), orgMask)
 		);
+		
+		options.push_back(op);
+		horizontals.push_back(horizontal);
+		verticals.push_back(vertical);
 	}
 	
 	
@@ -128,6 +140,71 @@ void testApp::setup() {
 		avg.addColor(ofColor::white);
 	}
 	
+	// Re-calibration using averaged point cloud
+	vector<vector<cv::Point3f> > objectPoints(1);
+	for( int j = 0 ; j < avg.getNumVertices(); j++ ) {
+		objectPoints[0].push_back(ofxCv::toCv(avg.getVertex(j)));
+	}
+	
+	for( int i = 0 ; i < rootDir.size() ; i++ ) {
+		ofLogNotice() << "Camera " << i;
+		
+		cv::Mat cameraMatrix = ci[i];
+		vector<cv::Mat> rvecs, tvecs;
+		cv::Mat distCoeffs;
+		vector<vector<cv::Point2f> > imagePoints(1);
+		cv::Size2i imageSize(mask.getWidth(), mask.getHeight());
+		int flags =
+			CV_CALIB_USE_INTRINSIC_GUESS |
+			CV_CALIB_FIX_PRINCIPAL_POINT |
+			CV_CALIB_FIX_ASPECT_RATIO;
+		
+		for (int y=0; y<mask.getHeight(); y++) {
+			for (int x=0; x<mask.getWidth(); x++) {
+				if( mask.getColor(x, y).getLightness() > 0 ) {
+					imagePoints[0].push_back(cv::Point2f(x, y));
+				}
+			}
+		}
+		
+		ofLogNotice() << cameraMatrix;
+		calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flags);
+		ofLogNotice() << cameraMatrix;
+		ofLogNotice() << distCoeffs;
+		ofLogNotice() << rvecs[0];
+		ofLogNotice() << tvecs[0];
+	}
+	
+	for( int i = 0 ; i < rootDir.size() ; i++ ) {
+		ofLogNotice() << "Projector " << i;
+		
+		cv::Mat cameraMatrix = pi[i];
+		vector<cv::Mat> rvecs, tvecs;
+		cv::Mat distCoeffs;
+		vector<vector<cv::Point2f> > imagePoints(1);
+		// take height margin in case pricincipal point is out of image
+		cv::Size2i imageSize(options[i].projector_width, options[i].projector_height*2);
+		int flags =
+			CV_CALIB_USE_INTRINSIC_GUESS |
+			CV_CALIB_FIX_PRINCIPAL_POINT |
+			CV_CALIB_FIX_ASPECT_RATIO;
+		
+		for (int y=0; y<mask.getHeight(); y++) {
+			for (int x=0; x<mask.getWidth(); x++) {
+				if( mask.getColor(x, y).getLightness() > 0 ) {
+					imagePoints[0].push_back(cv::Point2f(horizontals[i].cell(x, y), verticals[i].cell(x, y)));
+				}
+			}
+		}
+		
+		ofLogNotice() << cameraMatrix;
+		calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flags);
+		ofLogNotice() << cameraMatrix;
+		ofLogNotice() << distCoeffs;
+		ofLogNotice() << rvecs[0];
+		ofLogNotice() << tvecs[0];
+	}
+
 	curMesh = mesh.begin();
 	transformed = false;
 	
