@@ -65,7 +65,8 @@ void testApp::init() {
 		}
 	}
 	
-	vector<cv::Mat> ci, pi, pe;
+	vector<cv::Mat> ci, pi, ce, pe;
+	vector<double> cd, pd;
 	vector<Options> options;
 	vector<Map2f> horizontals, verticals;
 	
@@ -100,6 +101,8 @@ void testApp::init() {
 		ci.push_back(camIntrinsic);
 		pi.push_back(proIntrinsic);
 		pe.push_back(proExtrinsic);
+		cd.push_back(camDist);
+		pd.push_back(proDist);
 		
 		overlapMesh.push_back(
 			triangulate(op, horizontal, vertical, toAs(mask),
@@ -160,13 +163,16 @@ void testApp::init() {
 		
 		cv::Mat cameraMatrix = ci[i];
 		vector<cv::Mat> rvecs, tvecs;
-		cv::Mat distCoeffs;
+		cv::Mat distCoeffs = cv::Mat::zeros(1, 4, CV_32F);
 		vector<vector<cv::Point2f> > imagePoints(1);
 		cv::Size2i imageSize(mask.getWidth(), mask.getHeight());
 		int flags =
 			CV_CALIB_USE_INTRINSIC_GUESS |
 			CV_CALIB_FIX_PRINCIPAL_POINT |
-			CV_CALIB_FIX_ASPECT_RATIO;
+			CV_CALIB_FIX_ASPECT_RATIO |
+			CV_CALIB_ZERO_TANGENT_DIST |
+			CV_CALIB_FIX_K2 |
+			CV_CALIB_FIX_K3;
 		
 		for (int y=0; y<mask.getHeight(); y++) {
 			for (int x=0; x<mask.getWidth(); x++) {
@@ -176,12 +182,27 @@ void testApp::init() {
 			}
 		}
 		
+		//distCoeffs.at<double>(0) = cd[i];
+		
 		ofLogNotice() << cameraMatrix;
 		calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flags);
 		ofLogNotice() << cameraMatrix;
 		ofLogNotice() << distCoeffs;
 		ofLogNotice() << rvecs[0];
 		ofLogNotice() << tvecs[0];
+		
+		cv::FileStorage cfs(ofToDataPath(rootDir[i] + "/calibration2.yml"), cv::FileStorage::WRITE);
+		cfs << "camIntrinsic"  << cameraMatrix;
+		cfs << "camDistortion"  << distCoeffs.at<double>(0) / ci[i].at<double>(0,0) / ci[i].at<double>(0,0);
+		
+		cv::Mat r;
+		cv::Rodrigues(rvecs[0], r);
+		cv::Mat t = tvecs[0];
+		cv::Mat Rt = (cv::Mat1d(4, 4) << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), t.at<double>(0),
+		      r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), t.at<double>(1),
+		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2),
+		      0, 0, 0, 1);
+		ce.push_back(Rt);
 	}
 	
 	for( int i = 0 ; i < rootDir.size() ; i++ ) {
@@ -189,14 +210,17 @@ void testApp::init() {
 		
 		cv::Mat cameraMatrix = pi[i];
 		vector<cv::Mat> rvecs, tvecs;
-		cv::Mat distCoeffs;
+		cv::Mat distCoeffs = cv::Mat::zeros(1, 4, CV_32F);
 		vector<vector<cv::Point2f> > imagePoints(1);
 		// take height margin in case pricincipal point is out of image
 		cv::Size2i imageSize(options[i].projector_width, options[i].projector_height*2);
 		int flags =
 			CV_CALIB_USE_INTRINSIC_GUESS |
 			CV_CALIB_FIX_PRINCIPAL_POINT |
-			CV_CALIB_FIX_ASPECT_RATIO;
+			CV_CALIB_FIX_ASPECT_RATIO |
+			CV_CALIB_ZERO_TANGENT_DIST |
+			CV_CALIB_FIX_K2 |
+			CV_CALIB_FIX_K3;
 		
 		for (int y=0; y<mask.getHeight(); y++) {
 			for (int x=0; x<mask.getWidth(); x++) {
@@ -206,12 +230,30 @@ void testApp::init() {
 			}
 		}
 		
+		//distCoeffs.at<double>(0) = pd[i];
+		
 		ofLogNotice() << cameraMatrix;
 		calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flags);
 		ofLogNotice() << cameraMatrix;
 		ofLogNotice() << distCoeffs;
 		ofLogNotice() << rvecs[0];
 		ofLogNotice() << tvecs[0];
+		
+		cv::Mat r;
+		cv::Rodrigues(rvecs[0], r);
+		cv::Mat t = tvecs[0];
+		cv::Mat Rt = (cv::Mat1d(4, 4) << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), t.at<double>(0),
+		      r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), t.at<double>(1),
+		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), t.at<double>(2),
+		      0, 0, 0, 1);
+		Rt = Rt * ce[i].inv();
+		
+		cv::FileStorage cfs(ofToDataPath(rootDir[i] + "/calibration2.yml"), cv::FileStorage::APPEND);
+		cfs << "proIntrinsic"  << cameraMatrix;
+		cfs << "proExtrinsic"  << (cv::Mat1d(3, 4) << Rt.at<double>(0,0), Rt.at<double>(0,1), Rt.at<double>(0,2), Rt.at<double>(0,3),
+		      Rt.at<double>(1,0), Rt.at<double>(1,1), Rt.at<double>(1,2), Rt.at<double>(1,3),
+		      Rt.at<double>(2,0), Rt.at<double>(2,1), Rt.at<double>(2,2), Rt.at<double>(2,3));
+		cfs << "proDistortion"  << distCoeffs.at<double>(0) / pi[i].at<double>(0,0) / pi[i].at<double>(0,0);
 	}
 
 	curMesh = mesh.begin();
@@ -236,7 +278,7 @@ void testApp::draw() {
 		if( transformed ) {
 			mesh[0].drawVertices();
 			mesh[1].drawVertices();
-			avg.drawVertices();
+			//avg.drawVertices();
 		} else {
 			curMesh->drawVertices();
 		//	avg.drawVertices();
