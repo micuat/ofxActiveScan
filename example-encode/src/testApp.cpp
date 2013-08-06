@@ -20,6 +20,15 @@
 #include "testApp.h"
 
 void testApp::setup() {
+	if( rootDir.size() > 0 ) {
+		init();
+		pathLoaded = true;
+	} else {
+		pathLoaded = false;
+	}
+}
+
+void testApp::init() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofHideCursor();
 	
@@ -60,54 +69,76 @@ void testApp::setup() {
 	curIndex = -1;
 	captureTime = 0;
 	
-	ofDirectory::createDirectory(rootDir[0] + "img/", true, true);
+	ofDirectory::createDirectory(rootDir[0] + "/img/", true, true);
 }
 
 void testApp::update() {
-	unsigned long curTime = ofGetSystemTime();
-	bool needToCapture = (0 <= curIndex) && (curIndex < patterns.size())
-		&& ((curTime - captureTime) > bufferTime);
-	
+	if( pathLoaded ) {
+		
+		unsigned long curTime = ofGetSystemTime();
+		bool needToCapture = (0 <= curIndex) && (curIndex < patterns.size())
+			&& ((curTime - captureTime) > bufferTime);
+		
 #ifdef USE_LIBDC
-	if(camera.grabVideo(curFrame) && needToCapture) {
+		if(camera.grabVideo(curFrame) && needToCapture) {
 #else
-	camera.grabFrame();
-	curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
-	if(camera.isFrameNew() && needToCapture) {
+		camera.grabFrame();
+		curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
+		if(camera.isFrameNew() && needToCapture) {
 #endif
-		if( curIndex < patterns.size() - 1 ) {
-			curFrame.saveImage(rootDir[0] + "img/" + ofToString(curIndex + 10) + ".bmp");
-			captureTime = curTime;
-			curIndex++;
-			curPattern = patterns[curIndex];
-		} else {
-			// last frame is for color mapping
-			curFrame.saveImage(rootDir[0] + "camPerspective.jpg");
-			curIndex = -1;
-			captureTime = 0;
+			if( curIndex < patterns.size() - 1 ) {
+				curFrame.saveImage(rootDir[0] + "/img/" + ofToString(curIndex + 10) + ".bmp");
+				captureTime = curTime;
+				curIndex++;
+				curPattern = patterns[curIndex];
+			} else {
+				// last frame is for color mapping
+				curFrame.saveImage(rootDir[0] + "/camPerspective.jpg");
+				curIndex = -1;
+				captureTime = 0;
+			}
 		}
+		
 	}
 }
 
 void testApp::draw() {
 	ofBackground(0);
 	
-	if( curIndex >= 0 ) {
-		ofSetColor(grayHigh);
-		curPattern.draw(0, 0);
-	} else {
-		curFrame.update();
-		curFrame.draw(0, 0);
+	if( pathLoaded ) {
+		
+		if( curIndex >= 0 ) {
+			ofSetColor(grayHigh);
+			curPattern.draw(0, 0);
+		} else {
+			curFrame.update();
+			curFrame.draw(0, 0);
+		}
+		
 	}
 }
 
 void testApp::keyPressed(int key) {
-	if(key == ' ') {
-		curIndex = 0;
-		curPattern = patterns[curIndex];
-		captureTime = ofGetSystemTime();
+	if( pathLoaded ) {
+		
+		if(key == ' ') {
+			curIndex = 0;
+			curPattern = patterns[curIndex];
+			captureTime = ofGetSystemTime();
+		}
+		if( key == 'f' ) {
+			ofToggleFullscreen();
+		}
+		
 	}
-	if( key == 'f' ) {
-		ofToggleFullscreen();
+}
+
+void testApp::dragEvent(ofDragInfo dragInfo){
+	if( !pathLoaded ) {
+		for( int i = 0 ; i < dragInfo.files.size() ; i++ ) {
+			rootDir.push_back(dragInfo.files[i]);
+			init();
+			pathLoaded = true;
+		}
 	}
 }
