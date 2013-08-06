@@ -22,8 +22,9 @@ Dependencies
 * [ofxCv](https://github.com/kylemcdonald/ofxCv)
 * [ofxLibdc (optional)](https://github.com/kylemcdonald/ofxLibdc)
     * required for example-encode when using Libdc cameras
-* [ofxPCL (optional)](https://github.com/satoruhiga/ofxPCL)
-    * required for example-pcl; **currently requires modified ofxPCL**
+* ofxPCL (optional)
+    * required for example-pcl
+    * **requires [modified ofxPCL](https://github.com/micuat/ofxPCL) **
 
 
 Data Folder
