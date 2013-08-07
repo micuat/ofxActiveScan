@@ -76,6 +76,8 @@ Set parameters for example projects:
         * 1.12 for XD490U 4:3
 
 * nsamples
+    * *specific to example-calibrate*
+    * number of points sampled for fundamental matrix estimation (0: sample all points)
     * default: 1000
 
 
