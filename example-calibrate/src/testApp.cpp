@@ -51,13 +51,12 @@ void testApp::init() {
 	double camDistortion, proDistortion;
 	Matd proExtrinsic;
 	
-	bool success = false;
-	while( !success ) {
+	while( 1 ) {
 		try {
 			calibrate(options, horizontal, vertical, toAs(mask),
 					  camIntrinsic, camDistortion,
 					  proIntrinsic, proDistortion, proExtrinsic);
-			success = true;
+			break;
 		} catch ( std::runtime_error &e ) {
 			ofLogVerbose() << "Caught exception : " << e.what();
 			ofLogVerbose() << "Retrying calibration";
