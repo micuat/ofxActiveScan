@@ -45,7 +45,7 @@ void testApp::init() {
 	Map2f horizontal(ofToDataPath(rootDir[0] + "/h.map", true));
 	Map2f vertical(ofToDataPath(rootDir[0] + "/v.map", true));  
 	ofImage mask;
-	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.bmp"));
+	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/reliable.bmp"));
 	
 	Matd camIntrinsic, proIntrinsic;
 	double camDistortion, proDistortion;
