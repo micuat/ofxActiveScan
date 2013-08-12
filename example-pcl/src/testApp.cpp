@@ -110,7 +110,7 @@ void testApp::draw()
 		}
 		
 		mit->drawVertices();
-		if( count > 2 ) {
+		if( count > 60 ) {
 			advance(mit, 1);
 			if( mit == meshes.end() ) {
 				mit = meshes.begin();
