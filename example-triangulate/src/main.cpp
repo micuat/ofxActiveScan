@@ -7,10 +7,11 @@ int main(int argc, char **argv) {
 	ofSetDataPathRoot("./");
 	testApp * app = new testApp;
 	
-	if( argc == 1 ) {
-		//app->rootDir.push_back("../../SharedData/");
-	} else {
+	if( argc > 1 ) {
 		for( int i = 1 ; i < argc ; i++ ) {
+			if(argv[i][0] == '-')
+				break;
+			
 			string arg = argv[i];
 			app->rootDir.push_back(arg);
 		}
