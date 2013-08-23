@@ -26,7 +26,7 @@
 // convert TRACE into ofLog
 #define TRACE DEBUGofLog
 
-#if __STDC_VERSION__ >= 199901L
+#if (__STDC_VERSION__ >= 199901L) || defined(_MSC_VER)
 	#define DEBUGofLog(__VA_ARGS__) ofLog(OF_LOG_NOTICE, __VA_ARGS__)
 #else
 	#define DEBUGofLog(args...) ofLog(OF_LOG_NOTICE, ##args)
