@@ -6,6 +6,9 @@
 *.app*
 *.DS_Store
 *.xcworkspacedata
+#XCode 4
+xcuserdata
+*.xcworkspace
 
 # vs2010
 *.opensdf
