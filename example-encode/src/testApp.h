@@ -19,7 +19,7 @@
 
 #pragma once
 
-#define USE_LIBDC
+//#define USE_LIBDC
 
 #include "ofMain.h"
 #include "ofxCv.h"

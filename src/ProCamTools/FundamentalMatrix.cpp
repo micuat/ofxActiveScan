@@ -280,7 +280,7 @@ void EstimateFundamentalMatrixGeometric(const std::vector<CVector<2,double> >& p
 	int itmax = 1000;
 
 	const fundamental_geometric_data_t adata = { p1, p2, };
-	double x[n];
+	double *x = new double [n];
 	for( int i = 0 ; i < n ; i++ ) {
 		x[i] = 0.0;
 	}
@@ -620,7 +620,7 @@ void EstimateRadialFundamentalMatrixGeometric(
 	int itmax = 1000;
 
 	const radial_geometric_data_t adata = { p1, p2, cod1, cod2 };
-	double x[n];
+	double *x = new double [n];
 	for( int i = 0 ; i < n ; i++ ) {
 		x[i] = 0.0;
 	}
@@ -866,7 +866,7 @@ void EstimateRadialFundamentalMatrixApriori(
 	int itmax = 1000;
 
 	const radial_geometric_data_t adata = { p1, p2, cod1, cod2 };
-	double x[n];
+	double *x = new double [n];
 	for( int i = 0 ; i < n ; i++ ) {
 		x[i] = 0.0;
 	}
