@@ -12,7 +12,7 @@ uncalibrated projector-camera system. While this repository takes ofxaddon-style
 you can start 3D scanning just by compiling the included example projects.
 
 3D scanning algorithm is heavily relying on the software provided by
-[Mr. Shuntaro Yamazaki][1] and visualization is inspired by [ProCamToolkit][2].
+[Dr. Shuntaro Yamazaki][1] and visualization is inspired by [ProCamToolkit][2].
 
 
 Dependencies
@@ -74,11 +74,6 @@ Set parameters for example projects:
         * 0.86 for EMP1735W 4:3
         * 1.12 for XD490U 4:3
 
-* nsamples
-    * *specific to example-calibrate*
-    * number of points sampled for fundamental matrix estimation (0: sample all points)
-    * default: 1000
-
 
 example-encode
 --------
@@ -115,29 +110,12 @@ Press \[1] to view the point cloud (not working), \[2] to view the projector per
 and \[3] to camera perspective.
 
 
-example-recalibrate
---------
-
-This app is for manually adjusting the point cloud and the calibration parameters.
-First, press \[2] and [f] to project the point cloud on to the actual scene.
-Then, pick a point, press [space], and move the point that is selected and changed blue
-to the corresponding actual point by pressing arrow keys. When finished, press [enter].
-Iterate these steps for at least six points, and press [c] to adjust the point cloud.
-
-
 example-pcl
 --------
 
 This app is a PCL segmentation demo for projection mapping. The loaded 3D point cloud
 is segmented by PCL segmentation feature, and subsequently displayed.
 Press \[2] and [f] to start projection mapping.
-
-
-example-stitch
---------
-
-This app stitches two point clouds and outputs better camera parameters as `calibration2.yml`.
-Requires two input data folders.
 
 
 License
