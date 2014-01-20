@@ -23,33 +23,24 @@
 
 #include <stdlib.h>
 
-// convert TRACE into ofLog
-#define TRACE DEBUGofLog
-
-#if (__STDC_VERSION__ >= 199901L) || defined(_MSC_VER)
-	#define DEBUGofLog(__VA_ARGS__) ofLog(OF_LOG_NOTICE, __VA_ARGS__)
-#else
-	#define DEBUGofLog(args...) ofLog(OF_LOG_NOTICE, ##args)
-#endif
-//
+#define TRACE printf
 
 #include "ofxActiveScanTypes.h"
 #include "ofxActiveScanUtils.h"
 #include "ofxActiveScanTransform.h"
 
-#include "ProCamTools/stdafx.h"
-#include "ProCamTools/common/Field.h"
-#include "ProCamTools/common/ImageBmpIO.h"
-#include "ProCamTools/common/MiscUtil.h"
-#include "ProCamTools/common/MathBaseLapack.h"
-#include "ProCamTools/common/Stereo.h"
-#include "ProCamTools/common/LeastSquare.h"
-#include "ProCamTools/encode.h"
-#include "ProCamTools/decode.h"
-#include "ProCamTools/calibrate.h"
-#include "ProCamTools/triangulate.h"
-#include "ProCamTools/FundamentalMatrix.h"
-#include "ProCamTools/Options.h"
+#include "Field.h"
+#include "ImageBmpIO.h"
+#include "MiscUtil.h"
+#include "MathBaseLapack.h"
+#include "Stereo.h"
+#include "LeastSquare.h"
+#include "encode.h"
+#include "decode.h"
+#include "calibrate.h"
+#include "triangulate.h"
+#include "FundamentalMatrix.h"
+#include "Options.h"
 
 namespace ofxActiveScan {
 

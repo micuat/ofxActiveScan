@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "ProCamTools/common/Field.h"
-#include "ProCamTools/Options.h"
+#include "Field.h"
+#include "Options.h"
 
 namespace ofxActiveScan {
 	

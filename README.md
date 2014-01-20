@@ -22,8 +22,6 @@ Dependencies
 * [ofxCv](https://github.com/kylemcdonald/ofxCv)
 * [ofxLibdc (optional)](https://github.com/kylemcdonald/ofxLibdc)
     * required for example-encode when using Libdc cameras
-* [ofxPCL (optional)](https://github.com/satoruhiga/ofxPCL)
-    * required for example-pcl
 
 
 Data Folder
@@ -108,14 +106,6 @@ example-triangulate
 Finally, this app reconstructs a 3D point cloud. The point cloud is saved to `out.ply`.
 Press \[1] to view the point cloud (not working), \[2] to view the projector perspective
 and \[3] to camera perspective.
-
-
-example-pcl
---------
-
-This app is a PCL segmentation demo for projection mapping. The loaded 3D point cloud
-is segmented by PCL segmentation feature, and subsequently displayed.
-Press \[2] and [f] to start projection mapping.
 
 
 License
