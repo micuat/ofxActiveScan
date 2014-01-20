@@ -26,10 +26,6 @@
 
 #include "ofxActiveScan.h"
 
-#ifdef USE_LIBDC
-#include "ofxLibdc.h"
-#endif
-
 class testApp : public ofBaseApp {
 public:
 	void setup();
@@ -38,26 +34,25 @@ public:
 	void draw();
 	void keyPressed(int);
 	void dragEvent(ofDragInfo);
+	int difference(ofPixels &p0, ofPixels &p1);
 	
 	vector<string> rootDir;
 	
 private:
-	vector<ofImage> patterns;
 	ofxActiveScan::Options options;
-	ofImage curPattern;
-	ofImage curFrame;
+	ofxActiveScan::Encoder * encoder;
+	ofxActiveScan::Decoder * decoder;
 	
-#ifdef USE_LIBDC
-	ofxLibdc::PointGrey camera;
-#else
 	ofVideoGrabber camera;
-#endif
 	
-	int curIndex;
 	int cw, ch;
 	int grayLow, grayHigh;
 	int bufferTime;
 	unsigned long captureTime;
+	bool started;
+	ofImage curFrame;
+	ofImage prevFrame;
+	ofImage curPattern;
 	
 	bool pathLoaded;
 };

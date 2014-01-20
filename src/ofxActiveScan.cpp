@@ -21,45 +21,7 @@
 
 namespace ofxActiveScan {
 
-vector<ofImage> encode(Options op) {
-	vector<ofImage> patterns;
-	
-	CEncode encode(op);
-	
-	for(int i = 0; i < encode.GetNumImages(); i++) {
-		Map2u field;
-		encode.GetImage(i, field);
-		
-		patterns.push_back(toOf(field));
-	}
-	
-	return patterns;
-}
-
-void decode(Options op, Map2f& mapH, Map2f& mapV,
-			Map2f& mapMask, Map2f& mapReliable, string path)
-{
-	CDecode decode(op);
-	
-	ofDirectory dir(ofToDataPath(path));
-	dir.listDir();
-	dir.sort();
-	
-	std::vector<std::string> files;
-	for(int i = 0; i < dir.numFiles(); i++) {
-		files.push_back(dir.getPath(i));
-	}
-	
-	ofLogNotice() << "Decode::init() start decoding";
-	decode.Decode(files);
-	
-	mapH = decode.GetMap(0);
-	mapV = decode.GetMap(1);
-	mapMask = decode.GetMask();
-	mapReliable = decode.GetReliable();
-}
-
-void calibrate(Options options, Map2f hmap, Map2f vmap, Map2f mmap, 
+void calibrate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap,
 			   Matd& camIntrinsic, double& camDist,
 			   Matd& proIntrinsic, double& proDist,
 			   Matd& proExtrinsic)
@@ -117,7 +79,7 @@ ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 	for (int y=0; y<hmap.size(1); y++)
 	{
 		if (y % (hmap.size(1)/10) == 0)
-			TRACE("triangulation: %d%% done", 100*y/hmap.size(1));
+			TRACE("triangulation: %d%% done\n", 100*y/hmap.size(1));
 		
 		int nbehind=0;
 		for (int x=0; x<hmap.size(0); x++)
@@ -156,7 +118,7 @@ ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap,
 			}
 		}
 		if (nbehind)
-			TRACE("found %d points behind viewpoint.", nbehind);
+			TRACE("found %d points behind viewpoint.\n", nbehind);
 	}
 	
 	return mesh;

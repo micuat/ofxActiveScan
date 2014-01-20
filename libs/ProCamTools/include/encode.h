@@ -16,8 +16,8 @@
 class CEncode
 {
 public:
-	CEncode(const options_t& o) : m_options(o) {}
-	CEncode(const std::string& filename) { m_options.load(filename); }
+	CEncode(const options_t& o) : m_options(o), index(0) {}
+	CEncode(const std::string& filename) : index(0) { m_options.load(filename); }
 
 	int GetNumImages(void) const { 
 		int n = 0;
@@ -62,6 +62,26 @@ public:
 		}
 		throw std::runtime_error("invalid image id");
 	}
+	
+	slib::Field<2,unsigned char> GetImage(int id) const {
+		slib::Field<2,unsigned char> image;
+		GetImage(id, image);
+		return image;
+	}
+	
+	slib::Field<2,unsigned char> GetImage() const {
+		slib::Field<2,unsigned char> image;
+		GetImage(index, image);
+		return image;
+	}
+	
+	bool IsFinished() const {
+		return index >= GetNumImages();
+	}
+	
+	void Proceed() {
+		index++;
+	}
 
 private:
 	void get_gray(int direction, int id, slib::Field<2,unsigned char>& image) const {
@@ -76,4 +96,5 @@ private:
 
 private:
 	options_t m_options;
+	int index;
 };

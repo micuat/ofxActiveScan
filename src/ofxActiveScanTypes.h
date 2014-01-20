@@ -22,8 +22,13 @@
 #include "Field.h"
 #include "Options.h"
 
+class CEncode;
+class CDecode;
+
 namespace ofxActiveScan {
-	
+
+typedef CEncode Encoder;
+typedef CDecode Decoder;
 typedef options_t Options;
 typedef slib::Field<2,unsigned char> Map2u;
 typedef slib::Field<2,float> Map2f;

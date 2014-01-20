@@ -44,11 +44,7 @@
 
 namespace ofxActiveScan {
 
-vector<ofImage> encode(Options);
-
-void decode(Options, Map2f&, Map2f&, Map2f&, Map2f&, string);
-
-void calibrate(Options, Map2f, Map2f, Map2f, 
+void calibrate(Options&, Map2f&, Map2f&, Map2f&,
 			   Matd&, double&,
 			   Matd&, double&,
 			   Matd&);

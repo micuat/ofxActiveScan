@@ -73,6 +73,8 @@ void testApp::init() {
 	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);
 	camCalibration.setup(camIntrinsic, camSize);
+	
+	ofEnableDepthTest();
 }
 
 void testApp::update() {

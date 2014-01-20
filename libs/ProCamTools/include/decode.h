@@ -17,74 +17,100 @@
 class CDecode
 {
 public:
-	CDecode(const options_t& o) : m_options(o) {}
-	CDecode(const std::string& filename) { m_options.load(filename); }
-
-	void Decode(const std::vector<std::string>& files) 
-	{
-		std::vector<std::string>::const_iterator it = files.begin();
-		std::vector<slib::Field<2,float> > images;
-		if (m_options.horizontal) 
-		{
+	CDecode(const options_t& o) : m_options(o), stage(HORIZONTAL_GRAY) {}
+	CDecode(const std::string& filename) : stage(HORIZONTAL_GRAY) { m_options.load(filename); }
+	
+	// add from filepath
+	void AddImage(const std::string& s) {
+		slib::Field<2, float> image;
+		slib::image::Read(image, s);
+		
+		AddImage(image);
+	}
+	
+	void AddImage(const slib::Field<2, float>& image) {
+		if( stage != FINISHED )
+			images.push_back(image);
+		
+		if( stage == HORIZONTAL_GRAY ) {
 			int nbits = m_options.get_num_bits(0);
-			images.resize(2*nbits);
-			for (int i=0; i<2*nbits; i++)
-				slib::image::Read(images[i], *it++);
-
-			decode_gray(images,0);
-			generate_mask(0);
-
-			images.resize(m_options.num_fringes);
-			for (int i=0; i<m_options.num_fringes; i++)
-				slib::image::Read(images[i],*it++);
-
-			decode_phase(images,0);
-
-			if (m_options.debug)
-				dump_images(0);
-
-			convert_reliable_map(0);
-		}
-
-		if (m_options.vertical) 
-		{
+			if( images.size() == 2*nbits ) {
+				decode_gray(images,0);
+				generate_mask(0);
+				
+				stage = HORIZONTAL_SINE;
+				images.clear();
+			}
+		} else if( stage == HORIZONTAL_SINE ) {
+			if( images.size() == m_options.num_fringes ) {
+				decode_phase(images,0);
+				if (m_options.debug)
+					dump_images(0);
+				convert_reliable_map(0);
+				
+				stage = VERTICAL_GRAY;
+				images.clear();
+			}
+		} else if( stage == VERTICAL_GRAY ) {
 			int nbits = m_options.get_num_bits(1);
-			images.resize(2*nbits);
-			for (int i=0; i<2*nbits; i++)
-				slib::image::Read(images[i], *it++);
-
-			decode_gray(images,1);
-			generate_mask(1);
-
-			images.resize(m_options.num_fringes);
-			for (int i=0; i<m_options.num_fringes; i++)
-				slib::image::Read(images[i],*it++);
-
-			decode_phase(images,1);
-
-			if (m_options.debug)
-				dump_images(1);
-
-			convert_reliable_map(1);
-		}
-
-		// merge masks and reliable maps
-		if (m_options.horizontal && m_options.vertical) 
-		{
-			for (int y = 0; y < m_mask[1].size(1); y++) 
-			{
-				for (int x = 0; x < m_mask[1].size(0); x++) 
-				{
-					if (!m_mask[1].cell(x, y))
-						m_mask[0].cell(x, y) = 0;
-					m_phase_error[0].cell(x,y) = std::min(m_phase_error[0].cell(x,y),m_phase_error[1].cell(x,y));
-				}
+			if( images.size() == 2*nbits ) {
+				decode_gray(images,1);
+				generate_mask(1);
+				
+				stage = VERTICAL_SINE;
+				images.clear();
+			}
+		} else if( stage == VERTICAL_SINE ) {
+			if( images.size() == m_options.num_fringes ) {
+				decode_phase(images,1);
+				if (m_options.debug)
+					dump_images(1);
+				convert_reliable_map(1);
+				stage == DECODING;
+				images.clear();
 			}
 		}
+		
+		if( stage == DECODING ) {
+			// merge masks and reliable maps
+			if (m_options.horizontal && m_options.vertical)
+			{
+				for (int y = 0; y < m_mask[1].size(1); y++)
+				{
+					for (int x = 0; x < m_mask[1].size(0); x++)
+					{
+						if (!m_mask[1].cell(x, y))
+							m_mask[0].cell(x, y) = 0;
+						m_phase_error[0].cell(x,y) = std::min(m_phase_error[0].cell(x,y),m_phase_error[1].cell(x,y));
+					}
+				}
+			}
+			
+			stage = FINISHED;
+		}
 	}
-
-	const slib::Field<2,float>& GetMap(int direction) const { 
+	
+	void Decode(const std::vector<std::string>& files) {
+		std::vector<std::string>::const_iterator it = files.begin();
+		for( ; it < files.end() ; it++ ) {
+			AddImage(*it);
+		}
+	}
+	
+	bool IsFinished() const {
+		return stage == FINISHED;
+	}
+	
+	const slib::Field<2,float>& GetMap(int direction) const {
 		return m_phase_map[direction];
+	}
+	
+	const slib::Field<2,float>& GetHorizontal() const {
+		return m_phase_map[0];
+	}
+	
+	const slib::Field<2,float>& GetVertical() const {
+		return m_phase_map[1];
 	}
 
 	void WriteMap(int direction, const std::string& filename) const {
@@ -213,4 +239,14 @@ private:
 	slib::Field<2,int> m_gray_error[2];
 	slib::Field<2,float> m_phase_error[2]; // also used as reliable mask
 	slib::Field<2,float> m_mask[2];
+	std::vector<slib::Field<2,float> > images;
+	enum STAGE {
+		HORIZONTAL_GRAY = 0,
+		HORIZONTAL_SINE = 1,
+		VERTICAL_GRAY = 2,
+		VERTICAL_SINE = 3,
+		DECODING = 4,
+		FINISHED = 5
+	};
+	STAGE stage;
 };

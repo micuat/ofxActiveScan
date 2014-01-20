@@ -20,8 +20,6 @@ Dependencies
 
 * ofxOpenCv
 * [ofxCv](https://github.com/kylemcdonald/ofxCv)
-* [ofxLibdc (optional)](https://github.com/kylemcdonald/ofxLibdc)
-    * required for example-encode when using Libdc cameras
 
 
 Data Folder
@@ -73,38 +71,31 @@ Set parameters for example projects:
         * 1.12 for XD490U 4:3
 
 
-example-encode
+example_encode
 --------
 
 This app projects and captures structured light patterns.
 [f] to toggle fullscreen and [space] to start capturing.
 The app window must be set fullscreen on the projector desktop.
 
-Comment or uncomment `#define USE_LIBDC` to choose ofVideoGrabber or ofxLibdc.
+An image is saved for colored point cloud to `camPerspective.jpg`.
 
-Captured images are saved to `img`. The last image is taken for
-colored point cloud and saved to `camPerspective.jpg`.
-
-
-example-decode
---------
-
-This app decodes the results of example-encode and outputs
-`h.map`, `v.map`, `mask.bmp` and `reliable.bmp`.
+After scanning, the result is decoded and following files are saved:
+`h.map`, `v.map`, `mask.bmp`, `reliable.bmp`
 
 
-example-calibrate
+example_calibrate
 --------
 
 This app solves camera/projector intrinsic parameters and extrinsic paramters from
-the example-decode outputs. Calibration results are saved to `calibration.yml`.
+the example_encode outputs. Calibration results are saved to `calibration.yml`.
 
 
-example-triangulate
+example_triangulate
 --------
 
 Finally, this app reconstructs a 3D point cloud. The point cloud is saved to `out.ply`.
-Press \[1] to view the point cloud (not working), \[2] to view the projector perspective
+Press \[1] to view the point cloud, \[2] to view the projector perspective
 and \[3] to camera perspective.
 
 

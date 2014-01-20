@@ -19,6 +19,8 @@
 
 #include "testApp.h"
 
+using namespace ofxActiveScan;
+
 void testApp::setup() {
 	if( rootDir.size() > 0 ) {
 		init();
@@ -30,7 +32,6 @@ void testApp::setup() {
 
 void testApp::init() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	ofHideCursor();
 	
 	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	int devID;
@@ -45,58 +46,65 @@ void testApp::init() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
-	patterns = ofxActiveScan::encode(options);
-	ofImage blank;
-	blank.allocate(options.projector_width, options.projector_height, OF_IMAGE_GRAYSCALE);
-	patterns.push_back(blank);
-	
-#ifdef USE_LIBDC
-	camera.setup(devID);
-	camera.set1394b(true);
-	camera.setSize(cw, ch);
-	camera.setBrightness(0);
-	camera.setGain(0);
-	camera.setExposure(1);
-	camera.setGammaAbs(1);
-	camera.setShutter(1);
-	camera.printFeatures();
-#else
 	camera.listDevices();
 	camera.setDeviceID(devID);
 	camera.initGrabber(cw, ch);
-#endif
 	
-	curIndex = -1;
 	captureTime = 0;
+	started = false;
 	
-	ofDirectory::createDirectory(rootDir[0] + "/img/", true, true);
+	encoder = new Encoder(options);
+	decoder = new Decoder(options);
 }
 
 void testApp::update() {
 	if( pathLoaded ) {
 		
 		unsigned long curTime = ofGetSystemTime();
-		bool needToCapture = (0 <= curIndex) && (curIndex < patterns.size())
-			&& ((curTime - captureTime) > bufferTime);
+		bool needToCapture = started && ((curTime - captureTime) > bufferTime);
 		
-#ifdef USE_LIBDC
-		if(camera.grabVideo(curFrame) && needToCapture) {
-#else
 		camera.update();
 		curFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
-		if(camera.isFrameNew() && needToCapture) {
-#endif
-			if( curIndex < patterns.size() - 1 ) {
-				curFrame.saveImage(rootDir[0] + "/img/" + ofToString(curIndex + 10) + ".bmp");
-				captureTime = curTime;
-				curIndex++;
-				curPattern = patterns[curIndex];
-			} else {
-				// last frame is for color mapping
-				curFrame.saveImage(rootDir[0] + "/camPerspective.jpg");
-				curIndex = -1;
-				captureTime = 0;
+		curFrame.update();
+		
+		if( camera.isFrameNew() && needToCapture ) {
+			
+			// see if 20% of image changed
+			if( difference(camera.getPixelsRef(), prevFrame.getPixelsRef()) < 20 ) {
+				return;
 			}
+			
+			if( !curPattern.isAllocated() ) { // first image
+				curFrame.saveImage(rootDir[0] + "/camPerspective.jpg");
+				prevFrame = curFrame;
+			} else {
+				decoder->AddImage(toAs(curFrame));
+				prevFrame = curFrame;
+			}
+			
+			if( !encoder->IsFinished() ) {
+				curPattern = toOf(encoder->GetImage());
+				encoder->Proceed();
+			} else {
+				while ( decoder->IsFinished() ); // wait while decoding
+				
+				Map2f horizontal, vertical;
+				ofImage mask, reliable;
+				
+				horizontal = decoder->GetHorizontal();
+				vertical = decoder->GetVertical();
+				mask = toOf(decoder->GetMask());
+				reliable = toOf(decoder->GetReliable());
+				
+				horizontal.Write(ofToDataPath(rootDir[0] + "/h.map", true));
+				vertical.Write(ofToDataPath(rootDir[0] + "/v.map", true));
+				mask.saveImage(ofToDataPath(rootDir[0] + "/mask.bmp"));
+				reliable.saveImage(ofToDataPath(rootDir[0] + "/reliable.bmp"));
+				
+				started = false;
+			}
+			
+			captureTime = curTime;
 		}
 		
 	}
@@ -107,11 +115,11 @@ void testApp::draw() {
 	
 	if( pathLoaded ) {
 		
-		if( curIndex >= 0 ) {
+		if( started ) {
 			ofSetColor(grayHigh);
-			curPattern.draw(0, 0);
+			if( curPattern.isAllocated() )
+				curPattern.draw(0, 0);
 		} else {
-			curFrame.update();
 			curFrame.draw(0, 0);
 		}
 		
@@ -122,9 +130,8 @@ void testApp::keyPressed(int key) {
 	if( pathLoaded ) {
 		
 		if(key == ' ') {
-			curIndex = 0;
-			curPattern = patterns[curIndex];
-			captureTime = ofGetSystemTime();
+			started = true;
+			prevFrame.setFromPixels(camera.getPixels(), cw, ch, OF_IMAGE_COLOR);
 		}
 		if( key == 'f' ) {
 			ofToggleFullscreen();
@@ -141,4 +148,19 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 		init();
 		pathLoaded = true;
 	}
+}
+
+int testApp::difference(ofPixels &p0, ofPixels &p1){
+	// subtract two images
+	ofPixels pout = p0;
+	int numChanged = 0;
+	int threshold = 3;
+	for (int i = 0; i < pout.size(); i++) {
+		pout[i] = ofMap(p0[i] - p1[i], -255, 255, 0, 255, true);
+		if (pout[i] < 128 - threshold || 128 + threshold < pout[i]) {
+			numChanged++;
+		}
+	}
+	
+	return numChanged * 100 / pout.size();
 }
