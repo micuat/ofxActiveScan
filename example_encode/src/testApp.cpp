@@ -69,15 +69,15 @@ void testApp::update() {
 		
 		if( camera.isFrameNew() && needToCapture ) {
 			
-			// see if 20% of image changed
-			if( difference(camera.getPixelsRef(), prevFrame.getPixelsRef()) < 20 ) {
-				return;
-			}
-			
 			if( !curPattern.isAllocated() ) { // first image
 				curFrame.saveImage(rootDir[0] + "/camPerspective.jpg");
 				prevFrame = curFrame;
 			} else {
+				// see if 20% of image changed
+				if( difference(camera.getPixelsRef(), prevFrame.getPixelsRef()) < 20 ) {
+					return;
+				}
+				
 				decoder->AddImage(toAs(curFrame));
 				prevFrame = curFrame;
 			}
@@ -119,7 +119,7 @@ void testApp::draw() {
 			ofSetColor(grayHigh);
 			if( curPattern.isAllocated() )
 				curPattern.draw(0, 0);
-		} else {
+		} else if( ofGetWindowMode() != OF_FULLSCREEN ) {
 			curFrame.draw(0, 0);
 		}
 		
