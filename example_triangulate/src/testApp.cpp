@@ -65,9 +65,14 @@ void testApp::init() {
 	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.png"));
 	ofLoadImage(camPerspective, ofToDataPath(rootDir[0] + "/camPerspective.jpg"));
 	
-	mesh = triangulate(options, horizontal, vertical, toAs(mask),
-					   toAs(camIntrinsic), camDist,
-					   toAs(proIntrinsic), proDist, toAs(proExtrinsic), camPerspective);
+	Map2f maskMap = toAs(mask);
+	Matd camI = toAs(camIntrinsic);
+	Matd proI = toAs(proIntrinsic);
+	Matd proE = toAs(proExtrinsic);
+	
+	mesh = triangulate(options, horizontal, vertical, maskMap,
+					   camI, camDist,
+					   proI, proDist, proE, camPerspective);
 	mesh.save(ofToDataPath(rootDir[0] + "/out.ply"));
 	
 	// set parameters for projection

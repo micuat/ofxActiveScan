@@ -54,7 +54,6 @@ Map2f calibrate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap, Map2f& 
 				epline = epline * (1.0 / epline(2, 0));
 				Matd result = pr * epline;
 				
-				cout << result(0,0) << endl;
 				if( result(0, 0) > 3.0 )
 					mmapIn.cell(x, y) = 0;
 			}
@@ -136,12 +135,13 @@ ofMesh triangulate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap,
 				
 				// save
 				//result.push_back(p3d);
-				if (p3d[2]<0)
+				if (p3d[2]<0) {
 					nbehind++;
-				
-				mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
-				if( cp.bAllocated() ) {
-					mesh.addColor(cp.getColor(x, y));
+				} else {
+					mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
+					if( cp.bAllocated() ) {
+						mesh.addColor(cp.getColor(x, y));
+					}
 				}
 			}
 		}
