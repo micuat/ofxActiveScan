@@ -21,24 +21,52 @@
 
 namespace ofxActiveScan {
 
-void calibrate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap,
+Map2f calibrate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap, Map2f& rmap,
 			   Matd& camIntrinsic, double& camDist,
 			   Matd& proIntrinsic, double& proDist,
 			   Matd& proExtrinsic)
 {
 	CProCamCalibrate calib(options);
-	calib.Calibrate(hmap, vmap, mmap);
+	calib.Calibrate(hmap, vmap, rmap);
 	
 	camIntrinsic = calib.GetCamIntrinsic();
 	camDist      = calib.GetCamDistortion();
 	proIntrinsic = calib.GetProIntrinsic();
 	proDist      = calib.GetProDistortion();
 	proExtrinsic = calib.GetProExtrinsic();
+	
+	Map2f mmapIn = mmap;
+	
+	Matd fundamental = calib.GetFundamental();
+	
+	for( int y = 0; y < mmap.size(1); y++ ) {
+		for( int x = 0; x < mmap.size(0); x++ ) {
+			if( mmap.cell(x, y) ) {
+				Matd pl(3, 1);
+				Matd pr(1, 3);
+				pl(0, 0) = x;
+				pl(1, 0) = y;
+				pl(2, 0) = 1.0;
+				pr(0, 0) = hmap.cell(x, y);
+				pr(0, 1) = vmap.cell(x, y);
+				pr(0, 2) = 1.0;
+				Matd epline = fundamental * pl;
+				epline = epline * (1.0 / epline(2, 0));
+				Matd result = pr * epline;
+				
+				cout << result(0,0) << endl;
+				if( result(0, 0) > 3.0 )
+					mmapIn.cell(x, y) = 0;
+			}
+		}
+	}
+	
+	return mmapIn;
 }
 
-ofMesh triangulate(Options o, Map2f hmap, Map2f vmap, Map2f mmap,
-				   Matd cKd, double cD,
-				   Matd pKd, double pD, Matd Rtd, ofImage cp)
+ofMesh triangulate(Options& o, Map2f& hmap, Map2f& vmap, Map2f& mmap,
+				   Matd& cKd, double cD,
+				   Matd& pKd, double pD, Matd& Rtd, ofImage& cp)
 {
 	slib::CMatrix<3,3,double> cK(cKd.ptr());
 	slib::CMatrix<3,3,double> pK(pKd.ptr());
@@ -47,10 +75,10 @@ ofMesh triangulate(Options o, Map2f hmap, Map2f vmap, Map2f mmap,
 	return triangulate(o, hmap, vmap, mmap, cK, cD, pK, pD, Rt, cp);
 }
 
-ofMesh triangulate(Options options, Map2f hmap, Map2f vmap, Map2f mmap, 
-				   slib::CMatrix<3,3,double> matKcam, double camDist,
-				   slib::CMatrix<3,3,double> matKpro, double proDist,
-				   slib::CMatrix<3,4,double> proRt, ofImage cp)
+ofMesh triangulate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap,
+				   slib::CMatrix<3,3,double>& matKcam, double camDist,
+				   slib::CMatrix<3,3,double>& matKpro, double proDist,
+				   slib::CMatrix<3,4,double>& proRt, ofImage& cp)
 {
 	ofMesh mesh;
 	

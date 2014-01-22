@@ -98,8 +98,8 @@ void testApp::update() {
 				
 				horizontal.Write(ofToDataPath(rootDir[0] + "/h.map", true));
 				vertical.Write(ofToDataPath(rootDir[0] + "/v.map", true));
-				mask.saveImage(ofToDataPath(rootDir[0] + "/mask.bmp"));
-				reliable.saveImage(ofToDataPath(rootDir[0] + "/reliable.bmp"));
+				mask.saveImage(ofToDataPath(rootDir[0] + "/mask.png"));
+				reliable.saveImage(ofToDataPath(rootDir[0] + "/reliable.png"));
 				
 				started = false;
 			}

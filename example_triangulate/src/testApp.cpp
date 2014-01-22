@@ -62,7 +62,7 @@ void testApp::init() {
 	Map2f vertical(ofToDataPath(rootDir[0] + "/v.map", true));
 	
 	ofImage mask, camPerspective;
-	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.bmp"));
+	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.png"));
 	ofLoadImage(camPerspective, ofToDataPath(rootDir[0] + "/camPerspective.jpg"));
 	
 	mesh = triangulate(options, horizontal, vertical, toAs(mask),

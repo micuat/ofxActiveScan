@@ -39,7 +39,6 @@ public:
 		srand(time(NULL));
 		m_mask = mask;
 		build_correspondence(horizontal,vertical);
-		slib::CMatrix<3,3,double> fundamental;
 		estimate_fundamental(fundamental);
 		estimate_intrinsics(fundamental) ;
 		estimate_extrinsics(fundamental);
@@ -83,6 +82,10 @@ public:
 	
 	slib::CMatrix<3,4,double> GetProExtrinsic() const {
 		return m_pro_ext; 
+	}
+	
+	slib::CMatrix<3,3,double> GetFundamental() const {
+		return fundamental;
 	}
 	
 private:
@@ -401,6 +404,7 @@ private:
 	slib::Field<2,float> m_mask;
 	
 	// output
+	slib::CMatrix<3,3,double> fundamental;
 	slib::CMatrix<3,3,double> m_cam_int;
 	slib::CMatrix<3,3,double> m_pro_int;
 	slib::CMatrix<3,4,double> m_pro_ext;

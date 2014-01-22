@@ -43,9 +43,13 @@ void testApp::init() {
 	
 	// load correspondences estimated by decode program 
 	Map2f horizontal(ofToDataPath(rootDir[0] + "/h.map", true));
-	Map2f vertical(ofToDataPath(rootDir[0] + "/v.map", true));  
+	Map2f vertical(ofToDataPath(rootDir[0] + "/v.map", true));
 	ofImage mask;
-	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/reliable.bmp"));
+	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.png"));
+	Map2f maskMap = toAs(mask);
+	ofImage reliable;
+	ofLoadImage(reliable, ofToDataPath(rootDir[0] + "/reliable.png"));
+	Map2f reliableMap = toAs(reliable);
 	
 	Matd camIntrinsic, proIntrinsic;
 	double camDistortion, proDistortion;
@@ -53,15 +57,17 @@ void testApp::init() {
 	
 	while( 1 ) {
 		try {
-			calibrate(options, horizontal, vertical, toAs(mask),
-					  camIntrinsic, camDistortion,
-					  proIntrinsic, proDistortion, proExtrinsic);
+			maskMap = calibrate(options, horizontal, vertical, maskMap, reliableMap,
+								camIntrinsic, camDistortion,
+								proIntrinsic, proDistortion, proExtrinsic);
 			break;
 		} catch ( std::runtime_error &e ) {
 			ofLogVerbose() << "Caught exception : " << e.what();
 			ofLogVerbose() << "Retrying calibration";
 		}
 	}
+	mask = toOf(maskMap);
+	mask.saveImage(ofToDataPath(rootDir[0] + "/maskInlier.png"));
 	
 	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
 	cfs << "camIntrinsic"  << toCv(camIntrinsic);
