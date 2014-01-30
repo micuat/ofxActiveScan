@@ -82,6 +82,10 @@ public:
 	void Proceed() {
 		index++;
 	}
+	
+	int GetIndex() const {
+		return index;
+	}
 
 private:
 	void get_gray(int direction, int id, slib::Field<2,unsigned char>& image) const {
