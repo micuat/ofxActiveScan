@@ -7,6 +7,12 @@
 		<ClCompile Include="src\main.cpp">
 			<Filter>src</Filter>
 		</ClCompile>
+		<ClCompile Include="src\main.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
+		<ClCompile Include="src\testApp.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
 		<ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp">
 			<Filter>addons\ofxOpenCv\src</Filter>
 		</ClCompile>
@@ -37,17 +43,11 @@
 		<ClCompile Include="..\..\..\addons\ofxActiveScan\src\ofxActiveScanUtils.cpp">
 			<Filter>addons\ofxActiveScan\src</Filter>
 		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\FundamentalMatrix.cpp">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
+		<ClCompile Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\lib\FundamentalMatrix.cpp">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\lib</Filter>
 		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\triangulate.cpp">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\ETF.cpp">
-			<Filter>addons\ofxCv\libs\CLD\src</Filter>
-		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\fdog.cpp">
-			<Filter>addons\ofxCv\libs\CLD\src</Filter>
+		<ClCompile Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\lib\triangulate.cpp">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\lib</Filter>
 		</ClCompile>
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Calibration.cpp">
 			<Filter>addons\ofxCv\libs\ofxCv\src</Filter>
@@ -62,9 +62,6 @@
 			<Filter>addons\ofxCv\libs\ofxCv\src</Filter>
 		</ClCompile>
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Helpers.cpp">
-			<Filter>addons\ofxCv\libs\ofxCv\src</Filter>
-		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\ObjectFinder.cpp">
 			<Filter>addons\ofxCv\libs\ofxCv\src</Filter>
 		</ClCompile>
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\RunningBackground.cpp">
@@ -153,12 +150,6 @@
 		<Filter Include="addons\ofxActiveScan\src">
 			<UniqueIdentifier>{DD776305-5399-D7FC-5796-9BA6}</UniqueIdentifier>
 		</Filter>
-		<Filter Include="addons\ofxActiveScan\src\ProCamTools">
-			<UniqueIdentifier>{263D277C-FC61-8D92-9583-B62D}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxActiveScan\src\ProCamTools\common">
-			<UniqueIdentifier>{BE792A81-01EB-A14A-CF12-9394}</UniqueIdentifier>
-		</Filter>
 		<Filter Include="addons\ofxActiveScan\libs">
 			<UniqueIdentifier>{D9AEF184-397B-E2E2-C634-E562}</UniqueIdentifier>
 		</Filter>
@@ -174,6 +165,18 @@
 		<Filter Include="addons\ofxActiveScan\libs\levmar\include">
 			<UniqueIdentifier>{5A9BD409-9EF3-1570-B8F6-F502}</UniqueIdentifier>
 		</Filter>
+		<Filter Include="addons\ofxActiveScan\libs\ProCamTools">
+			<UniqueIdentifier>{D93EBAC7-716B-90D4-0A92-DBCA}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxActiveScan\libs\ProCamTools\include">
+			<UniqueIdentifier>{D78DB5A1-D02D-D64F-81D5-C6DA}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxActiveScan\libs\ProCamTools\include\common">
+			<UniqueIdentifier>{C4CD587D-4BC9-38D1-18A1-1276}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxActiveScan\libs\ProCamTools\lib">
+			<UniqueIdentifier>{12B26761-731F-8DC1-6566-9BDC}</UniqueIdentifier>
+		</Filter>
 		<Filter Include="addons\ofxCv">
 			<UniqueIdentifier>{A9C1150B-C1CB-2BC0-0F32-ED3B}</UniqueIdentifier>
 		</Filter>
@@ -182,18 +185,6 @@
 		</Filter>
 		<Filter Include="addons\ofxCv\libs">
 			<UniqueIdentifier>{2D63E874-134A-C540-1157-C931}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxCv\libs\CLD">
-			<UniqueIdentifier>{6E254616-00D9-D1AD-2976-B475}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxCv\libs\CLD\include">
-			<UniqueIdentifier>{127D6EBD-127A-D8C0-AE83-D8F2}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxCv\libs\CLD\include\CLD">
-			<UniqueIdentifier>{8B905DF6-4298-B52E-6BAD-BD9B}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxCv\libs\CLD\src">
-			<UniqueIdentifier>{988C5DE1-0A28-4035-7625-48D9}</UniqueIdentifier>
 		</Filter>
 		<Filter Include="addons\ofxCv\libs\ofxCv">
 			<UniqueIdentifier>{9104DB86-FB76-46B8-7315-E1A9}</UniqueIdentifier>
@@ -209,6 +200,9 @@
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>
+		<ClInclude Include="src\testApp.h">
+			<Filter>src</Filter>
+		</ClInclude>
 		<ClInclude Include="src\testApp.h">
 			<Filter>src</Filter>
 		</ClInclude>
@@ -503,87 +497,6 @@
 		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ofxActiveScanUtils.h">
 			<Filter>addons\ofxActiveScan\src</Filter>
 		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\calibrate.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\BmpUtil.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\CalcStatistics.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\CameraCalibration.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\ColorConv.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\DLT.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\Field.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\ImageBase.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\ImageBmpIO.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\ImageIOBase.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\IniFile.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\LeastSquare.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\MathBase.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\MathBaseLapack.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\MathBaseUtil.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\MiscUtil.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\common\Stereo.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools\common</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\decode.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\encode.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\FundamentalMatrix.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\GrayCode.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\levmar_util.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\Options.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\ransac.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\Rotation.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\stdafx.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxActiveScan\src\ProCamTools\triangulate.h">
-			<Filter>addons\ofxActiveScan\src\ProCamTools</Filter>
-		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\lapack\include\lapacke.h">
 			<Filter>addons\ofxActiveScan\libs\lapack\include</Filter>
 		</ClInclude>
@@ -599,20 +512,86 @@
 		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\levmar\include\levmar.h">
 			<Filter>addons\ofxActiveScan\libs\levmar\include</Filter>
 		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\calibrate.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\BmpUtil.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\CalcStatistics.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\CameraCalibration.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\ColorConv.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\DLT.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\Field.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\ImageBase.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\ImageBmpIO.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\ImageIOBase.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\IniFile.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\LeastSquare.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\MathBase.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\MathBaseLapack.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\MathBaseUtil.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\MiscUtil.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\common\Stereo.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include\common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\decode.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\encode.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\FundamentalMatrix.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\GrayCode.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\levmar_util.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\Options.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\ransac.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\Rotation.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxActiveScan\libs\ProCamTools\include\triangulate.h">
+			<Filter>addons\ofxActiveScan\libs\ProCamTools\include</Filter>
+		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h">
 			<Filter>addons\ofxCv\src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\ETF.h">
-			<Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\fdog.h">
-			<Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\imatrix.h">
-			<Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\myvec.h">
-			<Filter>addons\ofxCv\libs\CLD\include\CLD</Filter>
 		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Calibration.h">
 			<Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
@@ -627,9 +606,6 @@
 			<Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
 		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Helpers.h">
-			<Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\ObjectFinder.h">
 			<Filter>addons\ofxCv\libs\ofxCv\include\ofxCv</Filter>
 		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\RunningBackground.h">
