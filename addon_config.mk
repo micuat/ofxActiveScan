@@ -81,14 +81,14 @@ vs:
 	ADDON_LIBS += libs/lapack/lib/vs/liblapacked.lib
 	ADDON_LIBS += libs/levmar/lib/vs/liblevmar.lib
 	ADDON_LIBS += libs/levmar/lib/vs/liblevmard.lib
-ADDON_DLLS_TO_COPY =
-ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/libblas.dll
-ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/liblapack.dll
-ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/liblapacke.dll
-ADDON_DLLS_TO_COPY += libs/levmar/lib/vs/liblevmar.dll
-ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libgcc_s_dw2-1.dll
-ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libgfortran-3.dll
-ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libquadmath-0.dll
+	ADDON_DLLS_TO_COPY =
+	ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/libblas.dll
+	ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/liblapack.dll
+	ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/liblapacke.dll
+	ADDON_DLLS_TO_COPY += libs/levmar/lib/vs/liblevmar.dll
+	ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libgcc_s_dw2-1.dll
+	ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libgfortran-3.dll
+	ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libquadmath-0.dll
 
 osx:
 	ADDON_LIBS =
