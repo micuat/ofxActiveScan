@@ -71,18 +71,24 @@ linux:
 	ADDON_LIBS += libs/levmar/lib/linux/liblevmar.a
 	
 vs:
+	ADDON_CFLAGS = "/D ADD_ /D HAVE_LAPACK_CONFIG_H /D LAPACK_COMPLEX_STRUCTURE /D _USE_MATH_DEFINES"
 	ADDON_LIBS =
-	ADDON_LIBS += libs/lapack/lib/vs/libblas.dll
 	ADDON_LIBS += libs/lapack/lib/vs/libblas.lib
-	ADDON_LIBS += libs/lapack/lib/vs/liblapack.dll
+	ADDON_LIBS += libs/lapack/lib/vs/libblasd.lib
 	ADDON_LIBS += libs/lapack/lib/vs/liblapack.lib
-	ADDON_LIBS += libs/lapack/lib/vs/liblapacke.dll
+	ADDON_LIBS += libs/lapack/lib/vs/liblapackd.lib
 	ADDON_LIBS += libs/lapack/lib/vs/liblapacke.lib
-	ADDON_LIBS += libs/levmar/lib/vs/liblevmar.dll
+	ADDON_LIBS += libs/lapack/lib/vs/liblapacked.lib
 	ADDON_LIBS += libs/levmar/lib/vs/liblevmar.lib
-	ADDON_LIBS += libs/mingw/lib/vs/libgcc_s_dw2-1.dll
-	ADDON_LIBS += libs/mingw/lib/vs/libgfortran-3.dll
-	ADDON_LIBS += libs/mingw/lib/vs/libquadmath-0.dll
+	ADDON_LIBS += libs/levmar/lib/vs/liblevmard.lib
+ADDON_DLLS_TO_COPY =
+ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/libblas.dll
+ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/liblapack.dll
+ADDON_DLLS_TO_COPY += libs/lapack/lib/vs/liblapacke.dll
+ADDON_DLLS_TO_COPY += libs/levmar/lib/vs/liblevmar.dll
+ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libgcc_s_dw2-1.dll
+ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libgfortran-3.dll
+ADDON_DLLS_TO_COPY += libs/mingw/lib/vs/libquadmath-0.dll
 
 osx:
 	ADDON_LIBS =

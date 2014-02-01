@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <stdarg.h>
 #include <levmar.h>
 
 #include "levmar_util.h"
