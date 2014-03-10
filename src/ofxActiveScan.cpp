@@ -74,12 +74,34 @@ ofMesh triangulate(Options& o, Map2f& hmap, Map2f& vmap, Map2f& mmap,
 	return triangulate(o, hmap, vmap, mmap, cK, cD, pK, pD, Rt, cp);
 }
 
+ofMesh triangulate(Options& o, Map2f& hmap, Map2f& vmap, Map2f& mmap,
+				   Matd& cKd, double cD,
+				   Matd& pKd, double pD, Matd& Rtd, ofImage& cp, Map2i& indices)
+{
+	slib::CMatrix<3,3,double> cK(cKd.ptr());
+	slib::CMatrix<3,3,double> pK(pKd.ptr());
+	slib::CMatrix<3,4,double> Rt(Rtd.ptr());
+	
+	return triangulate(o, hmap, vmap, mmap, cK, cD, pK, pD, Rt, cp, indices);
+}
+
 ofMesh triangulate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap,
 				   slib::CMatrix<3,3,double>& matKcam, double camDist,
 				   slib::CMatrix<3,3,double>& matKpro, double proDist,
 				   slib::CMatrix<3,4,double>& proRt, ofImage& cp)
 {
+	Map2i indices;
+	return triangulate(options, hmap, vmap, mmap, matKcam, camDist, matKpro, proDist, proRt, cp, indices);
+}
+
+ofMesh triangulate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap,
+				   slib::CMatrix<3,3,double>& matKcam, double camDist,
+				   slib::CMatrix<3,3,double>& matKpro, double proDist,
+				   slib::CMatrix<3,4,double>& proRt, ofImage& cp, Map2i& indices)
+{
 	ofMesh mesh;
+	indices.Initialize(hmap.size());
+	indices.Clear(-1);
 	
 	slib::CVector<2,double>
 		cod1=make_vector<double>((options.projector_width+1)/2.0,options.projector_height*options.projector_horizontal_center),
@@ -138,6 +160,7 @@ ofMesh triangulate(Options& options, Map2f& hmap, Map2f& vmap, Map2f& mmap,
 				if (p3d[2]<0) {
 					nbehind++;
 				} else {
+					indices.cell(x, y) = mesh.getNumVertices();
 					mesh.addVertex(ofVec3f(p3d[0], p3d[1], p3d[2]));
 					if( cp.bAllocated() ) {
 						mesh.addColor(cp.getColor(x, y));
