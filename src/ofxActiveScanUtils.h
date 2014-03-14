@@ -21,7 +21,7 @@
 
 #include "ofMain.h"
 #include "ofxActiveScanTypes.h"
-#include "ofxCv.h"
+#include "ofxOpenCv.h"
 
 #include "Field.h"
 #include "Options.h"

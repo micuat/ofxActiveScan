@@ -22,8 +22,8 @@
 //#define USE_LIBDC
 
 #include "ofMain.h"
-#include "ofxCv.h"
 
+#include "ofxOpenCv.h"
 #include "ofxActiveScan.h"
 
 class testApp : public ofBaseApp {
@@ -54,5 +54,5 @@ private:
 	ofImage prevFrame;
 	ofImage curPattern;
 	
-	bool pathLoaded;
+	bool pathLoaded, imageUpdateTrigger;
 };

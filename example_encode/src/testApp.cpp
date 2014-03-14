@@ -55,6 +55,8 @@ void testApp::init() {
 	
 	encoder = new Encoder(options);
 	decoder = new Decoder(options);
+	
+	imageUpdateTrigger = false;
 }
 
 void testApp::update() {
@@ -74,12 +76,13 @@ void testApp::update() {
 				prevFrame = curFrame;
 			} else {
 				// see if 20% of image changed
-				if( difference(camera.getPixelsRef(), prevFrame.getPixelsRef()) < 20 ) {
+				if( difference(camera.getPixelsRef(), prevFrame.getPixelsRef()) < 20 / 3 ) {
 					return;
 				}
 				
 				decoder->AddImage(toAs(curFrame));
 				prevFrame = curFrame;
+				imageUpdateTrigger = false;
 			}
 			
 			if( !encoder->IsFinished() ) {
@@ -103,8 +106,6 @@ void testApp::update() {
 				
 				started = false;
 			}
-			
-			captureTime = curTime;
 		}
 		
 	}
@@ -117,8 +118,13 @@ void testApp::draw() {
 		
 		if( started ) {
 			ofSetColor(grayHigh);
-			if( curPattern.isAllocated() )
+			if( curPattern.isAllocated() ) {
 				curPattern.draw(0, 0);
+				if( imageUpdateTrigger == false ) {
+					imageUpdateTrigger = true;
+					captureTime = ofGetSystemTime();
+				}
+			}
 		} else if( ofGetWindowMode() != OF_FULLSCREEN ) {
 			curFrame.draw(0, 0);
 		}

@@ -97,6 +97,28 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>C602002DE761F9B52DB4400A</key>
+			<dict>
+				<key>fileRef</key>
+				<string>AE75A3FBA2C2D87D14F06FE6</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>AE75A3FBA2C2D87D14F06FE6</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ObjectFinder.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/ofxCv/src/ObjectFinder.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>2023EF517ED2D8B397511D4B</key>
 			<dict>
 				<key>fileRef</key>
@@ -194,6 +216,7 @@
 					<string>9DBD717072C35D324E101669</string>
 					<string>03A75A648BC4CF1D9DEDD0CE</string>
 					<string>B9076967F8C54A04362C04AA</string>
+					<string>AE75A3FBA2C2D87D14F06FE6</string>
 					<string>5CBF6AED6A17AC0C17F63CC4</string>
 					<string>A810DF70319A10353588F5DB</string>
 					<string>6CEC50DB3D06414010233963</string>
@@ -288,6 +311,21 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>4524C0ED0C2DD3E085CE3350</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ObjectFinder.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/ofxCv/include/ofxCv/ObjectFinder.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>8738DE90218B1E9054A88B54</key>
 			<dict>
 				<key>explicitFileType</key>
@@ -357,6 +395,7 @@
 					<string>D29DD28C195CD81267F3C8A1</string>
 					<string>8326CDEDA153D242D924D2B6</string>
 					<string>8738DE90218B1E9054A88B54</string>
+					<string>4524C0ED0C2DD3E085CE3350</string>
 					<string>6B3CDFD1A15E92F074E7D5AE</string>
 					<string>70046E043EDDB466ED625C3B</string>
 					<string>84D3470A12DEE51F320224AC</string>
@@ -396,19 +435,6 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>90D509C72729D1998E28A98F</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>85961BEC127E2550AA7756C9</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>libs</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
 			<key>58140E0F92D37844E9C8883D</key>
 			<dict>
 				<key>explicitFileType</key>
@@ -421,6 +447,181 @@
 				<string>Calibration.h</string>
 				<key>path</key>
 				<string>../../../addons/ofxCv/libs/ofxCv/include/ofxCv/Calibration.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>F76B4A79BD8DE4854141CB47</key>
+			<dict>
+				<key>fileRef</key>
+				<string>A2D8249D46647E3C51769CDE</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>A2D8249D46647E3C51769CDE</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>fdog.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/CLD/src/fdog.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>37CF39B443ACB0F86B1351ED</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>B047FF96258DC01792B272DB</string>
+					<string>A2D8249D46647E3C51769CDE</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>src</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>B6840996567E78436F7ECFAB</key>
+			<dict>
+				<key>fileRef</key>
+				<string>B047FF96258DC01792B272DB</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>B047FF96258DC01792B272DB</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ETF.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/CLD/src/ETF.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>FE15469185A3A49FEC9D2292</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>myvec.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/CLD/include/CLD/myvec.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>DB0CD4C938C079DCD67222FE</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>imatrix.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/CLD/include/CLD/imatrix.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>CC455256CE0ECFE328853737</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>fdog.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/CLD/include/CLD/fdog.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>FEA273413D5AFD9607F56ABE</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>820102E51B125101D727B3CC</string>
+					<string>CC455256CE0ECFE328853737</string>
+					<string>DB0CD4C938C079DCD67222FE</string>
+					<string>FE15469185A3A49FEC9D2292</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>CLD</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>45591C11B7434576DF6996B4</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>FEA273413D5AFD9607F56ABE</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>include</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>7CC1E591490DB083FB916812</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>45591C11B7434576DF6996B4</string>
+					<string>37CF39B443ACB0F86B1351ED</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>CLD</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>90D509C72729D1998E28A98F</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>7CC1E591490DB083FB916812</string>
+					<string>85961BEC127E2550AA7756C9</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>libs</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>820102E51B125101D727B3CC</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ETF.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxCv/libs/CLD/include/CLD/ETF.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -3662,6 +3863,10 @@
 						<string>../../../addons/ofxActiveScan/libs/mingw/lib</string>
 						<string>../../../addons/ofxActiveScan/src</string>
 						<string>../../../addons/ofxCv/libs</string>
+						<string>../../../addons/ofxCv/libs/CLD</string>
+						<string>../../../addons/ofxCv/libs/CLD/include</string>
+						<string>../../../addons/ofxCv/libs/CLD/include/CLD</string>
+						<string>../../../addons/ofxCv/libs/CLD/src</string>
 						<string>../../../addons/ofxCv/libs/ofxCv</string>
 						<string>../../../addons/ofxCv/libs/ofxCv/include</string>
 						<string>../../../addons/ofxCv/libs/ofxCv/include/ofxCv</string>
@@ -3782,6 +3987,10 @@
 						<string>../../../addons/ofxActiveScan/libs/mingw/lib</string>
 						<string>../../../addons/ofxActiveScan/src</string>
 						<string>../../../addons/ofxCv/libs</string>
+						<string>../../../addons/ofxCv/libs/CLD</string>
+						<string>../../../addons/ofxCv/libs/CLD/include</string>
+						<string>../../../addons/ofxCv/libs/CLD/include/CLD</string>
+						<string>../../../addons/ofxCv/libs/CLD/src</string>
 						<string>../../../addons/ofxCv/libs/ofxCv</string>
 						<string>../../../addons/ofxCv/libs/ofxCv/include</string>
 						<string>../../../addons/ofxCv/libs/ofxCv/include/ofxCv</string>
@@ -3858,11 +4067,14 @@
 					<string>6DE21163A4269156347BF095</string>
 					<string>A36A7EFEE3F94BF9910D9BC9</string>
 					<string>512AF2F237D6C21A3C7274FC</string>
+					<string>B6840996567E78436F7ECFAB</string>
+					<string>F76B4A79BD8DE4854141CB47</string>
 					<string>EBCDE831EFAE08274E799C97</string>
 					<string>6AABAB39E82AF5CFEA23A205</string>
 					<string>45CC483A999BF1065A6B926C</string>
 					<string>5CC34D433F5806179935B89D</string>
 					<string>2023EF517ED2D8B397511D4B</string>
+					<string>C602002DE761F9B52DB4400A</string>
 					<string>7CDAD32BE4FA46701E3552C7</string>
 					<string>10B69DE456AED1288FC9316B</string>
 					<string>A6668C5B1272D7FCD5B5A16F</string>

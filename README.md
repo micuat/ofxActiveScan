@@ -20,27 +20,24 @@ Dependencies
 
 * ofxOpenCv
 * [ofxCv](https://github.com/kylemcdonald/ofxCv)
+    * required for `example_triangulate`
 
 
 Data Folder
 --------
 
 In ofxActiveScan examples, a data folder stores all information of
-a projector-camera pair, including captured structured light images,
-calibration parameters, a point cloud. Therefore, if you use
-two projectors P1, P2 and one camera C1, you will need to create
-two data folders for the P1-C1 pair and P2-C1 pair.
+a projector-camera pair, including calibration parameters and a point cloud.
 
-In order to pass the data folder path to an app, just drag the folder icon
-to the openFrameworks window. For Linux users, since this feature is not supported,
-specify the path as a command-line argument.
+In order to specify the data folder, just drag the folder icon
+to the openFrameworks window. The folder path can be specified by 
+a command-line argument as well.
 
-To begin with, only the file `config.yml` must be created in advance.
-An example data folder is saved as `myData` in the repository.
+To begin with, only the file `config.yml` must be created in the folder.
+Look for `myData` for an example.
 
 First, use example-encode to capture structured-light images,
-then, example-decode to decode the images,
-next, example-calibrate to solve camera parameters,
+then, example-calibrate to solve camera parameters,
 and finally, example-triangulate to reconstruct a point cloud.
 
 
@@ -76,12 +73,12 @@ example_encode
 
 This app projects and captures structured light patterns.
 [f] to toggle fullscreen and [space] to start capturing.
-The app window must be set fullscreen on the projector desktop.
+The app window must be set fullscreen on the projector desktop before starting.
 
 An image is saved for colored point cloud to `camPerspective.jpg`.
 
 After scanning, the result is decoded and following files are saved:
-`h.map`, `v.map`, `mask.bmp`, `reliable.bmp`
+`h.map`, `v.map`, `mask.png`, `reliable.png`
 
 
 example_calibrate

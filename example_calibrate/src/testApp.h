@@ -20,8 +20,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxCv.h"
 
+#include "ofxOpenCv.h"
 #include "ofxActiveScan.h"
 
 class testApp : public ofBaseApp {
