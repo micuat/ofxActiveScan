@@ -1,0 +1,4 @@
+ofxKinect
+ofxActiveScan
+ofxOpenCv
+ofxCv

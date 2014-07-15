@@ -20,7 +20,9 @@ Dependencies
 
 * ofxOpenCv
 * [ofxCv](https://github.com/kylemcdonald/ofxCv)
-    * required for `example_triangulate`
+    * required for `example_triangulate` and Kinect examples
+* ofxKinect
+    * required for Kinect examples
 
 
 Data Folder
