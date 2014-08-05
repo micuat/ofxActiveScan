@@ -31,7 +31,7 @@ void ofApp::setup() {
 }
 
 void ofApp::init() {
-	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel(OF_LOG_WARNING);
 	
 	// enable depth->video image calibration
 	kinect.setRegistration(true);
@@ -54,9 +54,11 @@ void ofApp::init() {
 	ofImage mask;
 	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.png"));
 	maskMap = toAs(mask);
-	ofImage reliable;
-	ofLoadImage(reliable, ofToDataPath(rootDir[0] + "/reliable.png"));
-	Map2f reliableMap = toAs(reliable);
+	
+	ofImage depthImage;
+	ofLoadImage(depthImage, ofToDataPath(rootDir[0] + "/camPerspectiveDepth.png", true));
+	depthImage.setImageType(OF_IMAGE_GRAYSCALE);
+	depth = depthImage.getPixelsRef();
 }
 
 void ofApp::update() {
@@ -89,10 +91,10 @@ void ofApp::update() {
 			int step = 2;
 			for(int y = 0; y < h; y += step) {
 				for(int x = 0; x < w; x += step) {
-					float dist = kinect.getDistanceAt(x, y);
+					float dist = depth.getPixels()[y * w + h];
 					if( maskMap.cell(x, y) <= 0 ) continue;
 					if(dist > 0) {
-						referenceObjectPoints[0].push_back(ofxCv::toCv(kinect.getWorldCoordinateAt(x, y)));
+						referenceObjectPoints[0].push_back(ofxCv::toCv(kinect.getWorldCoordinateAt(x, y, dist)));
 						referenceImagePoints[0].push_back(cv::Point2f(horizontal.cell(x, y), vertical.cell(x, y)));
 //						referenceImagePoints[0].push_back(cv::Point2f(x, y));
 					}
@@ -120,6 +122,9 @@ void ofApp::update() {
 			cfs << "proIntrinsic"  << proIntrinsic;
 			cfs << "proDistortion" << proDistortion;
 			cfs << "proExtrinsic"  << proExtrinsic;
+			
+			ofLogWarning() << proIntrinsic;
+			ofLogWarning() << proExtrinsic;
 			
 			pathLoaded = false;
 		}

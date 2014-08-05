@@ -40,6 +40,7 @@ public:
 private:
 	ofxActiveScan::Options options;
 	ofxActiveScan::Map2f horizontal, vertical, maskMap;
+	ofPixels depth;
 	
 	int cw, ch;
 	
