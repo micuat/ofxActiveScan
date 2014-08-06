@@ -26,18 +26,20 @@
 #include "ofxKinect.h"
 #include "ofxCv.h"
 
+#include "levmar.h"
+
 class ofApp : public ofBaseApp {
 public:
 	void setup();
 	void init();
 	void update();
+	void kinectCalibration();
 	void draw();
 	void keyPressed(int);
 	void dragEvent(ofDragInfo);
 	
 	vector<string> rootDir;
 	
-private:
 	ofxActiveScan::Options options;
 	ofxActiveScan::Map2f horizontal, vertical, maskMap;
 	ofPixels depth;
@@ -47,4 +49,17 @@ private:
 	bool pathLoaded;
 	
 	ofxKinect kinect;
+	
+	cv::Mat proIntrinsic, camIntrinsic;
+	double camDistortion, proDistortion;
+	cv::Mat proExtrinsic;
+	
+	cv::Mat distCoeffs;
+	vector<cv::Mat> rvecs, tvecs;
+	int flags;
+	vector<vector<cv::Point3d> > referenceObjectPoints;
+	vector<vector<cv::Point2d> > referenceImagePoints;
+	cv::Size imageSize;
 };
+
+void levmarFocalFitting(double *, double *, int, int, void *);
