@@ -54,12 +54,8 @@ public:
 	double camDistortion, proDistortion;
 	cv::Mat proExtrinsic;
 	
-	cv::Mat distCoeffs;
-	vector<cv::Mat> rvecs, tvecs;
-	int flags;
 	vector<vector<cv::Point3d> > referenceObjectPoints;
 	vector<vector<cv::Point2d> > referenceImagePoints;
-	cv::Size imageSize;
 };
 
 void levmarFocalFitting(double *, double *, int, int, void *);

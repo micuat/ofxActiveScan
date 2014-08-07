@@ -33,17 +33,15 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 					f, 0, app->options.projector_width * 0.5 - 0.5,
 					0, f, app->options.projector_height * app->options.projector_horizontal_center - 0.5,
 					0, 0, 1);
-	//cv::calibrateCamera(app->referenceObjectPoints, app->referenceImagePoints, app->imageSize, intrinsic, app->distCoeffs, app->rvecs, app->tvecs, app->flags);
-	cv::solvePnP(app->referenceObjectPoints.at(0), app->referenceImagePoints.at(0), intrinsic, app->distCoeffs, app->rvecs.at(0), app->tvecs.at(0));
-
-	cv::Mat rot3x3;
-	cv::Rodrigues(app->rvecs[0], rot3x3);
-	double* rm = rot3x3.ptr<double>(0);
-	double* tm = app->tvecs[0].ptr<double>(0);
-	extrinsic = (cv::Mat1d(4,3) << rm[0], rm[3], rm[6],
-					rm[1], rm[4], rm[7],
-					rm[2], rm[5], rm[8],
-					tm[0], tm[1], tm[2]);
+	ofMatrix4x4 mat;
+	mat.makeIdentityMatrix();
+	mat.rotate(p[1], 1, 0, 0);
+	mat.rotate(p[2], 0, 1, 0);
+	mat.rotate(p[3], 0, 0, 1);
+	extrinsic = (cv::Mat1d(4,3) << mat(0, 0), mat(0, 1), mat(0, 2),
+					mat(1, 0), mat(1, 1), mat(1, 2),
+					mat(2, 0), mat(2, 1), mat(2, 2),
+					p[4], p[5], p[6]);
 	extrinsic = extrinsic.t();
 	
 	x[0] = 0;
@@ -61,9 +59,9 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 		float xtmp = cv::norm(pReproject);
 //		ofLogWarning() << xtmp;
 		if( xtmp < 0 || isnan(xtmp) || isinf(xtmp) ) {
-			xtmp = 1e3;
+			xtmp = 1e30;
 		}
-		x[0] += xtmp;
+		x[i] += xtmp;
 	}
 }
 
@@ -115,22 +113,11 @@ void ofApp::update() {
 }
 
 void ofApp::kinectCalibration() {
-	// cv setup begin
-	flags =
-	CV_CALIB_USE_INTRINSIC_GUESS |
-	CV_CALIB_FIX_PRINCIPAL_POINT |
-	CV_CALIB_FIX_ASPECT_RATIO |
-	//CV_CALIB_FIX_K1 |
-	//CV_CALIB_FIX_K2 |
-	//CV_CALIB_FIX_K3 |
-	CV_CALIB_ZERO_TANGENT_DIST;
 	int w = 640;
 	int h = 480;
-	int step = 16;
+	int step = 2;
 	referenceObjectPoints.resize(1);
 	referenceImagePoints.resize(1);
-	rvecs.resize(1);
-	tvecs.resize(1);
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
 			float dist = depth.getPixels()[y * w + h];
@@ -141,8 +128,7 @@ void ofApp::kinectCalibration() {
 			}
 		}
 	}
-	imageSize = cv::Size(options.projector_width, options.projector_height * (options.projector_horizontal_center + 0.1));
-	// cv setup end
+	ofLogWarning() << referenceImagePoints[0].size();
 	
 	// levmar setup begin
 	int ret;
@@ -153,12 +139,18 @@ void ofApp::kinectCalibration() {
 	opts[1] = 1E-15;
 	opts[2] = 1E-15;
 	opts[3] = 1E-20;
-	opts[4] = LM_DIFF_DELTA;
+	opts[4] = -LM_DIFF_DELTA;
 	
-	p.resize(1);
+	p.resize(8);
 	x.resize(referenceObjectPoints[0].size());
 	
 	p[0] = 1500; // focal length guess
+	p[1] = 0;
+	p[2] = 0;
+	p[3] = 0;
+	p[4] = 0;
+	p[5] = 0;
+	p[6] = 0;
 	for( int i = 0 ; i < x.size() ; i++ ) {
 		// minimize norm
 		x[i] = 0.0;
@@ -166,24 +158,7 @@ void ofApp::kinectCalibration() {
 	int nIteration = 1000;
 	// levmar setup end
 	
-	//ret = dlevmar_dif(levmarFocalFitting, &p[0], &x[0], p.size(), x.size(), nIteration, opts, info, NULL, NULL, this);
-	
-	double fBest = 1500, xBest = 1e100;
-	for( double f = 1900; f < 2200; f++ ) {
-		levmarFocalFitting(&f, &x[0], p.size(), x.size(), this);
-		ofLogWarning() << f << " " << x[0];
-		
-		if( xBest > x[0] ) {
-			fBest = f;
-			xBest = x[0];
-		}
-	}
-	levmarFocalFitting(&fBest, &x[0], p.size(), x.size(), this);
-
-	ofLogWarning() << fBest << " " << xBest;
-	
-	// apply again, just in case
-	//levmarFocalFitting(&p[0], &x[0], p.size(), x.size(), this);
+	ret = dlevmar_dif(levmarFocalFitting, &p[0], &x[0], p.size(), x.size(), nIteration, opts, info, NULL, NULL, this);
 	
 	ofLog(OF_LOG_WARNING, "Levenberg-Marquardt returned %d in %g iter, reason %g", ret, info[5], info[6]);
 	ofLog(OF_LOG_WARNING, "Solution:");
