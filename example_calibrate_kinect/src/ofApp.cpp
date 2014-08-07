@@ -45,6 +45,8 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 	extrinsic = extrinsic.t();
 	
 	x[0] = 0;
+	app->pointsReprojection.clear();
+	app->pointsReprojection.setMode(OF_PRIMITIVE_LINES);
 	// return reprojection error
 	for( int i = 0 ; i < n ; i++ ) {
 		x[i] = 0;
@@ -55,6 +57,12 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 		cv::Mat pReprojectMat = intrinsic * extrinsic * pMat;
 		pReproject.x = pReprojectMat.at<double>(0) / pReprojectMat.at<double>(2);
 		pReproject.y = pReprojectMat.at<double>(1) / pReprojectMat.at<double>(2);
+		
+		app->pointsReprojection.addVertex(ofVec3f(pReproject.x, pReproject.y, 0));
+		app->pointsReprojection.addColor(ofColor::red);
+		app->pointsReprojection.addVertex(ofVec3f(app->referenceImagePoints.at(0).at(i).x, app->referenceImagePoints.at(0).at(i).y, 0));
+		app->pointsReprojection.addColor(ofColor::white);
+		
 		pReproject -= app->referenceImagePoints.at(0).at(i);
 		float xtmp = cv::norm(pReproject);
 //		ofLogWarning() << xtmp;
@@ -184,6 +192,7 @@ void ofApp::kinectCalibration() {
 
 void ofApp::draw() {
 	ofBackground(0);
+	pointsReprojection.draw();
 }
 
 void ofApp::keyPressed(int key) {

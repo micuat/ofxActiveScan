@@ -56,6 +56,8 @@ public:
 	
 	vector<vector<cv::Point3d> > referenceObjectPoints;
 	vector<vector<cv::Point2d> > referenceImagePoints;
+	
+	ofMesh pointsReprojection;
 };
 
 void levmarFocalFitting(double *, double *, int, int, void *);
