@@ -47,6 +47,7 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 	x[0] = 0;
 	app->pointsReprojection.clear();
 	app->pointsReprojection.setMode(OF_PRIMITIVE_LINES);
+	int count = 0;
 	// return reprojection error
 	for( int i = 0 ; i < n ; i++ ) {
 		x[i] = 0;
@@ -68,8 +69,18 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 //		ofLogWarning() << xtmp;
 		if( xtmp < 0 || isnan(xtmp) || isinf(xtmp) ) {
 			xtmp = 1e30;
+		} else if( xtmp > 100 ) {
+			count++;
 		}
 		x[i] += xtmp;
+	}
+	
+	if( count < 30 ) {
+		for( int i = 0 ; i < n ; i++ ) {
+			if( x[i] > 100 && x[i] < 1e30) {
+				x[i] = 0;
+			}
+		}
 	}
 }
 
@@ -115,8 +126,11 @@ void ofApp::init() {
 
 void ofApp::update() {
 	if( pathLoaded ) {
-		kinectCalibration();
-		pathLoaded = false;
+		kinect.update();
+		if( kinect.isFrameNew() ) {
+			kinectCalibration();
+			pathLoaded = false;
+		}
 	}
 }
 
@@ -128,7 +142,7 @@ void ofApp::kinectCalibration() {
 	referenceImagePoints.resize(1);
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
-			float dist = depth.getPixels()[y * w + h];
+			float dist = kinect.getDistanceAt(x, y);
 			if( maskMap.cell(x, y) <= 0 ) continue;
 			if(dist > 0) {
 				referenceObjectPoints[0].push_back(ofxCv::toCv(kinect.getWorldCoordinateAt(x, y, dist)));
@@ -147,7 +161,7 @@ void ofApp::kinectCalibration() {
 	opts[1] = 1E-15;
 	opts[2] = 1E-15;
 	opts[3] = 1E-20;
-	opts[4] = -LM_DIFF_DELTA;
+	opts[4] = LM_DIFF_DELTA;
 	
 	p.resize(8);
 	x.resize(referenceObjectPoints[0].size());
