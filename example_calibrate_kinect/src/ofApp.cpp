@@ -28,10 +28,10 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 	cv::Mat &extrinsic = app->proExtrinsic;
 	
 	double f = p[0];
-	ofLogWarning() << p[0];
+	ofLogWarning() << p[0] << " " << p[7];
 	intrinsic = (cv::Mat1d(3, 3) <<
 					f, 0, app->options.projector_width * 0.5 - 0.5,
-					0, f, app->options.projector_height * app->options.projector_horizontal_center - 0.5,
+					0, f, app->options.projector_height * p[7] - 0.5,
 					0, 0, 1);
 	ofMatrix4x4 mat;
 	mat.makeIdentityMatrix();
@@ -166,13 +166,14 @@ void ofApp::kinectCalibration() {
 	p.resize(8);
 	x.resize(referenceObjectPoints[0].size());
 	
-	p[0] = 1500; // focal length guess
-	p[1] = 0;
+	p[0] = 1000; // 0: focal length
+	p[1] = 0; // 1-3: rotation
 	p[2] = 0;
 	p[3] = 0;
-	p[4] = 0;
+	p[4] = 0; // 4-6: translation
 	p[5] = 0;
 	p[6] = 0;
+	p[7] = 0.5; // 7: vertical lens shift
 	for( int i = 0 ; i < x.size() ; i++ ) {
 		// minimize norm
 		x[i] = 0.0;
