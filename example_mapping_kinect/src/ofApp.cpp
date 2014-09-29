@@ -41,7 +41,7 @@ void ofApp::init() {
 	
 	kinect.open();		// opens first available kinect
 	
-	cameraMode = EASYCAM_MODE;
+	cameraMode = PRO_MODE;
 	
 	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
@@ -113,7 +113,14 @@ void ofApp::drawPointCloud() {
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
 			if(kinect.getDistanceAt(x, y) > 0 && kinect.getDistanceAt(x, y) < ofMap(mouseX, 0, ofGetWidth(), 0, 3000) ) {
-				mesh.addColor(kinect.getDepthPixelsRef().getColor(x,y));
+				ofColor c;
+				if( x % (step*2) ) {
+					c.setHsb(kinect.getDepthPixelsRef().getColor(x,y).getBrightness(), 255, 255);
+				} else {
+					c.setHsb(255 - kinect.getDepthPixelsRef().getColor(x,y).getBrightness(), 255, 255);
+				}
+
+				mesh.addColor(c);
 				mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
 			}
 		}
