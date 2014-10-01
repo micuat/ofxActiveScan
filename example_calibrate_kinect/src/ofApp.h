@@ -41,14 +41,10 @@ public:
 	vector<string> rootDir;
 	
 	ofxActiveScan::Options options;
-	ofxActiveScan::Map2f horizontal, vertical, maskMap;
-	ofPixels depth;
 	
 	int cw, ch;
 	
 	bool pathLoaded;
-	
-	ofxKinect kinect;
 	
 	cv::Mat proIntrinsic, camIntrinsic;
 	double camDistortion, proDistortion;

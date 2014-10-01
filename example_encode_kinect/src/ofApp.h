@@ -33,6 +33,7 @@ public:
 	void init();
 	void update();
 	void draw();
+	void savePointCloud();
 	void keyPressed(int);
 	void dragEvent(ofDragInfo);
 	int difference(ofPixels &p0, ofPixels &p1);
@@ -54,6 +55,9 @@ private:
 	ofImage curFrame;
 	ofImage prevFrame;
 	ofImage curPattern;
+	
+	ofxActiveScan::Map2f horizontal, vertical;
+	ofImage mask, reliable;
 	
 	bool pathLoaded, imageUpdateTrigger;
 };

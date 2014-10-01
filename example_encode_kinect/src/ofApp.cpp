@@ -80,10 +80,6 @@ void ofApp::update() {
 			
 			if( !curPattern.isAllocated() ) { // first image
 				curFrame.saveImage(rootDir[0] + "/camPerspective.jpg");
-				
-				ofImage depthFrame;
-				depthFrame.setFromPixels(camera.getDepthPixelsRef());
-				depthFrame.saveImage(rootDir[0] + "/camPerspectiveDepth.png");
 				prevFrame = curFrame;
 			} else {
 				// see if 20% of image changed
@@ -102,9 +98,6 @@ void ofApp::update() {
 			} else {
 				while ( decoder->IsFinished() ); // wait while decoding
 				
-				Map2f horizontal, vertical;
-				ofImage mask, reliable;
-				
 				horizontal = decoder->GetHorizontal();
 				vertical = decoder->GetVertical();
 				mask = toOf(decoder->GetMask());
@@ -114,6 +107,8 @@ void ofApp::update() {
 				vertical.Write(ofToDataPath(rootDir[0] + "/v.map", true));
 				mask.saveImage(ofToDataPath(rootDir[0] + "/mask.png"));
 				reliable.saveImage(ofToDataPath(rootDir[0] + "/reliable.png"));
+				
+				savePointCloud();
 				
 				started = false;
 			}
@@ -141,6 +136,26 @@ void ofApp::draw() {
 		}
 		
 	}
+}
+
+void ofApp::savePointCloud() {
+	ofMesh mesh;
+	mesh.setMode(OF_PRIMITIVE_POINTS);
+	
+	int w = 640;
+	int h = 480;
+	int step = 2;
+	for(int y = 0; y < h; y += step) {
+		for(int x = 0; x < w; x += step) {
+			float dist = camera.getDistanceAt(x, y);
+			if( reliable.getColor(x, y).getBrightness() < 128 ) continue;
+			if( dist > 0 ) {
+				mesh.addVertex(camera.getWorldCoordinateAt(x, y, dist));
+				mesh.addTexCoord(ofVec2f(horizontal.cell(x, y), vertical.cell(x, y)));
+			}
+		}
+	}
+	mesh.save(ofToDataPath(rootDir[0] + "/" + ofGetTimestampString() + ".ply"));
 }
 
 void ofApp::keyPressed(int key) {

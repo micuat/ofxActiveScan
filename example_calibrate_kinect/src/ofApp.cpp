@@ -66,7 +66,6 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 		
 		pReproject -= app->referenceImagePoints.at(0).at(i);
 		float xtmp = cv::norm(pReproject);
-//		ofLogWarning() << xtmp;
 		if( xtmp < 0 || isnan(xtmp) || isinf(xtmp) ) {
 			xtmp = 1e30;
 		} else if( xtmp > 100 ) {
@@ -96,13 +95,6 @@ void ofApp::setup() {
 void ofApp::init() {
 	ofSetLogLevel(OF_LOG_WARNING);
 	
-	// enable depth->video image calibration
-	kinect.setRegistration(true);
-    
-	kinect.init();
-	
-	kinect.open();		// opens first available kinect
-
 	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
@@ -111,43 +103,27 @@ void ofApp::init() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
-	// load correspondences estimated by decode program 
-	horizontal = Map2f(ofToDataPath(rootDir[0] + "/h.map", true));
-	vertical = Map2f(ofToDataPath(rootDir[0] + "/v.map", true));
-	ofImage mask;
-	ofLoadImage(mask, ofToDataPath(rootDir[0] + "/mask.png"));
-	maskMap = toAs(mask);
-	
-	ofImage depthImage;
-	ofLoadImage(depthImage, ofToDataPath(rootDir[0] + "/camPerspectiveDepth.png", true));
-	depthImage.setImageType(OF_IMAGE_GRAYSCALE);
-	depth = depthImage.getPixelsRef();
+	kinectCalibration();
+	pathLoaded = false;
 }
 
 void ofApp::update() {
-	if( pathLoaded ) {
-		kinect.update();
-		if( kinect.isFrameNew() ) {
-			kinectCalibration();
-			pathLoaded = false;
-		}
-	}
 }
 
 void ofApp::kinectCalibration() {
-	int w = 640;
-	int h = 480;
-	int step = 2;
 	referenceObjectPoints.resize(1);
 	referenceImagePoints.resize(1);
-	for(int y = 0; y < h; y += step) {
-		for(int x = 0; x < w; x += step) {
-			float dist = kinect.getDistanceAt(x, y);
-			if( maskMap.cell(x, y) <= 0 ) continue;
-			if(dist > 0) {
-				referenceObjectPoints[0].push_back(ofxCv::toCv(kinect.getWorldCoordinateAt(x, y, dist)));
-				referenceImagePoints[0].push_back(cv::Point2d(horizontal.cell(x, y), vertical.cell(x, y)));
-			}
+	
+	ofDirectory dir(ofToDataPath(rootDir[0]));
+	dir.allowExt("ply");
+	dir.listDir();
+	
+	for( int j = 0; j < dir.numFiles(); j++ ){
+		ofMesh mesh;
+		mesh.load(dir.getPath(j));
+		for( int i = 0; i < mesh.getNumVertices(); i+=2 ) {
+			referenceObjectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(i)));
+			referenceImagePoints[0].push_back(ofxCv::toCv(mesh.getTexCoord(i)));
 		}
 	}
 	ofLogWarning() << referenceImagePoints[0].size();
