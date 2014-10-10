@@ -145,11 +145,16 @@ void ofApp::savePointCloud() {
 	int w = 640;
 	int h = 480;
 	int step = 2;
-	for(int y = 0; y < h; y += step) {
-		for(int x = 0; x < w; x += step) {
+	float depthTh = 50; // mm
+	for(int y = step; y < h - step; y += step) {
+		for(int x = step; x < w - step; x += step) {
 			float dist = camera.getDistanceAt(x, y);
 			if( reliable.getColor(x, y).getBrightness() < 128 ) continue;
 			if( dist > 0 ) {
+				if( abs(dist - camera.getDistanceAt(x-1, y)) > depthTh ) continue;
+				if( abs(dist - camera.getDistanceAt(x+1, y)) > depthTh ) continue;
+				if( abs(dist - camera.getDistanceAt(x, y-1)) > depthTh ) continue;
+				if( abs(dist - camera.getDistanceAt(x, y+1)) > depthTh ) continue;
 				mesh.addVertex(camera.getWorldCoordinateAt(x, y, dist));
 				mesh.addTexCoord(ofVec2f(horizontal.cell(x, y), vertical.cell(x, y)));
 			}
