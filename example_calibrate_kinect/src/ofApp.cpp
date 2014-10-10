@@ -45,24 +45,30 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 	extrinsic = extrinsic.t();
 	
 	x[0] = 0;
-	app->pointsReprojection.clear();
-	app->pointsReprojection.setMode(OF_PRIMITIVE_LINES);
+	ofMesh mesh;
+	mesh.setMode(OF_PRIMITIVE_LINES);
 	int count = 0;
 	// return reprojection error
 	for( int i = 0 ; i < n ; i++ ) {
 		x[i] = 0;
 		
 		cv::Point2d pReproject;
-		cv::Point3d &p = app->referenceObjectPoints.at(0).at(i);
-		cv::Mat pMat = (cv::Mat1d(4, 1) << p.x, p.y, p.z, 1);
+		cv::Point3d &pt = app->referenceObjectPoints.at(0).at(i);
+		cv::Mat pMat = (cv::Mat1d(4, 1) << pt.x, pt.y, pt.z, 1);
 		cv::Mat pReprojectMat = intrinsic * extrinsic * pMat;
 		pReproject.x = pReprojectMat.at<double>(0) / pReprojectMat.at<double>(2);
 		pReproject.y = pReprojectMat.at<double>(1) / pReprojectMat.at<double>(2);
 		
-		app->pointsReprojection.addVertex(ofVec3f(pReproject.x, pReproject.y, 0));
-		app->pointsReprojection.addColor(ofColor::red);
-		app->pointsReprojection.addVertex(ofVec3f(app->referenceImagePoints.at(0).at(i).x, app->referenceImagePoints.at(0).at(i).y, 0));
-		app->pointsReprojection.addColor(ofColor::white);
+		double xRad = pReproject.x - (app->options.projector_width * 0.5 - 0.5);
+		double yRad = pReproject.y - (app->options.projector_height * p[7] - 0.5);
+		double sqLen = xRad * xRad + yRad * yRad;
+		pReproject.x = xRad / (1.0 - p[8] / 1e4 * sqLen) + (app->options.projector_width * 0.5 - 0.5);
+		pReproject.y = yRad / (1.0 - p[8] / 1e4 * sqLen) + (app->options.projector_height * p[7] - 0.5);
+		
+		mesh.addVertex(ofVec3f(pReproject.x, pReproject.y, 0));
+		mesh.addColor(ofColor::red);
+		mesh.addVertex(ofVec3f(app->referenceImagePoints.at(0).at(i).x, app->referenceImagePoints.at(0).at(i).y, 0));
+		mesh.addColor(ofColor::white);
 		
 		pReproject -= app->referenceImagePoints.at(0).at(i);
 		float xtmp = cv::norm(pReproject);
@@ -74,13 +80,14 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 		x[i] += xtmp;
 	}
 	
-	if( count < 30 ) {
-		for( int i = 0 ; i < n ; i++ ) {
-			if( x[i] > 100 && x[i] < 1e30) {
-				x[i] = 0;
-			}
-		}
-	}
+//	if( count < 30 ) {
+//		for( int i = 0 ; i < n ; i++ ) {
+//			if( x[i] > 100 && x[i] < 1e30) {
+//				x[i] = 0;
+//			}
+//		}
+//	}
+	app->pointsReprojection = mesh;
 }
 
 void ofApp::setup() {
@@ -103,30 +110,48 @@ void ofApp::init() {
 	fs["vertical_center"] >> options.projector_horizontal_center;
 	fs["nsamples"] >> options.nsamples;
 	
-	kinectCalibration();
+	calibration.app = this;
+	calibration.startThread();
 	pathLoaded = false;
 }
 
 void ofApp::update() {
 }
 
-void ofApp::kinectCalibration() {
-	referenceObjectPoints.resize(1);
-	referenceImagePoints.resize(1);
+void KinectCalibration::threadedFunction() {
+	app->referenceObjectPoints.resize(1);
+	app->referenceImagePoints.resize(1);
 	
-	ofDirectory dir(ofToDataPath(rootDir[0]));
+	ofDirectory dir(ofToDataPath(app->rootDir[0]));
 	dir.allowExt("ply");
 	dir.listDir();
 	
+	ofMesh mesh;
+	// append meshes
 	for( int j = 0; j < dir.numFiles(); j++ ){
-		ofMesh mesh;
-		mesh.load(dir.getPath(j));
-		for( int i = 0; i < mesh.getNumVertices(); i+=2 ) {
-			referenceObjectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(i)));
-			referenceImagePoints[0].push_back(ofxCv::toCv(mesh.getTexCoord(i)));
+		ofMesh curMesh;
+		curMesh.load(dir.getPath(j));
+		for( int i = 0; i < curMesh.getNumVertices(); i+=2 ) {
+			mesh.addVertex(curMesh.getVertex(i));
+			mesh.addTexCoord(curMesh.getTexCoord(i));
 		}
 	}
-	ofLogWarning() << referenceImagePoints[0].size();
+	// downsample
+	float threshold = 100; // mm
+	float sqTh = threshold * threshold;
+	for( int i = 0; i < mesh.getNumVertices(); i++ ) {
+		if( mesh.getTexCoord(i).x < 0 ) continue;
+		app->referenceObjectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(i)));
+		app->referenceImagePoints[0].push_back(ofxCv::toCv(mesh.getTexCoord(i)));
+		for( int j = i + 1; j < mesh.getNumVertices(); j++ ) {
+			if( mesh.getTexCoord(j).x < 0 ) continue;
+			if( mesh.getVertex(j).squareDistance(mesh.getVertex(i)) < sqTh ) {
+				mesh.getTexCoord(j).x = -1;
+				mesh.getTexCoord(j).y = -1;
+			}
+		}
+	}
+	ofLogWarning() << app->referenceImagePoints[0].size();
 	
 	// levmar setup begin
 	int ret;
@@ -139,17 +164,18 @@ void ofApp::kinectCalibration() {
 	opts[3] = 1E-20;
 	opts[4] = LM_DIFF_DELTA;
 	
-	p.resize(8);
-	x.resize(referenceObjectPoints[0].size());
+	p.resize(9);
+	x.resize(app->referenceObjectPoints[0].size());
 	
-	p[0] = 1000; // 0: focal length
+	p[0] = 450; // 0: focal length
 	p[1] = 0; // 1-3: rotation
 	p[2] = 0;
 	p[3] = 0;
 	p[4] = 0; // 4-6: translation
 	p[5] = 0;
 	p[6] = 0;
-	p[7] = 0.5; // 7: vertical lens shift
+	p[7] = 1.36; // 7: vertical lens shift
+	p[8] = 0.001; // 8: lens distortion
 	for( int i = 0 ; i < x.size() ; i++ ) {
 		// minimize norm
 		x[i] = 0.0;
@@ -157,7 +183,7 @@ void ofApp::kinectCalibration() {
 	int nIteration = 1000;
 	// levmar setup end
 	
-	ret = dlevmar_dif(levmarFocalFitting, &p[0], &x[0], p.size(), x.size(), nIteration, opts, info, NULL, NULL, this);
+	ret = dlevmar_dif(levmarFocalFitting, &p[0], &x[0], p.size(), x.size(), nIteration, opts, info, NULL, NULL, app);
 	
 	ofLog(OF_LOG_WARNING, "Levenberg-Marquardt returned %d in %g iter, reason %g", ret, info[5], info[6]);
 	ofLog(OF_LOG_WARNING, "Solution:");
@@ -170,19 +196,24 @@ void ofApp::kinectCalibration() {
 	for( int i = 0 ; i < LM_INFO_SZ ; ++i )
 		ofLog(OF_LOG_WARNING, "%g", info[i]);
 	
-	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
-	cfs << "camIntrinsic"  << camIntrinsic;
-	cfs << "camDistortion" << camDistortion;
-	cfs << "proIntrinsic"  << proIntrinsic;
-	cfs << "proDistortion" << proDistortion;
-	cfs << "proExtrinsic"  << proExtrinsic;
+	cv::FileStorage cfs(ofToDataPath(app->rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
+	cfs << "camIntrinsic"  << app->camIntrinsic;
+	cfs << "camDistortion" << app->camDistortion;
+	cfs << "proIntrinsic"  << app->proIntrinsic;
+	cfs << "proDistortion" << app->proDistortion;
+	cfs << "proExtrinsic"  << app->proExtrinsic;
 	
-	ofLogWarning() << proIntrinsic;
-	ofLogWarning() << proExtrinsic;
+	ofLogWarning() << app->proIntrinsic;
+	ofLogWarning() << app->proExtrinsic;
 }
 
 void ofApp::draw() {
-	ofBackground(0);
+	if( calibration.isThreadRunning() ) {
+		ofBackground(0);
+	} else {
+		ofBackground(54);
+	}
+
 	pointsReprojection.draw();
 }
 

@@ -28,15 +28,24 @@
 
 #include "levmar.h"
 
+class ofApp;
+
+class KinectCalibration : public ofThread {
+public:
+	ofApp * app;
+	void threadedFunction();
+};
+
 class ofApp : public ofBaseApp {
 public:
 	void setup();
 	void init();
 	void update();
-	void kinectCalibration();
 	void draw();
 	void keyPressed(int);
 	void dragEvent(ofDragInfo);
+	
+	KinectCalibration calibration;
 	
 	vector<string> rootDir;
 	
