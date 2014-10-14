@@ -21,6 +21,8 @@
 
 using namespace ofxActiveScan;
 
+double lensDistortionCoeff = 1e-4;
+
 void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 	ofApp *app;
 	app = static_cast<ofApp *>(data);
@@ -62,8 +64,8 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 		double xRad = pReproject.x - (app->options.projector_width * 0.5 - 0.5);
 		double yRad = pReproject.y - (app->options.projector_height * p[7] - 0.5);
 		double sqLen = xRad * xRad + yRad * yRad;
-		pReproject.x = xRad / (1.0 - p[8] / 1e4 * sqLen) + (app->options.projector_width * 0.5 - 0.5);
-		pReproject.y = yRad / (1.0 - p[8] / 1e4 * sqLen) + (app->options.projector_height * p[7] - 0.5);
+		pReproject.x = xRad / (1.0 - p[8] * lensDistortionCoeff * sqLen) + (app->options.projector_width * 0.5 - 0.5);
+		pReproject.y = yRad / (1.0 - p[8] * lensDistortionCoeff * sqLen) + (app->options.projector_height * p[7] - 0.5);
 		
 		mesh.addVertex(ofVec3f(pReproject.x, pReproject.y, 0));
 		mesh.addColor(ofColor::red);
@@ -202,6 +204,7 @@ void KinectCalibration::threadedFunction() {
 	cfs << "proIntrinsic"  << app->proIntrinsic;
 	cfs << "proDistortion" << app->proDistortion;
 	cfs << "proExtrinsic"  << app->proExtrinsic;
+	cfs << "radialLensDistortion" << p[8] * lensDistortionCoeff;
 	
 	ofLogWarning() << app->proIntrinsic;
 	ofLogWarning() << app->proExtrinsic;
