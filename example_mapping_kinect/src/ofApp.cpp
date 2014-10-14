@@ -32,7 +32,7 @@ void ofApp::setup() {
 }
 
 void ofApp::init() {
-	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel(OF_LOG_WARNING);
 	
 	// enable depth->video image calibration
 	kinect.setRegistration(true);
@@ -43,6 +43,8 @@ void ofApp::init() {
 	
 	cameraMode = PRO_MODE;
 	
+	float lensDist;
+	
 	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
@@ -52,6 +54,7 @@ void ofApp::init() {
 	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::READ);
 	cfs["proIntrinsic"] >> proIntrinsic;
 	cfs["proExtrinsic"] >> proExtrinsic;
+	cfs["radialLensDistortion"] >> lensDist;
 	
 	proSize.width = options.projector_width;
 	proSize.height = options.projector_height;
@@ -61,6 +64,35 @@ void ofApp::init() {
 	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);
 	
+	// distortion shader
+#define STRINGIFY(A) #A
+	const char *src = STRINGIFY
+   (
+	uniform float dist;
+	uniform vec2 ppoint;
+	void main(){
+		
+		gl_TexCoord[0] = gl_MultiTexCoord0;
+		
+		// projection as usual
+		vec4 pos = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex;
+		gl_Position = pos;
+		
+		// xy with principal point origin
+		vec2 shiftPos = pos.xy - ppoint;
+		
+		// lens distortion
+		gl_Position.xy = shiftPos * (1.0 / (1.0 - dist * length(shiftPos))) + ppoint;
+		gl_FrontColor = gl_Color;
+	}
+	);
+	
+	shader.setupShaderFromSource(GL_VERTEX_SHADER, src);
+	shader.linkProgram();
+	
+	shader.begin();
+	shader.setUniform1f("dist", lensDist);
+	shader.end();
 	ofEnableDepthTest();
 }
 
@@ -91,7 +123,10 @@ void ofApp::draw() {
 			glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
 		}
 		
+		shader.begin();
+		shader.setUniform2f("ppoint", proIntrinsic.at<double>(0, 2) / ofGetWidth(), proIntrinsic.at<double>(1, 2) / ofGetHeight());
 		drawPointCloud();
+		shader.end();
 		
 		if(cameraMode == EASYCAM_MODE) {
 			cam.end();

@@ -52,5 +52,7 @@ private:
 	
 	ofxKinect kinect;
 	
+	ofShader shader;
+	
 	bool pathLoaded;
 };
