@@ -29,11 +29,11 @@ void levmarFocalFitting(double *p, double *x, int m, int n, void *data) {
 	cv::Mat &intrinsic = app->proIntrinsic;
 	cv::Mat &extrinsic = app->proExtrinsic;
 	
-	double f = p[0];
+	double f = 1700.48402893266;
 	ofLogWarning() << p[0] << " " << p[7];
 	intrinsic = (cv::Mat1d(3, 3) <<
 					f, 0, app->options.projector_width * 0.5 - 0.5,
-					0, f, app->options.projector_height * p[7] - 0.5,
+					0, f, 924.16198645433894,
 					0, 0, 1);
 	ofMatrix4x4 mat;
 	mat.makeIdentityMatrix();
@@ -145,69 +145,67 @@ void KinectCalibration::threadedFunction() {
 		if( mesh.getTexCoord(i).x < 0 ) continue;
 		app->referenceObjectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(i)));
 		app->referenceImagePoints[0].push_back(ofxCv::toCv(mesh.getTexCoord(i)));
-		for( int j = i + 1; j < mesh.getNumVertices(); j++ ) {
-			if( mesh.getTexCoord(j).x < 0 ) continue;
-			if( mesh.getVertex(j).squareDistance(mesh.getVertex(i)) < sqTh ) {
-				mesh.getTexCoord(j).x = -1;
-				mesh.getTexCoord(j).y = -1;
-			}
-		}
+//		for( int j = i + 1; j < mesh.getNumVertices(); j++ ) {
+//			if( mesh.getTexCoord(j).x < 0 ) continue;
+//			if( mesh.getVertex(j).squareDistance(mesh.getVertex(i)) < sqTh ) {
+//				mesh.setTexCoord(j, ofVec2f(-1, -1));
+//			}
+//		}
 	}
 	ofLogWarning() << app->referenceImagePoints[0].size();
 	
-	// levmar setup begin
-	int ret;
-	vector<double> p, x;
-	double opts[LM_OPTS_SZ], info[LM_INFO_SZ];
-	
-	opts[0] = LM_INIT_MU;
-	opts[1] = 1E-15;
-	opts[2] = 1E-15;
-	opts[3] = 1E-20;
-	opts[4] = LM_DIFF_DELTA;
-	
-	p.resize(9);
-	x.resize(app->referenceObjectPoints[0].size());
-	
-	p[0] = 450; // 0: focal length
-	p[1] = 0; // 1-3: rotation
-	p[2] = 0;
-	p[3] = 0;
-	p[4] = 0; // 4-6: translation
-	p[5] = 0;
-	p[6] = 0;
-	p[7] = 1.36; // 7: vertical lens shift
-	p[8] = 0.001; // 8: lens distortion
-	for( int i = 0 ; i < x.size() ; i++ ) {
-		// minimize norm
-		x[i] = 0.0;
-	}
-	int nIteration = 1000;
-	// levmar setup end
-	
-	ret = dlevmar_dif(levmarFocalFitting, &p[0], &x[0], p.size(), x.size(), nIteration, opts, info, NULL, NULL, app);
-	
-	ofLog(OF_LOG_WARNING, "Levenberg-Marquardt returned %d in %g iter, reason %g", ret, info[5], info[6]);
-	ofLog(OF_LOG_WARNING, "Solution:");
-	
-	for( int i = 0 ; i < p.size() ; ++i )
-		ofLog(OF_LOG_WARNING, "%.7g", p[i]);
-	
-	ofLog(OF_LOG_WARNING, "Minimization info:");
-	
-	for( int i = 0 ; i < LM_INFO_SZ ; ++i )
-		ofLog(OF_LOG_WARNING, "%g", info[i]);
+	app->proIntrinsic = (cv::Mat1d(3, 3) <<
+							1699.4161051180934, 0, 531.68731922681593,
+							0, 1701.5519527472304, 924.16198645433894,
+							0, 0, 1);
+	cv::Mat distCoeffs = (cv::Mat1d(4, 1) <<
+						  -1.3976824758462122e-01, 1.6504530150224475e-01,
+						  1.5693006340259787e-03, 2.1149550740275625e-04);
+	cv::Mat r, t;
+	cv::solvePnP(app->referenceObjectPoints[0], app->referenceImagePoints[0], app->proIntrinsic, distCoeffs, r, t);
 	
 	cv::FileStorage cfs(ofToDataPath(app->rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
-	cfs << "camIntrinsic"  << app->camIntrinsic;
-	cfs << "camDistortion" << app->camDistortion;
 	cfs << "proIntrinsic"  << app->proIntrinsic;
-	cfs << "proDistortion" << app->proDistortion;
-	cfs << "proExtrinsic"  << app->proExtrinsic;
-	cfs << "radialLensDistortion" << p[8] * lensDistortionCoeff;
+//	cfs << "proDistortion" << app->proDistortion;
+//	cfs << "proExtrinsic"  << app->proExtrinsic;
+//	cfs << "radialLensDistortion" << p[8] * lensDistortionCoeff;
+	
+	cv::Mat mat;
+	cv::Rodrigues(r, mat);
+	mat = mat.t();
+
+	app->proExtrinsic = (cv::Mat1d(4,3) << mat.at<double>(0, 0), mat.at<double>(0, 1), mat.at<double>(0, 2),
+					mat.at<double>(1, 0), mat.at<double>(1, 1), mat.at<double>(1, 2),
+					mat.at<double>(2, 0), mat.at<double>(2, 1), mat.at<double>(2, 2),
+					t.at<double>(0), t.at<double>(1), t.at<double>(2));
+	app->proExtrinsic = app->proExtrinsic.t();
+	
+	mesh.clear();
+	mesh.setMode(OF_PRIMITIVE_LINES);
+
+	for( int i = 0 ; i < app->referenceObjectPoints[0].size() ; i++ ) {
+		cv::Point2d pReproject;
+		cv::Point3d &pt = app->referenceObjectPoints.at(0).at(i);
+		cv::Mat pMat = (cv::Mat1d(4, 1) << pt.x, pt.y, pt.z, 1);
+		cv::Mat pReprojectMat = app->proIntrinsic * app->proExtrinsic * pMat;
+		pReproject.x = pReprojectMat.at<double>(0) / pReprojectMat.at<double>(2);
+		pReproject.y = pReprojectMat.at<double>(1) / pReprojectMat.at<double>(2);
+		
+		mesh.addVertex(ofVec3f(pReproject.x, pReproject.y, 0));
+		mesh.addColor(ofColor::red);
+		mesh.addVertex(ofVec3f(app->referenceImagePoints.at(0).at(i).x, app->referenceImagePoints.at(0).at(i).y, 0));
+		mesh.addColor(ofColor::white);
+		
+		pReproject -= app->referenceImagePoints.at(0).at(i);
+		float xtmp = cv::norm(pReproject);
+	}
 	
 	ofLogWarning() << app->proIntrinsic;
 	ofLogWarning() << app->proExtrinsic;
+	ofLogWarning() << mat;
+	ofLogWarning() << t;
+	
+	app->pointsReprojection = mesh;
 }
 
 void ofApp::draw() {
