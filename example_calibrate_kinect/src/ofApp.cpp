@@ -145,12 +145,6 @@ void KinectCalibration::threadedFunction() {
 		if( mesh.getTexCoord(i).x < 0 ) continue;
 		app->referenceObjectPoints[0].push_back(ofxCv::toCv(mesh.getVertex(i)));
 		app->referenceImagePoints[0].push_back(ofxCv::toCv(mesh.getTexCoord(i)));
-//		for( int j = i + 1; j < mesh.getNumVertices(); j++ ) {
-//			if( mesh.getTexCoord(j).x < 0 ) continue;
-//			if( mesh.getVertex(j).squareDistance(mesh.getVertex(i)) < sqTh ) {
-//				mesh.setTexCoord(j, ofVec2f(-1, -1));
-//			}
-//		}
 	}
 	ofLogWarning() << app->referenceImagePoints[0].size();
 	
@@ -164,12 +158,6 @@ void KinectCalibration::threadedFunction() {
 	cv::Mat r, t;
 	cv::solvePnP(app->referenceObjectPoints[0], app->referenceImagePoints[0], app->proIntrinsic, distCoeffs, r, t);
 	
-	cv::FileStorage cfs(ofToDataPath(app->rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
-	cfs << "proIntrinsic"  << app->proIntrinsic;
-//	cfs << "proDistortion" << app->proDistortion;
-//	cfs << "proExtrinsic"  << app->proExtrinsic;
-//	cfs << "radialLensDistortion" << p[8] * lensDistortionCoeff;
-	
 	cv::Mat mat;
 	cv::Rodrigues(r, mat);
 	mat = mat.t();
@@ -182,24 +170,64 @@ void KinectCalibration::threadedFunction() {
 	
 	mesh.clear();
 	mesh.setMode(OF_PRIMITIVE_LINES);
+	
+	vector<cv::Point3d> objectPoints;
+	vector<cv::Point2d> imagePoints;
+	
+	vector<cv::Point2d> repImagePoints;
+	
+	cv::projectPoints(app->referenceObjectPoints[0], r, t, app->proIntrinsic, distCoeffs, repImagePoints);
 
 	for( int i = 0 ; i < app->referenceObjectPoints[0].size() ; i++ ) {
-		cv::Point2d pReproject;
-		cv::Point3d &pt = app->referenceObjectPoints.at(0).at(i);
-		cv::Mat pMat = (cv::Mat1d(4, 1) << pt.x, pt.y, pt.z, 1);
-		cv::Mat pReprojectMat = app->proIntrinsic * app->proExtrinsic * pMat;
-		pReproject.x = pReprojectMat.at<double>(0) / pReprojectMat.at<double>(2);
-		pReproject.y = pReprojectMat.at<double>(1) / pReprojectMat.at<double>(2);
-		
-		mesh.addVertex(ofVec3f(pReproject.x, pReproject.y, 0));
-		mesh.addColor(ofColor::red);
-		mesh.addVertex(ofVec3f(app->referenceImagePoints.at(0).at(i).x, app->referenceImagePoints.at(0).at(i).y, 0));
-		mesh.addColor(ofColor::white);
+		cv::Point2d pReproject = repImagePoints.at(i);
 		
 		pReproject -= app->referenceImagePoints.at(0).at(i);
 		float xtmp = cv::norm(pReproject);
+		
+		if( xtmp < 5 ) {
+			objectPoints.push_back(app->referenceObjectPoints.at(0).at(i));
+			imagePoints.push_back(app->referenceImagePoints.at(0).at(i));
+		}
 	}
+	ofLogWarning() << imagePoints.size();
+
+	cv::solvePnP(objectPoints, imagePoints, app->proIntrinsic, distCoeffs, r, t);
 	
+	cv::Rodrigues(r, mat);
+	mat = mat.t();
+	
+	app->proExtrinsic = (cv::Mat1d(4,3) << mat.at<double>(0, 0), mat.at<double>(0, 1), mat.at<double>(0, 2),
+						 mat.at<double>(1, 0), mat.at<double>(1, 1), mat.at<double>(1, 2),
+						 mat.at<double>(2, 0), mat.at<double>(2, 1), mat.at<double>(2, 2),
+						 t.at<double>(0), t.at<double>(1), t.at<double>(2));
+	app->proExtrinsic = app->proExtrinsic.t();
+	
+	mesh.clear();
+	mesh.setMode(OF_PRIMITIVE_LINES);
+	float reperror = 0;
+	
+	cv::projectPoints(objectPoints, r, t, app->proIntrinsic, distCoeffs, repImagePoints);
+
+	for( int i = 0 ; i < objectPoints.size() ; i++ ) {
+		cv::Point2d pReproject = repImagePoints.at(i);
+		
+		mesh.addVertex(ofVec3f(pReproject.x, pReproject.y, 0));
+		mesh.addColor(ofColor::red);
+		mesh.addVertex(ofVec3f(imagePoints.at(i).x, imagePoints.at(i).y, 0));
+		mesh.addColor(ofColor::white);
+		
+		pReproject -= imagePoints.at(i);
+		reperror += cv::norm(pReproject);
+
+	}
+	ofLogWarning() << "reperror: " << reperror / objectPoints.size();
+	cv::FileStorage cfs(ofToDataPath(app->rootDir[0] + "/calibration.yml"), cv::FileStorage::WRITE);
+	cfs << "proIntrinsic"  << app->proIntrinsic;
+	cfs << "proDistortion" << distCoeffs;
+	cfs << "proExtrinsic"  << app->proExtrinsic;
+	cfs << "rvec"  << r;
+	cfs << "tvec"  << t;
+
 	ofLogWarning() << app->proIntrinsic;
 	ofLogWarning() << app->proExtrinsic;
 	ofLogWarning() << mat;

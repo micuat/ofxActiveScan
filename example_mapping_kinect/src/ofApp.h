@@ -40,8 +40,10 @@ public:
 private:
 	ofxActiveScan::Options options;
 	ofMesh mesh;
+	vector<cv::Point3d> objectPoints;
+	vector<cv::Point2d> imagePoints;
 	ofEasyCam cam;
-	cv::Mat proIntrinsic, proExtrinsic;
+	cv::Mat proIntrinsic, proExtrinsic, distCoeffs, rvec, tvec;
 	ofxCv::Intrinsics proCalibration;
 	cv::Size proSize;
 	

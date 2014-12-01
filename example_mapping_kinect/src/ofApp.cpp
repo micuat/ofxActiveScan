@@ -43,8 +43,6 @@ void ofApp::init() {
 	
 	cameraMode = PRO_MODE;
 	
-	float lensDist;
-	
 	cv::FileStorage fs(ofToDataPath(rootDir[0] + "/config.yml"), cv::FileStorage::READ);
 	fs["proWidth"] >> options.projector_width;
 	fs["proHeight"] >> options.projector_height;
@@ -54,12 +52,15 @@ void ofApp::init() {
 	cv::FileStorage cfs(ofToDataPath(rootDir[0] + "/calibration.yml"), cv::FileStorage::READ);
 	cfs["proIntrinsic"] >> proIntrinsic;
 	cfs["proExtrinsic"] >> proExtrinsic;
-	cfs["radialLensDistortion"] >> lensDist;
+	cfs["proDistortion"] >> distCoeffs;
+	cfs["rvec"] >> rvec;
+	cfs["tvec"] >> tvec;
 	
 	proSize.width = options.projector_width;
 	proSize.height = options.projector_height;
 	cout << proIntrinsic << endl;
 	cout << proExtrinsic << endl;
+	cout << distCoeffs << endl;
 	
 	// set parameters for projection
 	proCalibration.setup(proIntrinsic, proSize);
@@ -91,7 +92,7 @@ void ofApp::init() {
 	shader.linkProgram();
 	
 	shader.begin();
-	shader.setUniform1f("dist", lensDist);
+//	shader.setUniform1f("dist", lensDist);
 	shader.end();
 	ofEnableDepthTest();
 }
@@ -111,22 +112,20 @@ void ofApp::draw() {
 			ofScale(1000, 1000, 1000);
 			ofTranslate(0, 0, -2);
 		} else if(cameraMode == PRO_MODE) {
-			ofSetupScreenPerspective(options.projector_width, options.projector_height);
-			proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
-			cv::Mat m = proExtrinsic;
-			cv::Mat extrinsics = (cv::Mat1d(4,4) <<
-								  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
-								  m.at<double>(1,0), m.at<double>(1,1), m.at<double>(1,2), m.at<double>(1,3),
-								  m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2), m.at<double>(2,3),
-								  0, 0, 0, 1);
-			extrinsics = extrinsics.t();
-			glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
+//			ofSetupScreenPerspective(options.projector_width, options.projector_height);
+//			proCalibration.loadProjectionMatrix(0.0001, 100000000.0);
+//			cv::Mat m = proExtrinsic;
+//			cv::Mat extrinsics = (cv::Mat1d(4,4) <<
+//								  m.at<double>(0,0), m.at<double>(0,1), m.at<double>(0,2), m.at<double>(0,3),
+//								  m.at<double>(1,0), m.at<double>(1,1), m.at<double>(1,2), m.at<double>(1,3),
+//								  m.at<double>(2,0), m.at<double>(2,1), m.at<double>(2,2), m.at<double>(2,3),
+//								  0, 0, 0, 1);
+//			extrinsics = extrinsics.t();
+//			glMultMatrixd((GLdouble*) extrinsics.ptr(0, 0));
+			
 		}
 		
-		shader.begin();
-		shader.setUniform2f("ppoint", proIntrinsic.at<double>(0, 2) / ofGetWidth(), proIntrinsic.at<double>(1, 2) / ofGetHeight());
 		drawPointCloud();
-		shader.end();
 		
 		if(cameraMode == EASYCAM_MODE) {
 			cam.end();
@@ -142,6 +141,8 @@ void ofApp::drawPointCloud() {
 	int h = 480;
 	mesh.clear();
 	mesh.setMode(OF_PRIMITIVE_POINTS);
+	objectPoints.clear();
+	imagePoints.clear();
 	glPointSize(2);
 	int step = 2;
 	
@@ -157,10 +158,20 @@ void ofApp::drawPointCloud() {
 
 				mesh.addColor(c);
 				mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
+				objectPoints.push_back(ofxCv::toCv(kinect.getWorldCoordinateAt(x, y)));
 			}
 		}
 	}
-	mesh.draw();
+	if( objectPoints.size() > 0 ) {
+		cv::projectPoints(objectPoints, rvec, tvec, proIntrinsic, distCoeffs, imagePoints);
+	}
+	
+	for( int i = 0; i < imagePoints.size(); i++ ) {
+		ofSetColor(mesh.getColor(i));
+		ofFill();
+		ofRect(imagePoints.at(i).x, imagePoints.at(i).y, 2, 2);
+	}
+	//mesh.draw();
 }
 
 void ofApp::keyPressed(int key) {
