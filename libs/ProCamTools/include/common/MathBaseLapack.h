@@ -10,6 +10,8 @@
 #undef small // conflict with "rpcndr.h" used in MFC
 
 #include <stdexcept>
+#include <algorithm>
+
 #include <lapacke.h>
 
 #include "MathBaseUtil.h"
