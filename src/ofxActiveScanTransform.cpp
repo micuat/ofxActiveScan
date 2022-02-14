@@ -193,14 +193,14 @@ void levmar_3dNormMesh(double *p, double *x, int m, int n, void *data) {
 		      r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2), p[5],
 		      0, 0, 0, 1);
 	
-	vector<ofVec3f> mwork;
+	vector<glm::vec3> mwork;
 	mwork = d[1].getVertices();
 	
 	for( int i = 0 ; i < d[0].getNumVertices() ; i++ ) {
 		cv::Mat orig = (cv::Mat1d(4, 1) << d[0].getVertex(i).x, d[0].getVertex(i).y, d[0].getVertex(i).z, 1);
 		cv::Mat transformed = Rt * orig;
 		
-		ofVec3f ot(transformed.at<double>(0), transformed.at<double>(1), transformed.at<double>(2));
+		glm::vec3 ot(transformed.at<double>(0), transformed.at<double>(1), transformed.at<double>(2));
 		/*ofVec3f nearest = mwork.at(0);
 		float dist = nearest.distance(ot);
 		int index = 0;
@@ -214,7 +214,7 @@ void levmar_3dNormMesh(double *p, double *x, int m, int n, void *data) {
 		}
 		mwork.erase(mwork.begin() + index);
 		x[i] = dist;*/
-		x[i] = mwork.at(i).distance(ot);
+		x[i] = glm::distance(mwork.at(i), ot);
 	}
 }
 

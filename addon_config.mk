@@ -60,15 +60,12 @@ common:
 	# a specific platform
 	# ADDON_LIBS_EXCLUDE =
 	
-linux:
+linux64:
 	# binary libraries, these will be usually parsed from the file system but some 
 	# libraries need to passed to the linker in a specific order 
 	ADDON_LIBS =
-	ADDON_LIBS += libs/lapack/lib/linux/libblas.a
-	ADDON_LIBS += libs/lapack/lib/linux/liblapack.a
-	ADDON_LIBS += libs/lapack/lib/linux/liblapacke.a
-	ADDON_LIBS += libs/lapack/lib/linux/libtmglib.a
 	ADDON_LIBS += libs/levmar/lib/linux/liblevmar.a
+	ADDON_LDFLAGS = -llapack -lblas -lf2c
 	
 vs:
 	ADDON_CFLAGS = "/D ADD_ /D HAVE_LAPACK_CONFIG_H /D LAPACK_COMPLEX_STRUCTURE /D _USE_MATH_DEFINES"
